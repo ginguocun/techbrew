@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from ..utils import object_paginator, convert_num_to_chinese
 from ..forms import *
 
@@ -137,7 +137,7 @@ def brew_detail_public(request, pk, brew_key):
         if brew.brew_key == brew_key:
             context = brew_data(request, pk=pk)
             return render(request, template_name=template_name, context=context)
-    return HttpResponseRedirect(reverse('public'))
+    return Http404
 
 
 @login_required

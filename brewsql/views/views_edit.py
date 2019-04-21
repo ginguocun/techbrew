@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.views.generic.edit import UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.shortcuts import render
@@ -782,7 +782,6 @@ def sale_order_next(request):
 @login_required
 @permission_required('{0}.view_product'.format(app_name))
 def password_change_own(request):
-    redirect = 'public'
     template_name = '{0}/user/password_change.html'.format(app_name)
     if request.user.is_authenticated:
         u = User.objects.get(id=request.user.id)
@@ -794,7 +793,7 @@ def password_change_own(request):
                 u.save()
         return render(request, template_name=template_name, context={'form': form})
     else:
-        return HttpResponseRedirect(reverse(redirect))
+        return Http404
 
 
 class HandBookUpdate(TechBrewUpdateView):
