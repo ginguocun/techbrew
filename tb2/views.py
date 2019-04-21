@@ -12,8 +12,8 @@ import requests as req
 @ratelimit(key='post:username', rate='5/m', method=['POST'], block=True)
 @ratelimit(key='post:username', rate='20/h', method=['POST'], block=True)
 def tb_login(request):
-    template_name = 'registration/login.html'
-    redirect_to = 'public'
+    template_name = 'brewsql/login.html'
+    redirect_to = 'brewsql:home'
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -29,7 +29,7 @@ def tb_login(request):
 
 
 def tb_logout(request):
-    redirect_to = 'public'
+    redirect_to = 'login'
     logout(request)
     return redirect(redirect_to)
 
