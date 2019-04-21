@@ -1,0 +1,99 @@
+{% extends "public/base.html" %}
+{% block keywords %}<meta name="keywords" content="Brewing, beer, 精酿啤酒, 啤酒酿造, brix, plato, specific gravity, abv">{% endblock %}
+{% block title %}Brix-Plato-SG-ABV{% endblock %}
+{% load i18n static staticfiles %}
+{% block content %}
+<section class="wrapper site-min-height">
+    <div class="row col-lg-offset-1 col-lg-10">
+        <div class="text-center feature-head">
+            <h1> Plato/Brix 与 SG 相互转换计算 </h1>
+        </div>
+        <div class="col-lg-offset-2 col-lg-4">
+            <section class="panel">
+                <header class="panel-heading">
+                    Plato/Brix <i class="fa fa-arrows-h"></i> SG <i class="fa fa-long-arrow-right"></i> ABV
+                </header>
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="input-group m-bot15">
+                            <span class="input-group-addon">糖度(P/Brix)&ensp;</span>
+                            <input align="right" type="number" name="brix" min="0" step="0.1" class="form-control" maxlength="5" value="15.0" id="brix" onChange="javascript:calculate_1();">
+                        </div>
+                        <div class="input-group m-bot15">
+                            <span class="input-group-addon">相对密度(SG)</span>
+                            <input type="number" name="sg" min="1" step="0.0001" class="form-control" id="sg" value="1.0611" onChange="javascript:calculate_2();">
+                        </div>
+                        <div class="input-group m-bot15">
+                            <span class="input-group-addon">酒精度(ABV)&ensp;</span>
+                            <input type="text" name="abv" class="form-control" id="abv" value="8.2%" onfocus="this.blur();" >
+                        </div>
+                        <div class="form-group" align="right">
+                            <div class="col-sm-12">
+                                <div onclick="javascript:calculate_1();" class="btn btn-info" >{% trans "计算" %}</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            <section class="panel">
+                <header class="panel-heading">
+                    OG & FG <i class="fa fa-long-arrow-right"></i> ABV
+                </header>
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="input-group m-bot15">
+                            <span class="input-group-addon">起始糖度(OG)</span>
+                            <input type="number" name="og" min="1" step="0.0001" class="form-control" value="1.0600" id="og" onChange="javascript:calculate_3();">
+                        </div>
+                        <div class="input-group m-bot15">
+                            <span class="input-group-addon">终点糖度(FG)</span>
+                            <input type="number" name="fg" min="1" step="0.0001" class="form-control" value="1.0100" id="fg" onChange="javascript:calculate_3();">
+                        </div>
+                        <div class="input-group m-bot15">
+                            <span class="input-group-addon">酒精度(ABV)&ensp;</span>
+                            <input type="text" name="abv2" class="form-control" id="abv2" value="6.8%" onfocus="this.blur();" >
+                        </div>
+                        <div class="form-group" align="right">
+                            <div class="col-sm-12">
+                                <div onclick="javascript:calculate_3();" class="btn btn-info" >{% trans "计算" %}</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-offset-1 col-lg-5">
+            <b>Brix <i class="fa fa-long-arrow-right"></i> SG 计算公式: </b>
+            <p>SG = (Brix / (258.6 - ((Brix / 258.2) * 227.1))) + 1</p>
+            <b>SG <i class="fa fa-long-arrow-right"></i> Brix 计算公式: </b>
+            <p>Brix = (((182.4601 * SG - 775.6821) * SG + 1262.7794) * SG - 669.5622)</p>
+            <b>ABV计算公式: </b>
+            <p>ABV = (76.08 * (og - fg) / (1.775 - og)) * (fg / 0.794)</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block this_js %}
+<script>
+function calculate_1() {
+    var brix = document.getElementById('brix');
+    var sg = (brix.value / (258.6-((brix.value / 258.2)*227.1))) + 1;
+    var abv = (76.08 * (sg-1) / (1.775-sg)) * (1 / 0.794);
+    document.getElementById('sg').value = sg.toFixed(4);
+    document.getElementById('abv').value = abv.toFixed(1) + '%';
+}
+function calculate_2() {
+    var sg = document.getElementById('sg');
+    var brix = (((182.4601 * sg.value - 775.6821) * sg.value + 1262.7794) * sg.value - 669.5622);
+    var abv = (76.08 * (sg.value - 1) / (1.775 - sg.value)) * (1 / 0.794);
+    document.getElementById('brix').value = brix.toFixed(1);
+    document.getElementById('abv').value = abv.toFixed(1) + '%';
+}
+function calculate_3() {
+    var og = document.getElementById('og');
+    var fg = document.getElementById('fg');
+    var abv = (76.08 * (og.value - fg.value) / (1.775 - og.value)) * (fg.value / 0.794);
+    document.getElementById('abv2').value = abv.toFixed(1) + '%';
+}
+</script>
+{% endblock %}

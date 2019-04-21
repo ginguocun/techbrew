@@ -1,0 +1,70 @@
+<div class="navbar-collapse collapse yamm mega-menu">{% load i18n static staticfiles %}
+    <ul class="nav navbar-nav">
+        <!--<li class="dropdown">-->
+            <!--<a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle" href="#">{% trans '客户' %}<b class=" fa fa-angle-down"></b></a>-->
+            <!--<ul class="dropdown-menu list-unstyled" id="clients">-->
+            <!--</ul>-->
+        <!--</li>-->
+        <!--<li><a href="">{% trans '价目表' %}</a></li>-->
+        <!--<li><a href="">{% trans '精酿活动' %}</a></li>-->
+        <li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle">{% trans '百宝箱' %}<b class="fa fa-angle-down"></b></a>
+            <ul class="dropdown-menu wide-full">
+                <li>
+                    <!-- Content container to add padding -->
+                    <div class="yamm-content">
+                        <div class="row">
+                            <ul class="col-sm-2 list-unstyled">
+                                <li><p class="title">{% trans '资料库' %}</p></li>
+                                <li><a href="#">{% trans '风格' %}</a></li>
+                                <li><a href="#">{% trans '酵母' %}</a></li>
+                                <li><a href="#">{% trans '酒花' %}</a></li>
+                                <li><a href="#">{% trans '麦芽' %}</a></li>
+                                <li><a href="#">{% trans '水' %}</a></li>
+                            </ul>
+                            <ul class="col-sm-3 list-unstyled">
+                                <li><p class="title">{% trans '计算工具' %}</p></li>
+                                <li><a href="{% url 'brix_plato' %}"> Plato/Brix/SG/ABV </a></li>
+                                <li><a href="#">{% trans '酵母添加量' %}</a></li>
+                                <li><a href="#">{% trans '制冷/制热/电功率' %}</a></li>
+                            </ul>
+                            <ul class="col-sm-3 list-unstyled">
+                                <li><p class="title">{% trans '推荐阅读' %}</p></li>
+                                <li><a href="http://howtobrew.com" target="_blank">《How to Brew》</a></li>
+                                <li><a href="https://www.bjcp.org/docs/2015_Guidelines_Beer.pdf" target="_blank">{% trans 'BJCP 啤酒风格' %}</a></li>
+                                <li><a href="https://www.brewersassociation.org/resources/brewers-association-beer-style-guidelines/" target="_blank">{% trans 'BBA 啤酒风格 ' %}</a></li>
+
+                            </ul>
+                            <ul class="col-sm-4 list-unstyled">
+                                <li><p class="title">友情链接</p></li>
+                                <li><a href="https://www.bjcp.org/" target="_blank"> BJCP </a></li>
+                                <li><a href="https://www.cicerone.org/" target="_blank"> Cicerone </a></li>
+                                <li><a href="https://www.beeradvocate.com/" target="_blank"> Beeradvocate </a></li>
+                                <li><a href="https://www.ratebeer.com/" target="_blank"> RateBeer.com </a></li>
+                                <li><a href="https://untappd.com/" target="_blank"> untappd </a></li>
+                                <li><a href="http://www.imbeer.com/" target="_blank"> imbeer </a></li>
+                                <li><a href="https://www.jiuhuar.com/" target="_blank"> 酒花儿 </a></li>
+                                <li><a href="https://www.worldbeercup.org/" target="_blank"> World Beer Cup </a></li>
+                                <li><a href="http://www.brusselsbeerchallenge.com/en/home-en/" target="_blank"> Brussels Beer Challenge </a></li>
+                                <li><a href="http://www.thebeerlink.com/" target="_blank"> 嬉啤士 </a></li>
+                                <!--<li><a href="http://www.cnwinenews.com/" target="_blank"> 中国酒业新闻网 </a></li>-->
+                                <li><a href="https://gulubeer.cn/" target="_blank"> 咕噜精酿 </a></li>
+                                <li><a href="http://www.homebrew8.com/forum.php" target="_blank"> 家酿啤酒爱好者 </a></li>
+                                <li><a href="http://www.cnwinenews.com/" target="_blank"> 中国酒业新闻网 </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </li>
+        <!--<li class="dropdown">-->
+            <!--<a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle" href="#">{% trans '客户服务' %}<b class=" fa fa-angle-down"></b></a>-->
+            <!--<ul class="dropdown-menu">-->
+                <!--<li><a href="">{% trans '帮助中心' %}</a></li>-->
+                <!--<li><a href="">{% trans '常见问题' %}</a></li>-->
+                <!--<li><a href="">{% trans '商务合作' %}</a></li>-->
+                <!--<li><a href="">{% trans '使用协议' %}</a></li>-->
+                <!--<li><a href="">{% trans '隐私政策' %}</a></li>-->
+            <!--</ul>-->
+        <!--</li>-->
+    </ul>
+</div>

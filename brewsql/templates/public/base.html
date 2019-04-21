@@ -1,0 +1,78 @@
+<!DOCTYPE html>{% load i18n static staticfiles %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="酿造管理系统">
+        <meta name="author" content="Guoqun">
+        <link rel="shortcut icon" href="{% static 'flatlab/favicon.ico' %}">
+        {% block keywords %}<meta name="keywords" content="Brewing, beer, techbrew, brewer, 精酿啤酒, 啤酒酿造">{% endblock %}
+        <title>{% block title %}TechBrew{% endblock %}</title>
+        <!-- Bootstrap core CSS -->
+        <link href="{% static 'flatlab/css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'flatlab/css/bootstrap-reset.css' %}" rel="stylesheet">
+        <!--external css-->
+        <link href="{% static 'flatlab/assets/font-awesome/css/font-awesome.css' %}" rel="stylesheet" />
+        <link href="{% static 'flatlab/css/yamm.css' %}" rel="stylesheet">
+          <!-- Custom styles for this template -->
+        <link href="{% static 'home/css/style.css' %}" rel="stylesheet">
+        <link href="{% static 'flatlab/css/style-responsive.css' %}" rel="stylesheet" />
+        {% block this_css %}{% endblock %}
+    </head>
+    <body class="full-width">
+        <section id="container" class="">
+            <!--header start-->
+            <header class="header dark-bg">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="fa fa-bars"></span>
+                    </button>
+                    <!--logo start-->
+                    <a href="" class="logo" >Tech<span>Brew</span></a>
+                    <!--logo end-->
+                    {% block navbartop %}{% include 'public/top.html' %}{% endblock %}
+                 </div>
+            </header>
+            <!--header end-->
+            <!--main content start-->
+                <section id="main-content">
+                    <!-- page start-->
+                    {% block content %}
+                    <section class="wrapper site-min-height">
+                    </section>
+                    {% endblock %}
+                    <!-- page end-->
+                </section>
+            <!--main content end-->
+            <!--footer start-->
+            {% block footer %}
+            <footer class="site-footer">
+                <div class="text-center">
+                    2017-2019 &copy; TechBrew.cn 版权所有 浙ICP备17014484号-1
+                    <a href="#" class="go-top">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+            </footer>
+            {% endblock %}
+            <!--footer end-->
+        </section>
+        <!-- js placed at the end of the document so the pages load faster -->
+        <script src="{% static 'flatlab/js/jquery.js' %}"></script>
+        <script src="{% static 'flatlab/js/bootstrap.min.js' %}"></script>
+        <script class="include" type="text/javascript" src="{% static 'flatlab/js/jquery.dcjqaccordion.2.7.js' %}"></script>
+        <script type="text/javascript" src="{% static 'flatlab/js/hover-dropdown.js' %}"></script>
+        <script src="{% static 'flatlab/js/jquery.scrollTo.min.js' %}"></script>
+        <script src="{% static 'flatlab/js/jquery.nicescroll.js' %}" type="text/javascript"></script>
+        <script src="{% static 'flatlab/js/respond.min.js' %}" ></script>
+        <!--common script for all pages-->
+        <script src="{% static 'flatlab/js/common-scripts.js' %}"></script>
+        <script src="{% static 'home/js/load_clients.js' %}"></script>
+        <script>
+            $(document).on('click', '.yamm .dropdown-menu', function(e) {
+                e.stopPropagation()
+            })
+        </script>
+        {% block this_js %}{% endblock %}
+    </body>
+</html>
