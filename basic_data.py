@@ -90,17 +90,6 @@ def create_material_categories(ob=MaterialCategory):
         print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
-def create_tanks(s=1, e=30, tank_name='FV', volume=2000, ob=Tank):
-    for t in range(s, e + 1):
-        new_item = ob(
-            tank_code='{0}'.format(str(t).zfill(2)),
-            tank_name='{1}{0}'.format(str(t).zfill(2), tank_name),
-            tank_standard_volume=volume,
-        )
-        new_item.save()
-        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
-
-
 def create_product_packs(ob=ProductPackSizeUnit):
     data = [
         {'size': '30', 'unit': 'L', 'type_en': 'stainless steel', 'type_cn': '不锈钢桶', 'type_c': 'A'},
@@ -173,13 +162,24 @@ def create_order_state(ob=OrderState):
         print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
+def create_tanks(s=1, e=30, tank_name='FV', volume=2000, ob=Tank):
+    for t in range(s, e + 1):
+        new_item = ob(
+            tank_code='{0}'.format(str(t).zfill(2)),
+            tank_name='{1}{0}'.format(str(t).zfill(2), tank_name),
+            tank_standard_volume=volume,
+        )
+        new_item.save()
+        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
+
+
 def add_init_data():
     create_money_in_out_types()
     create_tank_states()
     create_product_types()
     create_material_categories()
-    create_tanks(1, 10, 'FV', 2000)
-    create_tanks(11, 30, 'FV', 4000)
+    create_tanks(1, 10, '1', 2000)
+    create_tanks(11, 16, '2', 6000)
     create_product_packs()
     create_employee_state()
     create_company_type()
@@ -199,4 +199,4 @@ def test_send_email():
 
 
 if __name__ == '__main__':
-    print(test_send_email())
+    print(add_init_data())
