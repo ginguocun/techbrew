@@ -1,0 +1,18 @@
+{% extends "public/base.html" %}{% load i18n static staticfiles %}
+
+{% block content %}
+<section class="wrapper site-min-height">
+    <form class="form-signin" action="{% url 'login' %}" method="post">{% csrf_token %}
+        <h2 class="form-signin-heading">欢迎光临</h2>
+        <div class="login-wrap">
+            {% if form.non_field_errors %}{% for error in form.non_field_errors %}
+                <p class="errornote">{{ error }}</p>{% endfor %}
+            {% endif %}
+            <input name="username" type="text" class="form-control" placeholder="User ID" autofocus>{{ form.username.errors }}
+            <input name="password" type="password" class="form-control" placeholder="{% trans '密码'%}">{{ form.password.errors }} {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}" />{% endif %}
+            <button class="btn btn-lg btn-login btn-block" type="submit">登录</button>
+        </div>
+    </form>
+</section>
+{% endblock %}
