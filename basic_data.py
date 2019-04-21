@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tb2.settings")
@@ -23,14 +22,16 @@ def create_money_in_out_types(ob=MoneyInOutType):
          'is_negative': False, 'is_auto': False},
     ]
     for d in data:
-        new_item = ob(
-            money_in_out_type_cn=d['money_in_out_type_cn'],
-            money_in_out_type_en=d['money_in_out_type_en'],
-            is_negative=d['is_negative'],
-            is_auto=d['is_auto'],
-        )
-        new_item.save()
-        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
+        ob_check = ob.objects.filter(money_in_out_type_cn=d['money_in_out_type_cn'])
+        if not ob_check.exists():
+            new_item = ob(
+                money_in_out_type_cn=d['money_in_out_type_cn'],
+                money_in_out_type_en=d['money_in_out_type_en'],
+                is_negative=d['is_negative'],
+                is_auto=d['is_auto'],
+            )
+            new_item.save()
+            print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
 def create_tank_states(ob=TankState):
@@ -44,13 +45,15 @@ def create_tank_states(ob=TankState):
         {'state_en': 'need to repair', 'state_cn': '需要检修', 'with_product': False},
     ]
     for d in data:
-        new_item = ob(
-            tank_state_en=d['state_en'],
-            tank_state_cn=d['state_cn'],
-            with_product=d['with_product'],
-        )
-        new_item.save()
-        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
+        ob_check = ob.objects.filter(tank_state_en=d['state_en'])
+        if not ob_check.exists():
+            new_item = ob(
+                tank_state_en=d['state_en'],
+                tank_state_cn=d['state_cn'],
+                with_product=d['with_product'],
+            )
+            new_item.save()
+            print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
 def create_product_types(ob=ProductType):
@@ -60,13 +63,15 @@ def create_product_types(ob=ProductType):
         {'code': '2', 'name_cn': '实验产品', 'name_en': 'test product'},
     ]
     for d in data:
-        new_item = ob(
-            product_type_code=d['code'],
-            product_type_name_cn=d['name_cn'],
-            product_type_name_en=d['name_en'],
-        )
-        new_item.save()
-        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
+        ob_check = ob.objects.filter(product_type_code=d['code'])
+        if not ob_check.exists():
+            new_item = ob(
+                product_type_code=d['code'],
+                product_type_name_cn=d['name_cn'],
+                product_type_name_en=d['name_en'],
+            )
+            new_item.save()
+            print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
 def create_material_categories(ob=MaterialCategory):
@@ -81,13 +86,15 @@ def create_material_categories(ob=MaterialCategory):
         {'code': 'O', 'name_cn': '其他物品', 'name_en': 'others'},
     ]
     for d in data:
-        new_item = ob(
-            material_category_code=d['code'],
-            material_category_en=d['name_en'],
-            material_category_cn=d['name_cn'],
-        )
-        new_item.save()
-        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
+        ob_check = ob.objects.filter(material_category_en=d['name_en'])
+        if not ob_check.exists():
+            new_item = ob(
+                material_category_code=d['code'],
+                material_category_en=d['name_en'],
+                material_category_cn=d['name_cn'],
+            )
+            new_item.save()
+            print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
 def create_product_packs(ob=ProductPackSizeUnit):
@@ -120,12 +127,14 @@ def create_employee_state(ob=EmployeeState):
         {'id': '2', 'employee_state_cn': '休假', 'employee_state_en': 'on holiday'},
     ]
     for d in data:
-        new_item = ob(
-            employee_state_cn=d['employee_state_cn'],
-            employee_state_en=d['employee_state_en'],
-        )
-        new_item.save()
-        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
+        ob_check = ob.objects.filter(employee_state_cn=d['employee_state_cn'])
+        if not ob_check.exists():
+            new_item = ob(
+                employee_state_cn=d['employee_state_cn'],
+                employee_state_en=d['employee_state_en'],
+            )
+            new_item.save()
+            print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
 def create_company_type(ob=CompanyType):
@@ -135,12 +144,14 @@ def create_company_type(ob=CompanyType):
         {'id': '3', 'company_type_en': 'Beer Distributor', 'company_type_cn': '啤酒经销商'},
     ]
     for d in data:
-        new_item = ob(
-            company_type_en=d['company_type_en'],
-            company_type_cn=d['company_type_cn'],
-        )
-        new_item.save()
-        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
+        ob_check = ob.objects.filter(company_type_en=d['company_type_en'])
+        if not ob_check.exists():
+            new_item = ob(
+                company_type_en=d['company_type_en'],
+                company_type_cn=d['company_type_cn'],
+            )
+            new_item.save()
+            print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
 def create_order_state(ob=OrderState):
@@ -154,23 +165,27 @@ def create_order_state(ob=OrderState):
         {'id': '7', 'order_state_cn': '待处理', 'order_state_en': 'Follow Up'},
     ]
     for d in data:
-        new_item = ob(
-            order_state_cn=d['order_state_cn'],
-            order_state_en=d['order_state_en'],
-        )
-        new_item.save()
-        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
+        ob_check = ob.objects.filter(order_state_cn=d['order_state_cn'])
+        if not ob_check.exists():
+            new_item = ob(
+                order_state_cn=d['order_state_cn'],
+                order_state_en=d['order_state_en'],
+            )
+            new_item.save()
+            print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
 def create_tanks(s=1, e=30, tank_name='FV', volume=2000, ob=Tank):
     for t in range(s, e + 1):
-        new_item = ob(
-            tank_code='{0}'.format(str(t).zfill(2)),
-            tank_name='{1}{0}'.format(str(t).zfill(2), tank_name),
-            tank_standard_volume=volume,
-        )
-        new_item.save()
-        print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
+        ob_check = ob.objects.filter(tank_code='{0}'.format(str(t).zfill(2)))
+        if not ob_check.exists():
+            new_item = ob(
+                tank_code='{0}'.format(str(t).zfill(2)),
+                tank_name='{1}{0}'.format(str(t).zfill(2), tank_name),
+                tank_standard_volume=volume,
+            )
+            new_item.save()
+            print('new item saved [{0}] {1}'.format(new_item.pk, new_item))
 
 
 def add_init_data():
