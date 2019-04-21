@@ -1,0 +1,115 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '产品入库' %}{% endblock %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'flatlab/assets/bootstrap-timepicker/compiled/timepicker.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "产品入库" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="{% url 'brewsql:add_pack' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    {% if request.user.is_authenticated %}
+                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    {% endif %}
+                    {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}" />{% endif %}
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ pack_form.brew.label_tag }}</div>
+                        <div class="col-lg-10">
+                            <select name="pack-brew" id="id_pack-brew" required="" class="selectpicker show-tick form-control" data-live-search="true">
+                                <option value="" selected="">----{% trans '请选择' %}----</option>
+                                {% if request.GET.brew_id %}
+                                    {% for brew in brews %}
+                                        {% if request.GET.brew_id|floatformat:'0' == brew.pk|floatformat:'0' %}
+                                            <option value="{{ brew.pk }}" selected="selected">[{{ brew.tank.tank_name }}] {{ brew.delta_days }} 天  {{ brew.tank.tank_state.tank_state_cn }} {{ brew.brew_batch_code }} {{ brew.product_name.product_name_cn }} </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% for brew in brews %}
+                                        <option value="{{ brew.pk }}">[{{ brew.tank.tank_name }}] {{ brew.delta_days }} 天  {{ brew.tank.tank_state.tank_state_cn }} {{ brew.brew_batch_code }} {{ brew.product_name.product_name_cn }} </option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                            <p class="help-block">{{ pack_form.brew.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ product_form.product_pack.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ product_form.product_pack }}
+                            <p class="help-block">{{ product_form.product_pack.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ pack_form.employee.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ pack_form.employee }}
+                            <p class="help-block">{{ pack_form.employee.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ pack_form.pack_num.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ pack_form.pack_num }}
+                            <p class="help-block">{{ pack_form.pack_num.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ pack_form.pack_date.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ pack_form.pack_date }}
+                            <p class="help-block">{{ pack_form.pack_date.errors }}</p>
+                        </div>
+                    </div>
+                    <!--TODO 时间做成选择框-->
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ pack_form.pack_start.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ pack_form.pack_start }}
+                            <!--<div class="input-group bootstrap-timepicker">-->
+                                <!--<input type="text" class="form-control timepicker-24" id="id_pack-pack_start" name="pack-pack_start">-->
+                                <!--<span class="input-group-btn">-->
+                                    <!--<button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>-->
+                                <!--</span>-->
+                            <!--</div>-->
+                            <p class="help-block">{{ pack_form.pack_start.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ pack_form.pack_end.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ pack_form.pack_end }}
+                            <p class="help-block">{{ pack_form.pack_end.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ pack_form.notes.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ pack_form.notes }}
+                            <p class="help-block">{{ pack_form.notes.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-2">
+        <section class="panel">
+            {% if perms.brewsql.add_productpacksizeunit %}
+            <button class="btn btn-success btn-block" type="button"><a href="{% url 'brewsql:add_productpacksizeunit' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加产品包装' %}</a></button>{% endif %}{% if perms.brewsql.add_employee %}
+            <button class="btn btn-warning btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加操作员' %}</a></button>{% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'flatlab/assets/bootstrap-timepicker/js/bootstrap-timepicker.js' %}"></script>
+{% endblock %}

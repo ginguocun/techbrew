@@ -1,0 +1,282 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{{ brew.brew_batch_code }}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-9">
+        <section class="panel">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6" align="left">{% trans '产品名称' %}: {{ brew.product_name.product_name_cn }}</div>
+                    <div class="col-md-6" align="left">{% trans '酿造批次' %}: {{ brew.brew_batch_code }}</div>
+                    <div class="col-md-6" align="left">{% trans '发酵罐号' %}: {{ brew.tank.tank_name }}</div>
+                    <div class="col-md-6" align="left">{% trans '开始日期' %}: {{ brew.date_start|date:"Y-m-d" }}</div>
+                </div>
+            </div>
+            <div class="panel-body text-center">
+                <div id="fermentation_data"></div>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-3 state-overview">
+        <div class="col-lg-12 col-sm-12">
+            <section class="panel">
+                <div class="symbol green">
+                    <i class="fa fa-sign-in"></i>
+                </div>
+                <div class="value">
+                    <h4 class="count">¥ {{ brew.sale_incomes }}</h4>
+                    <p>{% trans '销售收入' %}</p>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-12 col-sm-12">
+            <section class="panel">
+                <div class="symbol yellow">
+                    <i class="fa  fa-sign-out"></i>
+                </div>
+                <div class="value">
+                    <h4 class=" count2">¥ {{ brew.material_costs }}</h4>
+                    <p>{% trans '原料支出' %}</p>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="col-lg-3" align="right">
+        <section class="panel">
+            <div class="panel-heading">
+                <div class="row">{% if perms.brewsql.add_brewmonitor %}
+                    <div class="col-md-12" align="right">
+                        <a href="{% url 'brewsql:add_brewmonitor' %}?next={% url 'brewsql:brew_detail' brew.pk %}"><button type="button" class="btn btn-danger">{% trans "添加糖化记录" %}</button></a>
+                    </div>{% endif %}
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>{% trans '编号' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{% for b in brew_monitors %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{% if perms.brewsql.change_brewmonitor %}<a href="{% url 'brewsql:change_brewmonitor' b.pk %}?next={% url 'brewsql:brew_detail' brew.pk %}">{{ b.brew_monitor_code }}</a>{% else %}{{ b.brew_monitor_code }}{% endif %}</td>
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6">{% trans '发酵监控数据' %}</div>
+                    <div class="col-md-6" align="right">{% if perms.brewsql.add_fermentmonitor %}
+                        <a href="{% url 'brewsql:new_ferment_record_2' brew.pk %}">
+                            <button type="button" class="btn btn-primary">{% trans "添加记录" %}</button>
+                        </a>{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans '记录时间' %}</th>
+                            <th>{% trans '天数' %}</th>
+                            <th>{% trans '相对密度' %}</th>
+                            <th>{% trans '糖度' %}</th>
+                            <th>{% trans 'pH' %}</th>
+                            <th>{% trans '真实温度/设置温度' %}</th>
+                            <th>{% trans '压力' %}</th>
+                            <th>{% trans '酵母数' %}</th>
+                            <th>{% trans '备注' %}</th>{% if perms.brewsql.delete_fermentmonitor %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>{% for f in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ f.recorded|date:"Y-m-d H:i:s" }}</td>
+                            <td>{% if f.delta_days %}{{ f.delta_days }}{% else %}0{% endif %}</td>
+                            <td>{{ f.sg|default_if_none:'' }}</td>
+                            <td>{{ f.plato|default_if_none:'' }}</td>
+                            <td>{{ f.ph|default_if_none:'' }}</td>
+                            <td>{{ f.t_real|default_if_none:'' }} / {{ f.t_set|default_if_none:'' }}</td>
+                            <td>{{ f.bar|default_if_none:'' }}</td>
+                            <td>{{ f.cell_mml|default_if_none:'' }}</td>
+                            <td>{{ f.notes }}</td>{% if perms.brewsql.delete_fermentmonitor %}
+                            <td>
+                                <a href="{% url 'brewsql:ferment_monitor_delete' f.pk %}?next={% url 'brewsql:brew_detail' brew.pk %}"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></a>
+                            </td>{% endif %}
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div align="right">
+            {% include 'brewsql/tablenav.html' %}
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-lg-7">
+        <section class="panel">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6">
+                        {% trans '产品入库记录' %}
+                    </div>
+                    <div class="col-md-6" align="right">{% if perms.brewsql.add_pack %}
+                        <a href="{% url 'brewsql:add_pack' %}?next={% url 'brewsql:brew_detail' brew.pk %}&brew_id={{ brew.pk }}"><button type="button" class="btn btn-success">{% trans "产品入库" %}</button></a>{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>{% trans '入库单号' %}</th>
+                            <th>{% trans '日期' %}</th>
+                            <th>{% trans '包装' %}</th>
+                            <th>{% trans '数量' %}</th>
+                            <th>{% trans '剩余' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{% for p in packs %}
+                        <tr class="{% cycle '' 'active' %} {% if not p.state %}is-not-active{% endif %}" valign="middle">
+                            <td>{{ p.pk }}</td>
+                            <td>{{ p.pack_batch_code }}</td>
+                            <td>{{ p.pack_date|date:'Y-m-d' }}</td>
+                            <td>{{ p.product.product_pack.product_pack_size_unit_cn }}</td>
+                            <td><span class="label label-success">{{ p.pack_num }}</span></td>
+                            <td><span class="label label-danger">{{ p.pack_num_left }}</span></td>
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="panel">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6">
+                        {% trans '原料使用记录' %}
+                    </div>
+                    <div class="col-md-6" align="right">{% if perms.brewsql.add_materialout %}
+                        <a href="{% url 'brewsql:add_material_out' %}?next={% url 'brewsql:brew_detail' brew.pk %}&brew_id={{ brew.pk }}"><button type="button" class="btn btn-info">{% trans "原料出库" %}</button></a>{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>{% trans '原料批次' %}</th>
+                            <th>{% trans '原料名称' %}</th>
+                            <th>{% trans '日期' %}</th>
+                            <th>{% trans '数量' %}</th>
+                            <th>{% trans '金额' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{% for m in materials %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ m.pk }}</td>
+                            <td>{{ m.material_batch.material_batch_code }}</td>
+                            <td>{{ m.material_batch.material }}</td>
+                            <td>{{ m.material_out_date|date:'Y-m-d' }}</td>
+                            <td>{{ m.amount }}</td>
+                            <td>¥ {{ m.material_out_cost }}</td>
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-5">
+        <section class="panel">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6">
+                        {% trans '产品出库记录' %}
+                    </div>
+                    <div class="col-md-6" align="right">{% if perms.brewsql.add_sale %}
+                        <a href="{% url 'brewsql:add_sale' %}?next={% url 'brewsql:brew_detail' brew.pk %}&brew_id={{ brew.pk }}"><button type="button" class="btn btn-warning">{% trans "产品出库" %}</button></a>{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>{% trans '出库单号' %}</th>
+                            <th>{% trans '日期' %}</th>
+                            <th>{% trans '数量' %}</th>
+                            <th>{% trans '金额' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{% for s in sales %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ s.pk }}</td>
+                            <td>{{ s.sale_order }}</td>
+                            <td>{{ s.sale_date|date:'Y-m-d' }}</td>
+                            <td><span class="label label-warning">{{ s.sale_num }}</span></td>
+                            <td>¥ {{ s.sale_price_link.money_in_out}}</td>
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block this_js %}
+<script src="{% static 'flatlab/assets/highcharts/highcharts.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/exporting.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/export-data.js' %}"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script language="JavaScript">
+    Highcharts.chart('fermentation_data', {
+        credits: {enabled: false},
+        chart: {type: 'spline'},
+        title: {text: '{% trans "发酵监控" %}'},
+        subtitle: {text: ''},
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: { // don't display the dummy year
+                hour: '%H:%M',
+                day: '%m-%d',
+                month: '%b \'%y',
+                },
+            title: {text: 'Date'}
+        },
+        yAxis: {
+            title: {text: 'Plato / pH / Temp(C)'},
+            min: -5,
+            max: 30
+        },
+        tooltip: {
+            headerFormat: '{point.x:%Y-%m-%d %H:%M}<br>',
+            pointFormat: '{series.name}: {point.y:.2f}'
+        },
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+        colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
+        series: [{name: 'Plato', data: [{% for d in plato_data %}[Date.UTC({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.min }}), {{ d.data }}],{% endfor %}]
+         }, {name: 'pH', data: [{% for d in ph_data %}[Date.UTC({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.min }}), {{ d.data }}],{% endfor %}]
+         }, {name: 'Real T', data: [{% for d in t_real %}[Date.UTC({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.min }}), {{ d.data }}],{% endfor %}]
+         }, {name: 'Set T', data: [{% for d in t_set %}[Date.UTC({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.min }}), {{ d.data }}],{% endfor %}]
+         }]
+        });
+</script>
+{% endblock %}

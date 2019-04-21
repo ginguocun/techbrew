@@ -1,0 +1,74 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '客户等级管理' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <section class="panel table-responsive">
+            <header class="panel-heading">
+                {% trans '客户等级列表' %}
+            </header>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>{% trans '等级编号' %}</th>
+                            <th>{% trans '等级-中文' %}</th>
+                            <th>{% trans '等级-英文' %}</th>{% if perms.brewsql.change_clientlevel %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ d.pk }}</td>
+                            <td>{{ d.level_code }}</td>
+                            <td>{{ d.level_cn }}</td>
+                            <td>{{ d.level_en }}</td>{% if perms.brewsql.change_clientlevel %}
+                            <td align="right"><a href="{% url 'brewsql:client_level_update' d.pk %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>{% if perms.brewsql.add_companytype %}
+    <div class="col-lg-6">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans '添加客户等级' %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+                <p>{{ form.non_field_errors }}</p>
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="{% url 'brewsql:client_level_list' %}">{% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-md-3 control-label">{{ form.level_code.label_tag }}</div>
+                        <div class="col-md-9">{{ form.level_code }}{{ form.level_code.errors }}</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3 control-label">{{ form.level_cn.label_tag }}</div>
+                        <div class="col-md-9">{{ form.level_cn }}{{ form.level_cn.errors }}</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3 control-label">{{ form.level_en.label_tag }}</div>
+                        <div class="col-md-9">{{ form.level_en }}{{ form.level_en.errors }}</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3 control-label">{{ form.level_desc_cn.label_tag }}</div>
+                        <div class="col-md-9">{{ form.level_desc_cn }}{{ form.level_desc_cn.errors }}</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3 control-label">{{ form.level_desc_en.label_tag }}</div>
+                        <div class="col-md-9">{{ form.level_desc_en }}{{ form.level_desc_en.errors }}</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12" align="right"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
+                    </div>
+                </form>
+            </div>
+      </section>
+    </div>{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '更新公司类型' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-offset-3 col-lg-6">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "更新公司类型" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+                {{ form.non_field_errors }}
+            </header>
+            <div class="panel-body">
+                <form method="post">{% csrf_token %}
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12">{{ form.company_type_cn }}{{ form.company_type_cn.errors }}</div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12">{{ form.company_type_en }}{{ form.company_type_en.errors }}</div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12" align="right"><button type="submit" class="btn btn-primary">{% trans "提交" %}</button></div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

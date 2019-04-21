@@ -1,0 +1,56 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '客户' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_client %}
+        <a href="{% url 'brewsql:add_client' %}?next={% url 'brewsql:client_list' %}"><button type="button" class="btn btn-primary">{% trans "添加客户" %}</button></a>{% endif %}
+    </div>
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'ID' %}</th>
+                            <th>{% trans '姓名' %}</th>
+                            <th>{% trans '微信登录' %}</th>
+                            <th>{% trans '微信头像' %}</th>
+                            <th>{% trans '客户等级' %}</th>
+                            <th>{% trans '性别' %}</th>
+                            <th>{% trans '电话' %}</th>
+                            <th>{% trans '微信' %}</th>
+                            <th>{% trans '邮箱' %}</th>
+                            <th>{% trans '公司' %}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ d.pk }}</td>
+                            <td>{{ d.name|default_if_none:"" }}{% if d.nickname %}[{{ d.nickname }}]{% endif %}</td>
+                            <td>{% if d.openid %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
+                            <td>{% if d.avatar %}<img src="{{ d.avatar }}" height="40">{% endif %}</td>
+                            <td>{{ d.client_level }}</td>
+                            <td>{{ d.get_gender_display }}</td>
+                            <td>{{ d.mobile|default_if_none:"" }}</td>
+                            <td>{{ d.wechat|default_if_none:"" }}</td>
+                            <td>{{ d.email|default_if_none:"" }}</td>
+                            <td>{{ d.client_company.company_name_cn|default_if_none:"" }}</td>
+                            <td align="right">
+                                <a href="{% url 'brewsql:client_detail' d.pk %}"><button class="btn btn-info btn-xs"><i class="fa fa-info-circle"></i></button></a>
+                                {% if perms.brewsql.change_client %}<a href="{% url 'brewsql:client_update' d.pk %}?next={% url 'brewsql:client_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div align="right">
+            {% include 'brewsql/tablenav.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% load static i18n %}
+{% load static %}
+<header class="header white-bg">
+    <div class="sidebar-toggle-box">
+      <div class="fa fa-bars tooltips" data-placement="right"></div>
+    </div>
+    <!--logo start-->
+    <a href="{% url 'brewsql:home' %}" class="logo">Tech<span>Brew</span></a>
+    <!--logo end-->
+    <div class="top-nav ">
+        <!--search & user info start-->
+        <ul class="nav pull-right top-menu">
+            <!-- user login dropdown start-->
+            <li class="dropdown">
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                    <span class="username">{% if request.user.is_authenticated %}{{ request.user.username }}{% endif %}</span>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu ">
+                    <!--<li><a href="#"><i class="fa fa-suitcase"></i>{% trans '个人主页' %}</a></li>-->
+                    {% if request.user.is_staff %}<li><a href="{% if request.user.is_staff %}/admincjzh/brewsql/{% endif %}"><i class="fa fa-cog"></i> {% trans '进入后台' %}</a></li>{% endif %}
+                    <li><a href="{% url 'brewsql:change_password' %}"><i class="fa fa-bell-o"></i> {% trans '修改密码' %}</a></li>
+                    <li><a href="{% url 'logout' %}"><i class="fa fa-key"></i> {% trans '注销登录' %}</a></li>
+                </ul>
+            </li>
+            <!-- user login dropdown end -->
+        </ul>
+        <!--search & user info end-->
+    </div>
+</header>

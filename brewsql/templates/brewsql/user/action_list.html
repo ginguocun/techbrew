@@ -1,0 +1,56 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '用户操作记录' %}{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="panel-body">
+        <div class="col-md-12">
+            <form class="form-inline" role="form" method="get">
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '起始' %}:</span>
+                        <input type="date" name="s" class="form-control" value="{% if request.GET.s %}{{ request.GET.s }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '截止' %}:</span>
+                        <input type="date" name="e" class="form-control" value="{% if request.GET.e %}{{ request.GET.e }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="q" placeholder="" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                        <span class="input-group-btn"><button class="btn btn-primary" type="submit">搜索</button></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<section class="panel">
+    <div class="panel-body table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>{% trans '操作时间' %}</th>
+                    <th>{% trans '项目' %}</th>
+                    <th>{% trans '用户' %}</th>
+                    <th>{% trans '描述' %}</th>
+                </tr>
+            </thead>
+            <tbody>{% for d in data %}
+                <tr class="{% cycle '' 'active' %}">
+                    <th>{{ d.action_time }}</th>
+                    <td>{{ d.content_type }}</td>
+                    <td>{{ d.user }}</td>
+                    <td>{{ d }}</td>
+                </tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<div align="right">
+    {% include 'brewsql/tablenav.html' %}
+</div>
+{% endblock %}

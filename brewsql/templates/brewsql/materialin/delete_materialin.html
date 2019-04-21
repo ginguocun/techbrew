@@ -1,0 +1,70 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '删除原料入库记录' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "删除原料入库记录" %}
+                {% if object.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post">{% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-lg-2" align="right">{% trans '原料批次' %}:</div>
+                        <div class="col-lg-10">
+                            {{ object.material_batch }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2" align="right">{% trans '供应商' %}:</div>
+                        <div class="col-lg-10">
+                            {{ object.supplier }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2" align="right">{% trans '入库日期' %}:</div>
+                        <div class="col-lg-4">
+                            {{ object.material_in_date }}
+                        </div>
+                        <div class="col-lg-2" align="right">{% trans '数量' %}:</div>
+                        <div class="col-lg-4">
+                            {{ object.amount }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2" align="right">{% trans '支出金额' %}:</div>
+                        <div class="col-lg-4">
+                            {{ object.material_cost }}
+                        </div>
+                        <div class="col-lg-2" align="right">{% trans '存储位置' %}:</div>
+                        <div class="col-lg-4">
+                            {{ object.warehouse }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2" align="right">{% trans '经手人' %}:</div>
+                        <div class="col-lg-4">
+                            {{ object.recorder }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2" align="right">{% trans '备注' %}:</div>
+                        <div class="col-lg-10">
+                            {{ object.notes }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,246 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '资金流水' %}{% endblock %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="panel-body">
+        <div class="col-md-12">
+            <form class="form-inline" role="form" method="get">
+                <div class="form-group">
+                    <select name="c" class="selectpicker show-tick form-control" data-live-search='true'>
+                        <option value="">{% trans '所有记录' %}</option>
+                        {% for ss in money_io_t %}
+                            {% if ss.pk|floatformat:'0' == request.GET.c|floatformat:'0' %}
+                            <option value="{{ ss.pk }}" selected>{{ ss.money_in_out_type_cn }}</option>
+                            {% else %}
+                            <option value="{{ ss.pk }}" >{{ ss.money_in_out_type_cn }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select name="d" class="selectpicker show-tick form-control" data-live-search='true'>
+                        <option value="">{% trans '所有' %}</option>{% if request.GET.d == '1' %}
+                        <option value="1" selected>{% trans '未到账' %}</option>{% else %}
+                        <option value="1">{% trans '未到账' %}</option>{% endif %}{% if request.GET.d == '2' %}
+                        <option value="2" selected>{% trans '已到账' %}</option>{% else %}
+                        <option value="2">{% trans '已到账' %}</option>{% endif %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '起始' %}:</span>
+                        <input type="date" name="s" class="form-control" value="{% if request.GET.s %}{{ request.GET.s }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '截止' %}:</span>
+                        <input type="date" name="e" class="form-control" value="{% if request.GET.e %}{{ request.GET.e }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="q" placeholder="" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                        <span class="input-group-btn"><button class="btn btn-primary" type="submit">搜索</button></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-12" align="right">{% if perms.brewsql.add_moneyinouttype %}
+            <a href="{% url 'brewsql:money_inout_types' %}" target="_blank"><button class="btn btn-warning" type="button"> {% trans '收支类型' %}</button></a>{% endif %}{% if perms.brewsql.add_moneyinout %}
+            <a href="{% url 'brewsql:add_moneyinout' %}?next={% url 'brewsql:moneyinout_list' %}"><button type="button" class="btn btn-success">{% trans "添加记录" %}</button></a>{% endif %}
+        </div>
+    </div>
+</section>
+{% get_current_language as LANGUAGE_CODE %}
+<section class="panel">
+    <div class="panel-body table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>{% trans '日期' %}</th>
+                    <th>{% trans '关联订单' %}</th>
+                    <th>{% trans '备注' %}</th>{% if not request.GET.c %}
+                    <th>{% trans '类型' %}</th>{% endif %}
+                    <th>{% trans '金额' %}</th>
+                    <th>{% trans '结余' %}</th>
+                    <th>{% trans '已到账' %}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>{% for d in data %}
+                <tr class="{% cycle '' 'active' %} {% if not d.is_active %}is-not-active{% endif %}">
+                    <td>{{ d.pk }}</td>
+                    <td>{{ d.money_in_out_date|date:"Y-m-d" }}</td>
+                    <th>
+                        {% if d.linked_sale.sale_order_id %}
+                            {% if perms.brewsql.view_saleorder %}
+                                <a href="{% url 'brewsql:sale_order_detail' d.linked_sale.sale_order_id %}">{{ d.linked_sale.sale_order.sale_order_code}}</a>
+                            {% else %}
+                                {{ d.linked_sale.sale_order.sale_order_code}}
+                            {% endif %}
+                        {% endif %}
+                    </th>
+                    <td>{{ d.notes|linebreaks|default_if_none:"" }}</td>{% if not request.GET.c %}
+                    <td>{{ d.money_in_out_type.money_in_out_type_cn }}</td>{% endif %}
+                    <td>¥ {{ d.money_in_out|floatformat:-2 }}{% if d.linked_sale %} / ¥ {{ d.linked_sale.sale_order.total_price|floatformat:"-2" }}{% endif %}</td>
+                    <td>¥ {{ d.money_left_before|floatformat:-2 }}</td>
+                    <td>{% if d.is_confirmed %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
+                    <td align="right">
+                        {% if perms.brewsql.change_moneyinout %}
+                            {% if d.money_in_out_type.is_auto %}
+                                <a href="{% url 'brewsql:money_ios_update' d.pk %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>
+                            {% else %}
+                                <a href="{% url 'brewsql:moneyinout_update' d.pk %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>
+                            {% endif %}
+                        {% endif %}
+                        {% if d.linked_sale and not d.linked_sale.fee_received and perms.brewsql.confirm_fee_receive %}
+                            <!--<a data-toggle="modal" href="#salePay_{{ d.pk }}"><button class="btn btn-danger btn-xs"><i class="fa fa-money"></i></button></a>-->
+                            <!--<div align="left" class="modal fade " id="salePay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+                                <!--<div class="modal-dialog">-->
+                                    <!--<div class="modal-content">-->
+                                        <!--<form method="post" action="{% url 'brewsql:sale_pay' %}">{% csrf_token %}-->
+                                            <!--<div class="modal-header">-->
+                                                <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                                                <!--<h4 class="modal-title">{% trans '请确认收款' %}</h4>-->
+                                            <!--</div>-->
+                                            <!--<div class="modal-body">-->
+                                                <!--<p>{% trans '单号' %}：{{ d.linked_sale.sale_order.sale_order_code|default_if_none:'N/A' }}</p>-->
+                                                <!--<p>{% trans '产品' %}：[{{ d.linked_sale.pack.product.product_code }}] {{ d.linked_sale.pack.product.product_name.product_name_cn }} ({{ d.linked_sale.pack.product.product_pack.product_pack_size_unit_cn }})</p>-->
+                                                <!--<p>{% trans '批次' %}：{{ d.linked_sale.pack.pack_batch_code }}</p>-->
+                                                <!--<p>{% trans '数量' %}：{{ d.linked_sale.sale_num }}</p>-->
+                                                <!--<p>{% trans '金额' %}：¥ {{ d.linked_sale.sale_price_link.money_in_out|floatformat:"-2" }} / ¥ {{ d.linked_sale.sale_order.total_price|floatformat:"-2" }}</p>-->
+                                                <!--<input type="hidden" name="sale_id" value="{{ d.linked_sale.pk }}">-->
+                                                <!--<input type="hidden" name="next" value="{% url 'brewsql:moneyinout_list' %}?d=1">-->
+                                            <!--</div>-->
+                                            <!--<div class="modal-footer">-->
+                                                <!--<button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>-->
+                                                <!--<button class="btn btn-success" type="submit">{% trans '确认' %}</button>-->
+                                            <!--</div>-->
+                                        <!--</form>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <a data-toggle="modal" href="#saleOrderPay_{{ d.pk }}"><label class="btn btn-warning btn-xs"><i class="fa fa-check-square-o"></i></label></a>
+                            <div class="modal fade " id="saleOrderPay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" align="left">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form method="post" action="{% url 'brewsql:sale_order_fee_receive' %}">{% csrf_token %}
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title">{% trans '确认收款' %}</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>{% trans '单号' %}：{{ d.linked_sale.sale_order.sale_order_code|default_if_none:'N/A' }}</p>
+                                                <p>{% trans '日期' %}：{{ d.linked_sale.sale_order.sale_order_date|date:"Y-m-d" }}</p>
+                                                <p>{% trans '合计' %}：<b> ¥ {{ d.linked_sale.sale_order.total_price|floatformat:"-2" }}</b></p>
+                                                <p>{% trans '货物' %}：</p>
+                                                {% if d.linked_sale.sale_order.product_items %}{% for i in d.linked_sale.sale_order.product_items %}
+                                                <p style="{% if i.pk == d.linked_sale.pk %}background-color:#a9d86e;{% endif %}">
+                                                    {{ forloop.counter }}. {{ i.pack.product.product_name }} {{ i.pack.product.product_pack }} * {{ i.sale_num }} = ¥ {{ i.sale_price }}
+                                                </p>
+                                                {% endfor %}{% endif %}
+                                                <input type="hidden" name="sale_order_id" value="{{ d.linked_sale.sale_order.pk }}">
+                                                <input type="hidden" name="next" value="{% url 'brewsql:moneyinout_list' %}?d=1">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                                                <button class="btn btn-success" type="submit">{% trans '确认' %}</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if not d.linked_sale and not d.is_confirmed and perms.brewsql.confirm_moneyinout %}
+                            <a data-toggle="modal" href="#moneyConfirmed_{{ d.pk }}"><button class="btn btn-danger btn-xs"><i class="fa fa-money"></i></button></a>
+                            <div align="left" class="modal fade " id="moneyConfirmed_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form method="post" action="{% url 'brewsql:confirm_moneyinout' %}">{% csrf_token %}
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                <h4 class="modal-title">{% trans '请确认到账' %}</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>{% trans '类型' %}：{{ d.money_in_out_type }}</p>
+                                                <p>{% trans '备注' %}：{{ d.notes|safe }}</p>
+                                                <p>{% trans '金额' %}：¥ {{ d.money_in_out|floatformat:"-2" }}</p>
+                                                <input type="hidden" name="moneyinout_id" value="{{ d.pk }}">
+                                                <input type="hidden" name="next" value="{% url 'brewsql:moneyinout_list' %}?d=1">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                                                <button class="btn btn-success" type="submit">{% trans '确认' %}</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<div align="right">
+    {% include 'brewsql/tablenav.html' %}
+</div>
+<div class="clearfix"></div>
+<section class="row">
+    <div class="col-lg-6">
+        <div id="money_io"></div>
+    </div>
+    <div class="col-lg-3">
+        <div id="money_i_p"></div>
+    </div>
+    <div class="col-lg-3">
+        <div id="money_o_p"></div>
+    </div>
+</section>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/assets/highcharts/highcharts.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/exporting.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/export-data.js' %}"></script>
+<script language="JavaScript">
+Highcharts.chart('money_io', {
+    chart: {type: 'bar'},
+    title: {text: '{% trans "每月收支额" %}'},
+    xAxis: {categories: {{ in_out_month|safe }}},
+    yAxis: {title: {text: '{% trans "金额/元" %}'}},
+    tooltip: {pointFormat: '{series.name}: ¥ {point.y:.2f}'},
+    series: [{name: '{% trans "收入" %}', data: {{ income_info|safe }}},
+            {name: '{% trans "支出" %}', data: {{ outcome_info|safe }}},
+            {name: '{% trans "收支" %}', data: {{ io_come_info|safe }}}],
+    credits: {enabled: false},
+});
+</script>
+<script language="JavaScript">
+Highcharts.chart('money_i_p', {
+    chart: {plotBackgroundColor: null, plotBorderWidth: null, plotShadow: false},
+    title: {text: '{% trans "收入来源金额及比例" %}'},
+    tooltip: {pointFormat: '¥ {point.y:.2f} {series.name}: <b>{point.percentage:.1f}%</b>'},
+    plotOptions: {pie: {allowPointSelect: true, cursor: 'pointer', dataLabels: {enabled: false}, showInLegend: true}},
+    series: [{type: 'pie',name: '{% trans "比例" %}',data: {{ income_by_products|safe }}}],
+    credits: {enabled: false},
+});
+</script>
+<script language="JavaScript">
+Highcharts.chart('money_o_p', {
+    chart: {plotBackgroundColor: null, plotBorderWidth: null, plotShadow: false},
+    title: {text: '{% trans "支出金额及比例" %}'},
+    tooltip: {pointFormat: '¥ {point.y:.2f} {series.name}: <b>{point.percentage:.1f}%</b>'},
+    plotOptions: {pie: {allowPointSelect: true, cursor: 'pointer', dataLabels: {enabled: false}, showInLegend: true}},
+    series: [{type: 'pie',name: '{% trans "比例" %}',data: {{ outcome_by_types|safe }}}],
+    credits: {enabled: false},
+});
+</script>
+<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+{% endblock %}

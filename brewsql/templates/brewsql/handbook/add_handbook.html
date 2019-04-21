@@ -1,0 +1,82 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '添加使用说明' %}{% endblock %}
+{% block this_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'flatlab/assets/summernote/dist/summernote.css' %}" />
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "添加使用说明" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="{% url 'brewsql:add_handbook' %}">{% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.chapter.label_tag }}</div>
+                        <div class="col-lg-2">
+                            {{ form.chapter }}
+                            <p class="help-block">{{ form.chapter.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.chapter_code.label_tag }}</div>
+                        <div class="col-lg-6">
+                            {{ form.chapter_code }}
+                            <p class="help-block">{{ form.chapter_code.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.chapter_name_cn.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.chapter_name_cn }}
+                            <p class="help-block">{{ form.chapter_name_cn.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.chapter_name_en.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.chapter_name_en }}
+                            <p class="help-block">{{ form.chapter_name_en.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.chapter_content_cn.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.chapter_content_cn }}
+                            <p class="help-block">{{ form.chapter_content_cn.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.chapter_content_en.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.chapter_content_en }}
+                            <p class="help-block">{{ form.chapter_content_en.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script type="text/javascript" src="{% static 'flatlab/assets/summernote/dist/summernote.min.js' %}"></script>
+<script>
+jQuery(document).ready(function(){
+    $('.summernote').summernote({
+        height: 200,                 // set editor height
+        minHeight: null,             // set minimum height of editor
+        maxHeight: null,             // set maximum height of editor
+        focus: true                 // set focus to editable area after initializing summernote
+    });
+});
+</script>
+{% endblock %}

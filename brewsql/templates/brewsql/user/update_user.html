@@ -1,0 +1,128 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '编辑用户资料' %}{% endblock %}
+{% block this_css %}
+<link type="text/css" href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+<link type="text/css" href="{% static 'flatlab/assets/jquery-multi-select/css/multi-select.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+{% get_current_language as LANGUAGE_CODE %}
+<div class="row">
+    <div class="col-lg-offset-1 col-lg-9">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "编辑用户资料" %}
+                {% if form.errors %}
+                {{ form.errors }}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post">{% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.username.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.username }}
+                            <p class="help-block">{{ form.username.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.is_active.label_tag }}</div>
+                        <div class="col-lg-4">
+                            <div class="switch switch-square"
+                                data-on-label="<i class=' fa fa-check'></i>"
+                                data-off-label="<i class='fa fa-times'></i>">
+                                {{ form.is_active }}
+                            </div>
+                            <p class="help-block">{{ form.is_active.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.last_name.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.last_name }}
+                            <p class="help-block">{{ form.last_name.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.first_name.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.first_name }}
+                            <p class="help-block">{{ form.first_name.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.email.label_tag }}</div>
+                        <div class="col-lg-5">
+                            {{ form.email }}
+                            <p class="help-block">{{ form.email.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.groups.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.groups }}
+                            <p class="help-block">{{ form.groups.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="panel-body">
+                <h4>⚠️注意：</h4>
+                <p>1. 用户的权限将通过权限分组进行管理；2. 左侧为【未选择】的分组，右侧为【已选择】的分组。</p>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-2">
+        <section class="panel">{% if perms.brewsql.add_employee %}
+            <button class="btn btn-success btn-block" type="button"><a href="{% url 'brewsql:group_list' %}" target="_blank">{% trans '权限分组管理' %}</a></button>{% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script type="text/javascript" src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'flatlab/js/bootstrap-switch.js' %}"></script>
+<script type="text/javascript" src="{% static 'flatlab/assets/jquery-multi-select/js/jquery.multi-select.js' %}"></script>
+<script type="text/javascript" src="{% static 'flatlab/assets/jquery-multi-select/js/jquery.quicksearch.js' %}"></script>
+<script>
+    $('#id_groups').multiSelect({
+        selectableHeader: "<input type='text' class='form-control search-input' autocomplete='off' placeholder='search...'>",
+        selectionHeader: "<input type='text' class='form-control search-input' autocomplete='off' placeholder='search...'>",
+        afterInit: function (ms) {
+            var that = this,
+                $selectableSearch = that.$selectableUl.prev(),
+                $selectionSearch = that.$selectionUl.prev(),
+                selectableSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selectable:not(.ms-selected)',
+                selectionSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selection.ms-selected';
+
+            that.qs1 = $selectableSearch.quicksearch(selectableSearchString)
+                .on('keydown', function (e) {
+                    if (e.which === 40) {
+                        that.$selectableUl.focus();
+                        return false;
+                    }
+                });
+
+            that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                .on('keydown', function (e) {
+                    if (e.which == 40) {
+                        that.$selectionUl.focus();
+                        return false;
+                    }
+                });
+        },
+        afterSelect: function () {
+            this.qs1.cache();
+            this.qs2.cache();
+        },
+        afterDeselect: function () {
+            this.qs1.cache();
+            this.qs2.cache();
+        }
+    });
+</script>
+{% endblock %}

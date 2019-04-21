@@ -1,0 +1,54 @@
+{% extends "brewsql/base.html" %}
+{% load i18n %}
+{% block title %}{% trans '风格管理' %}{% endblock %}
+{% block content %}
+<div class="panel">
+    <div class="panel-heading">
+        {% trans "风格列表" %}
+        {% if form.errors %}
+        <p>{% trans "提交的数据有误,请认真检查!" %}</p>
+        {{ form.errors }}
+        {% endif %}
+    </div>
+    <div class="panel-body no-padding">
+        {% get_current_language as LANGUAGE_CODE %}
+        <div class="table-responsive panel-body widget-shadow">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>{% trans '中文名称' %}</th>
+                        <th>{% trans '英文名称' %}</th>
+                        <th>{% trans '中文描述' %}</th>
+                        <th>{% trans '英文描述' %}</th>{% if perms.brewsql.change_productstyle %}
+                        <th></th>{% endif %}
+                    </tr>
+                </thead>
+                <tbody>{% for d in product_style_list %}
+                    <tr>
+                        <td>{{ d.pk }}</td>
+                        <td>{{ d.product_style_cn }}</td>
+                        <td>{{ d.product_style_en }}</td>
+                        <td style="width: 25%;">{{ d.product_style_desc_cn }}</td>
+                        <td style="width: 25%;">{{ d.product_style_desc_en }}</td>{% if perms.brewsql.change_productstyle %}
+                        <td align="right"><a href="{% url 'brewsql:product_style_update' d.pk %}"><span class="btn btn-info btn-xs">{% trans '更新' %}</span></a></td>{% endif %}
+                    </tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if perms.brewsql.add_productstyle %}
+    <div class="panel-body">
+        <form method="post" action="{% url 'brewsql:product_style_create' %}">{% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group col-md-12">
+                <div class="col-sm-3">{{ form.product_style_cn }}{{ form.product_style_cn.errors }}<br>{{ form.product_style_en }}{{ form.product_style_en.errors }}</div>
+                <div class="col-sm-4">{{ form.product_style_desc_cn }}{{ form.product_style_desc_cn.errors }}</div>
+                <div class="col-sm-4">{{ form.product_style_desc_en }}{{ form.product_style_desc_en.errors }}</div>
+                <div class="col-sm-1" align="right"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

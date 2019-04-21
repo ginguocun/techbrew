@@ -1,0 +1,78 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '发酵罐状态更新' %}{% endblock %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+{% get_current_language as LANGUAGE_CODE %}
+<div class="row">
+    <div class="col-lg-offset-3 col-lg-6">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "发酵罐状态更新" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post">{% csrf_token %}
+                    {% if request.user.is_authenticated %}
+                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    {% endif %}
+                    <div class="form-group">
+                        <div class="col-lg-4 col-sm-2 control-label">{{ form.tank.label_tag }}</div>
+                        <div class="col-lg-8">
+                            <select name="tank" class="selectpicker show-tick form-control" data-live-search="true" required="" id="id_tank">
+                                <option value="" selected="">---------</option>
+                                {% for tank in tanks %}
+                                    {% if tank.tank_state_id <= 4 %}
+                                    <option value="{{ tank.id }}">
+                                        {{ tank.tank_name }}
+                                        {% if LANGUAGE_CODE == 'en'%}
+                                            [{{ tank.tank_state.tank_state_en }}]
+                                            {{ tank.current_brew.product_name.product_name_en }}
+                                        {% else %}
+                                            {{ tank.tank_state.tank_state_cn }}
+                                            {{ tank.current_brew.product_name.product_name_cn }}
+                                        {% endif %}
+                                        [{{ tank.current_brew.delta_days }}天]
+                                    </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                            <p class="help-block">{{ form.tank.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4 control-label">{{ form.tank_state_now.label_tag }}</div>
+                        <div class="col-lg-8">
+                            <select name="tank_state_now" class="selectpicker show-tick form-control" data-live-search="true" required="" id="id_tank_state_now">
+                                <option value="" selected="">---------</option>
+                                {% for tank_state in tank_states %}
+                                    <option value="{{ tank_state.id }}">
+                                        {% if LANGUAGE_CODE == 'en'%}
+                                            [{{ tank_state.tank_state_en }}]
+                                        {% else %}
+                                            {{ tank_state.tank_state_cn }}
+                                        {% endif %}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <p class="help-block">{{ form.tank_state_now.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+{% endblock %}

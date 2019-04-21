@@ -1,0 +1,58 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '公司类型管理' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <section class="panel table-responsive">
+            <header class="panel-heading">
+                {% trans '公司类型列表' %}
+            </header>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>{% trans '类型中文名称' %}</th>
+                            <th>{% trans '类型英文名称' %}</th>{% if perms.brewsql.change_companytype %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ d.pk }}</td>
+                            <td>{{ d.company_type_cn }}</td>
+                            <td>{{ d.company_type_en }}</td>{% if perms.brewsql.change_companytype %}
+                            <td align="right"><a href="{% url 'brewsql:company_type_update' d.pk %}?next={% url 'brewsql:company_type_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>{% if perms.brewsql.add_companytype %}
+    <div class="col-lg-6">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans '添加公司类型' %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+                <p>{{ form.non_field_errors }}</p>
+            </header>
+            <div class="panel-body">
+                <form method="post" action="{% url 'brewsql:company_type_list' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12">{{ form.company_type_cn }}{{ form.company_type_cn.errors }}</div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12">{{ form.company_type_en }}{{ form.company_type_en.errors }}</div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12" align="right"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
+                    </div>
+                </form>
+            </div>
+      </section>
+    </div>{% endif %}
+</div>
+{% endblock %}

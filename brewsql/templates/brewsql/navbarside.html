@@ -1,0 +1,125 @@
+{% load static i18n %}
+<aside>
+    <div id="sidebar"  class="nav-collapse ">
+    <!-- sidebar menu start-->
+        <ul class="sidebar-menu" id="nav-accordion">
+            <li>
+                <a href="{% url 'brewsql:home' %}">
+                    <i class="fa fa-home"></i>
+                    <span>{% trans 'Home' %}</span>
+                </a>
+            </li>
+            {% if perms.brewsql.view_tank or perms.brewsql.view_fermentmonitor or view_brew %}
+            <li class="sub-menu">
+                <a href="javascript:;" >
+                    <i class="fa fa-tasks"></i>
+                    <span>{% trans '酿造管理' %}</span>
+                </a>
+                <ul class="sub">{% if perms.brewsql.view_tank %}
+                    <li><a href="{% url 'brewsql:tanks_overview' %}">{% trans '发酵总览' %}</a></li>
+                    <li><a href="{% url 'brewsql:tank_list' %}">{% trans '发酵罐' %}</a></li>{% endif %}{% if perms.brewsql.view_fermentmonitor %}
+                    <li><a href="{% url 'brewsql:ferment_monitor_list' %}">{% trans '发酵监控' %}</a></li>{% endif %}{% if perms.brewsql.view_brew %}
+                    <li><a href="{% url 'brewsql:brew_list' %}">{% trans '酿造批次' %}</a></li>{% endif %}
+                </ul>
+            </li>
+            {% endif %}
+            <li class="sub-menu">
+                <a href="javascript:;" >
+                    <i class="fa fa-beer"></i>
+                    <span>{% trans '产品管理' %}</span>
+                </a>
+                <ul class="sub">{% if perms.brewsql.view_product %}
+                    <li><a  href="{% url 'brewsql:product_inventory' %}">{% trans '产品库存' %}</a></li>{% endif %}{% if perms.brewsql.view_pack %}
+                    <li><a  href="{% url 'brewsql:pack_list' %}">{% trans '入库记录' %}</a></li>{% endif %}
+                    {% if perms.brewsql.view_productname or perms.brewsql.view_productpacksizeunit %}
+                    <li class="sub-menu">
+                        <a href="javascript:;" class="dcjq-parent">{% trans '名称/包装' %}<span class="dcjq-icon"></span></a>
+                        <ul class="sub" style="display: none;">{% if perms.brewsql.view_productname %}
+                            <li><a  href="{% url 'brewsql:product_name_list' %}">{% trans '产品名称' %}</a></li>{% endif %}{% if perms.brewsql.view_productpacksizeunit %}
+                            <li><a  href="{% url 'brewsql:product_pack_list' %}">{% trans '产品包装' %}</a></li>{% endif %}{% if perms.brewsql.view_productcategory %}
+                            <li><a  href="{% url 'brewsql:product_category_list' %}">{% trans '产品归类' %}</a></li>{% endif %} {% if perms.brewsql.view_productstyle %}
+                            <li><a  href="{% url 'brewsql:product_style_create' %}">{% trans '产品风格' %}</a></li>{% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+            </li>
+            {% if perms.brewsql.view_sale or perms.brewsql.view_saleorder %}
+            <li class="sub-menu">
+                <a href="javascript:;" >
+                    <i class="fa fa-shopping-cart"></i>
+                    <span>{% trans '销售管理' %}</span>
+                </a>
+                <ul class="sub">{% if perms.brewsql.view_saleorder %}
+                    <li><a  href="{% url 'brewsql:sale_order_list' %}?c=1">{% trans '销售订单' %}</a></li>{% endif %}{% if perms.brewsql.view_sale %}
+                    <li><a  href="{% url 'brewsql:sale_list' %}?c=1">{% trans '订单明细' %}</a></li>{% endif %}{% if perms.brewsql.view_saleorder %}
+                    <li><a  href="{% url 'brewsql:sale_order_list_wx' %}">{% trans '小程序订单' %}</a></li>{% endif %}
+                </ul>
+            </li>
+            {% endif %}
+            {% if perms.brewsql.view_material or perms.brewsql.view_materialbatch or perms.brewsql.view_materialin or perms.brewsql.view_materialout %}
+            <li class="sub-menu">
+                <a href="javascript:;">
+                <i class="fa fa-tags"></i>
+                <span>{% trans '原料管理' %}</span><span class="dcjq-icon"></span>
+                </a>
+                <ul class="sub">{% if perms.brewsql.view_material %}
+                    <li><a href="{% url 'brewsql:material_list' %}">{% trans '原料列表' %}</a></li>{% endif %}{% if perms.brewsql.view_materialbatch %}
+                    <li><a href="{% url 'brewsql:material_batch_list' %}">{% trans '原料批次' %}</a></li>{% endif %}{% if perms.brewsql.view_materialin %}
+                    <li><a href="{% url 'brewsql:material_in_list'%}">{% trans '原料入库' %}</a></li>{% endif %}{% if perms.brewsql.view_materialout %}
+                    <li><a href="{% url 'brewsql:material_out_list'%}">{% trans '原料出库' %}</a></li>{% endif %}
+                    <li class="sub-menu">
+                        <a href="javascript:;" class="dcjq-parent">{% trans '包装/位置' %}<span class="dcjq-icon"></span></a>
+                        <ul class="sub" style="display: none;">{% if perms.brewsql.view_materialpacksizeunit %}
+                            <li><a href="{% url 'brewsql:material_pack_list' %}">{% trans '包装规格' %}</a></li>{% endif %}{% if perms.brewsql.view_warehouse %}
+                            <li><a href="{% url 'brewsql:warehouse_list' %}">{% trans '存储位置' %}</a></li>{% endif %}
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            {% endif %}
+            {% if perms.brewsql.view_supplier or perms.brewsql.view_company or perms.brewsql.view_employee  %}
+            <li class="sub-menu">
+                <a href="javascript:;" >
+                    <i class="fa fa-male"></i>
+                    <span>{% trans '人员管理' %}</span>
+                </a>
+                <ul class="sub">{% if perms.brewsql.view_client %}
+                    <li><a href="{% url 'brewsql:client_list' %}">{% trans '客户管理' %}</a></li>{% endif %}{% if perms.brewsql.view_supplier %}
+                    <li><a href="{% url 'brewsql:supplier_list' %}">{% trans '供应商管理' %}</a></li>{% endif %}{% if perms.brewsql.view_company %}
+                    <li><a href="{% url 'brewsql:company_list' %}">{% trans '合作公司' %}</a></li>{% endif %}{% if perms.brewsql.view_employee %}
+                    <li><a href="{% url 'brewsql:employee_list' %}">{% trans '员工管理' %}</a></li>{% endif %}{% if perms.brewsql.add_employee %}
+                    <li><a href="{% url 'brewsql:user_list' %}">{% trans '账号管理' %}</a></li>
+                    {% if perms.brewsql.view_wechatuser or perms.brewsql.add_employeestate or perms.brewsql.add_companytype %}
+                    <li class="sub-menu">
+                        <a href="javascript:;" class="dcjq-parent">{% trans '高级管理' %}<span class="dcjq-icon"></span></a>
+                        <ul class="sub" style="display: none;">{% if perms.brewsql.add_employee %}
+                            <li><a href="{% url 'brewsql:user_action_list' %}">{% trans '操作记录' %}</a></li>{% endif %}{% if perms.brewsql.add_employeestate %}
+                            <li><a href="{% url 'brewsql:employee_state_list' %}">{% trans '员工状态' %}</a></li>{% endif %}{% if perms.brewsql.add_clientlevel%}
+                            <li><a href="{% url 'brewsql:client_level_list' %}">{% trans '客户等级' %}</a></li>{% endif %}{% if perms.brewsql.add_companytype %}
+                            <li><a href="{% url 'brewsql:company_type_list' %}">{% trans '公司类型' %}</a></li>{% endif %}
+                        </ul>
+                    </li>{% endif %}
+                    {% endif %}
+                </ul>
+            </li>
+            {% endif %}
+            {% if perms.brewsql.view_moneyinout %}
+            <li class="sub-menu">
+                <a href="{% url 'brewsql:moneyinout_list' %}" >
+                    <i class="fa fa-money"></i>
+                    <span>{% trans '资金流水' %}</span>
+                </a>
+            </li>{% endif %}
+            {% if perms.brewsql.view_handbook %}
+            <li class="sub-menu">
+                <a href="{% url 'brewsql:handbook' %}" >
+                    <i class="fa fa-book"></i>
+                    <span>{% trans '操作说明' %}</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    <!-- sidebar menu end-->
+    </div>
+</aside>

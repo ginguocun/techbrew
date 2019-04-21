@@ -1,0 +1,10 @@
+.pyc
+__pycache__
+venv
+tb2/local_setting.py
+tb2/settings.py
+tb2/sms_aliyun.py
+static/admin
+static/rest_framework
+brewsql/migrations/*.py
+!brewsql/migrations/__init__.py

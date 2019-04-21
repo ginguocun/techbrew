@@ -1,0 +1,55 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '员工' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_employee %}
+        <a href="{% url 'brewsql:add_employee' %}?next={% url 'brewsql:employee_list' %}"><button type="button" class="btn btn-primary">{% trans "添加员工" %}</button></a>{% endif %}
+    </div>
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>{% trans '姓名' %}</th>
+                            <th>{% trans '头衔' %}</th>
+                            <th>{% trans '部门' %}</th>
+                            <th>{% trans '性别' %}</th>
+                            <th>{% trans '微信' %}</th>
+                            <th>{% trans '电话' %}</th>
+                            <th>{% trans '邮箱' %}</th>
+                            <th>{% trans '酿酒师' %}</th>
+                            <th>{% trans '销售员' %}</th>
+                            <th>{% trans '介绍' %}</th>{% if perms.brewsql.change_employee %}
+                            <th>{% trans '关联账号' %}</th>
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in data %}
+                        <tr class="{% if d.is_brewer %}warning{% endif %}">
+                            <td>{{ d.id|default_if_none:"" }}</td>
+                            <td>{{ d.last_name }}{{ d.first_name }}</td>
+                            <td>{{ d.title|default_if_none:"" }}</td>
+                            <td>{{ d.department|default_if_none:"" }}</td>
+                            <td>{{ d.get_gender_display }}</td>
+                            <td>{{ d.wechat|default_if_none:"" }}</td>
+                            <td>{{ d.mobile|default_if_none:"" }}</td>
+                            <td>{{ d.email|default_if_none:"" }}</td>
+                            <td>{% if d.is_brewer %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
+                            <td>{% if d.is_salesman %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
+                            <td>{{ d.desc|default_if_none:"" }}</td>{% if perms.brewsql.change_employee %}
+                            <td>{{ d.linked_account_info|default_if_none:"" }}</td>
+                            <td align="right"><a href="{% url 'brewsql:employee_update' d.pk %}?next={% url 'brewsql:employee_list' %}"><label class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></label></a></td>{% endif %}
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div align="right">
+            {% include 'brewsql/tablenav.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '产品出库更新' %}{% endblock %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+{% get_current_language as LANGUAGE_CODE %}
+<div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "产品出库更新" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post">{% csrf_token %}
+                    {% if request.user.is_authenticated %}
+                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    {% endif %}
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.sale_order.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.sale_order }}
+                            <p class="help-block">{{ form.sale_order.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.sale_date.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.sale_date }}
+                            <p class="help-block">{{ form.sale_date.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.pack.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.pack }}
+                            <p class="help-block">{{ form.pack.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.sale_num.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.sale_num }}
+                            <p class="help-block">{{ form.sale_num.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.sale_price.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.sale_price }}
+                            <p class="help-block">{{ form.sale_price.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.notes.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.notes }}
+                            <p class="help-block">{{ form.notes.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.is_sale.label_tag }}</div>
+                        <div class="col-lg-4">
+                            <div class="switch switch-square"
+                                data-on-label="<i class=' fa fa-check'></i>"
+                                data-off-label="<i class='fa fa-times'></i>">
+                                {{ form.is_sale }}
+                            </div>
+                            <p class="help-block">{{ form.is_sale.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.is_active.label_tag }}</div>
+                        <div class="col-lg-4">
+                            <div class="switch switch-square"
+                                data-on-label="<i class=' fa fa-check'></i>"
+                                data-off-label="<i class='fa fa-times'></i>">
+                                {{ form.is_active }}
+                            </div>
+                            <p class="help-block">{{ form.is_active.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            {% if perms.brewsql.delete_sale %}
+                            <a href="{% url 'brewsql:sale_delete' object.pk %}"><button type="button" class="btn btn btn-danger">{% trans "删除" %}</button></a>{% endif %}
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="panel-body">
+                <h4>备注：</h4>
+                <p>
+                    1. 【正常出售】标签用于区别产品是<b>正常出售</b>还是<b>报废</b>；<br>
+                    2. 【是否有效】若不勾选，相当于删除，无效的订单将不会被统计。
+                </p>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'flatlab/js/bootstrap-switch.js' %}"></script>
+{% endblock %}

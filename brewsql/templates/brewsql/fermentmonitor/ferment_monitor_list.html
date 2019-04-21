@@ -1,0 +1,57 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '发酵监控' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_fermentmonitor %}
+        <a href="{% url 'brewsql:new_ferment_record' %}?next={% url 'brewsql:ferment_monitor_list' %}"><button type="button" class="btn btn-primary">{% trans "记录" %}</button></a>{% endif %}
+    </div>
+    {% get_current_language as LANGUAGE_CODE %}
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans '记录时间' %}</th>
+                            <th>{% trans '发酵罐' %}</th>
+                            <th>{% trans '生产批次' %}</th>
+                            <th>{% trans '产品名称' %}</th>
+                            <th>{% trans '糖度/SG' %}</th>
+                            <th>{% trans 'pH' %}</th>
+                            <th>{% trans '真实/设置温度' %}</th>
+                            <th>{% trans 'Bar' %}</th>
+                            <th>{% trans '酵母数' %}</th>
+                            <th>{% trans '记录人' %}</th>
+                            <th>{% trans '备注' %}</th>{% if perms.brewsql.delete_fermentmonitor %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ d.recorded|date:"Y-m-d H:i:m" }}</td>
+                            <td>{{ d.brew.tank.tank_name }}</td>
+                            <th><a href="{% if perms.brewsql.view_brew %}{% url 'brewsql:brew_detail' d.brew.pk %}{% endif %}" target="_blank">{{ d.brew.brew_batch_code|default_if_none:"" }}</a></th>{% if LANGUAGE_CODE == 'en'%}
+                            <td>{{ d.brew.product_name.product_name_en }}</td>{% else %}
+                            <td>{{ d.brew.product_name.product_name_cn }}</td>{% endif %}
+                            <td>{{ d.plato|default_if_none:"" }}{% if d.sg is not None %}/{% endif %}{{ d.sg|default_if_none:"" }}</td>
+                            <td>{{ d.ph|default_if_none:"" }}</td>
+                            <td>{{ d.t_real|default_if_none:"" }}{% if d.t_set is not None %}/{% endif %}{{ d.t_set|default_if_none:"" }}</td>
+                            <td>{{ d.bar|default_if_none:"" }}</td>
+                            <td>{{ d.cell_mml|default_if_none:"" }}</td>
+                            <td>{{ d.recorder }}</td>
+                            <td>{{ d.notes }}</td>{% if perms.brewsql.delete_fermentmonitor %}
+                            <td><a href="{% url 'brewsql:ferment_monitor_delete' d.pk %}?next={% url 'brewsql:ferment_monitor_list' %}"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></a></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div align="right">
+            {% include 'brewsql/tablenav.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

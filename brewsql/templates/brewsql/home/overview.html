@@ -1,0 +1,238 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '首页' %}{% endblock %}
+{% get_current_language as LANGUAGE_CODE %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12 state-overview">
+        <div class="col-lg-3 col-sm-6">
+            <section class="panel">
+                <div class="symbol terques">
+                    <i class="fa fa-user"></i>
+                </div>
+                <div class="value">
+                    <h1 class="count">{{ client_num }}</h1>
+                    <p>{% trans '客户数' %}</p>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <section class="panel">
+                <div class="symbol red">
+                    <i class="fa fa-tags"></i>
+                </div>
+                <div class="value">
+                    <h1 class=" count2">{{ product_name_num }}</h1>
+                    <p>{% trans '产品数量' %}</p>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <section class="panel">
+                <div class="symbol yellow">
+                    <i class="fa fa-gears"></i>
+                </div>
+                <div class="value">
+                    <h1 class=" count3">{{ brew_num }}</h1>
+                    <p>{% trans '生产批次' %}</p>
+                </div>
+            </section>
+        </div>
+        {% if perms.brewsql.view_moneyinout %}
+        <div class="col-lg-3 col-sm-6">
+            <section class="panel">
+                <div class="symbol blue">
+                    <i class="fa fa-bar-chart-o"></i>
+                </div>
+                <div class="value">
+                    <h4 class=" count4">{{ total_sale_income }}</h4>
+                    <p>{% trans '销售总额' %}</p>
+                </div>
+            </section>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-lg-8">
+        <section class="">
+            <div class="panel-body text-center">
+                <div id="left"></div>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-4">
+        <section class="panel">
+            <div class="panel-body text-center">
+                <div id="product_type"></div>
+            </div>
+        </section>
+    </div>
+    <div class="clearfix"></div>
+    {% if perms.brewsql.view_sale or perms.brewsql.view_saleorder or perms.brewsql.view_moneyinout %}
+    <div class="col-lg-6">
+        <div class="row">
+            <div class="col-md-12">
+                <section class="panel">
+                    <div class="panel-body text-center">
+                        <div id="production"></div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-md-12">
+                 <section class="panel">
+                    <div class="panel-body text-center">
+                        <div id="sales"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <section class="panel table-responsive">
+            <header class="panel-heading">
+                {% trans '最近销售订单' %}
+            </header>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>{% trans '日期/单号' %}</th>
+                            <th>{% trans '产品' %}</th>
+                            <th>{% trans '客户' %}</th>
+                            <th>{% trans '数量' %}</th>
+                            <th>{% trans '订单金额' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in last_12_sales %}
+                        <tr class="{% cycle '' 'active' %} {% if not d.is_active %}is-not-active{% endif %}">
+                            <td>{{ d.pk }}</td>
+                            <th>{{ d.sale_date|date:"Y-m-d" }}<br>{{ d.sale_code }}</th>
+                            <td>[{{ d.pack.product.product_code }}] {% if LANGUAGE_CODE == 'en'%}{{ d.pack.product.product_name.product_name_en }} ({{ d.pack.product.product_pack.product_pack_size_unit_en }}){% else %}{{ d.pack.product.product_name.product_name_cn }} ({{ d.pack.product.product_pack.product_pack_size_unit_cn }}){% endif %}</td>
+                            <td>{{ d.client.name }}</td>
+                            <td><span class="label label-warning">{{ d.sale_num }}</span></td>
+                            <td>¥ {{ d.sale_price_link.money_in_out|floatformat:"-2" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    {% endif %}
+    {% if perms.brewsql.view_moneyinout %}
+    <div class="clearfix"></div>
+    <div class="col-lg-6">
+        <section class="panel">
+            <div class="panel-body text-center">
+                <div id="money_io"></div>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-3">
+        <section class="panel">
+            <div class="panel-body text-center">
+                <div id="money_i_p"></div>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-3">
+        <section class="panel">
+            <div class="panel-body text-center">
+                <div id="money_o_p"></div>
+            </div>
+        </section>
+    </div>
+    {% endif %}
+    <div class="clearfix"></div>
+</div>
+{% endblock %}
+
+{% block this_js %}
+<script src="{% static 'flatlab/assets/highcharts/highcharts.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/exporting.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/export-data.js' %}"></script>
+<script language="JavaScript">
+Highcharts.chart('left', {
+    chart: {type: 'column', backgroundColor: null},
+    title: {text: '{% trans "产品库存" %}'},
+    xAxis: {categories: {{ categories|safe }}},
+    yAxis: {min: 0, title: {text: '{% trans "库存/桶" %}', align: 'high'}, labels: {overflow: 'justify'}},
+    legend: {reversed: true},
+    credits: {enabled: false},
+    series: {{ gb_left|safe }}
+});
+</script>
+{% if perms.brewsql.view_sale or perms.brewsql.view_saleorder or perms.brewsql.view_moneyinout %}
+    <script language="JavaScript">
+    Highcharts.chart('production', {
+        chart: {type: 'bar'},
+        title: {text: '{% trans "产品生产统计" %}'},
+        xAxis: {categories: {{ categories|safe }}},
+        yAxis: {min: 0, title: {text: '{% trans "桶" %}', align: 'high'}, labels: {overflow: 'justify'}},
+        plotOptions: {bar: {dataLabels: {enabled: true}}},
+        legend: {reversed: true},
+        credits: {enabled: false},
+        series: {{ gb_production|safe }}
+    });
+    </script>
+    <script language="JavaScript">
+    Highcharts.chart('sales', {
+        chart: {type: 'bar'},
+        title: {text: '{% trans "产品出库统计" %}'},
+        xAxis: {categories: {{ categories|safe }}},
+        yAxis: {min: 0, title: {text: '{% trans "桶" %}', align: 'high'}, labels: {overflow: 'justify'}},
+        plotOptions: {bar: {dataLabels: {enabled: true}}},
+        legend: {reversed: true},
+        credits: {enabled: false},
+        series: {{ gb_sales|safe }}
+    });
+    </script>
+{% endif %}
+<script language="JavaScript">
+Highcharts.chart('product_type', {
+    chart: {plotBackgroundColor: null, plotBorderWidth: null, plotShadow: false, backgroundColor: null},
+    title: {text: '{% trans "产品生产次数及比例" %}'},
+    tooltip: {pointFormat: '{% trans "生产次数" %}: {point.y:.0f} <b>{series.name}: {point.percentage:.1f}%</b>'},
+    plotOptions: {pie: {allowPointSelect: true, cursor: 'pointer', dataLabels: {enabled: false}, showInLegend: true}},
+    series: [{type: 'pie',name: '{% trans "比例" %}',data: {{ product_name_p|safe }}}],
+    credits: {enabled: false},
+});
+</script>
+
+<script language="JavaScript">
+Highcharts.chart('money_io', {
+    chart: {type: 'bar'},
+    title: {text: '{% trans "每月收支额" %}'},
+    xAxis: {categories: {{ in_out_month|safe }}},
+    yAxis: {title: {text: '{% trans "金额/元" %}'}},
+    tooltip: {pointFormat: '{series.name} ¥ {point.y:.2f}'},
+    series: [{name: '{% trans "收入" %}', data: {{ income_info|safe }}},
+            {name: '{% trans "支出" %}', data: {{ outcome_info|safe }}},
+            {name: '{% trans "收支" %}', data: {{ io_come_info|safe }}}],
+    credits: {enabled: false},
+});
+</script>
+{% if perms.brewsql.view_moneyinout %}
+<script language="JavaScript">
+Highcharts.chart('money_i_p', {
+    chart: {plotBackgroundColor: null, plotBorderWidth: null, plotShadow: false},
+    title: {text: '{% trans "收入来源金额及比例" %}'},
+    tooltip: {pointFormat: '¥ {point.y:.2f} <b>{series.name}: {point.percentage:.1f}%</b>'},
+    plotOptions: {pie: {allowPointSelect: true, cursor: 'pointer', dataLabels: {enabled: false}, showInLegend: true}},
+    series: [{type: 'pie',name: '{% trans "比例" %}',data: {{ income_by_products|safe }}}],
+    credits: {enabled: false},
+});
+</script>
+<script language="JavaScript">
+Highcharts.chart('money_o_p', {
+    chart: {plotBackgroundColor: null, plotBorderWidth: null, plotShadow: false},
+    title: {text: '{% trans "支出类型金额及比例" %}'},
+    tooltip: {pointFormat: '¥ {point.y:.2f} <b>{series.name}: {point.percentage:.1f}%</b>'},
+    plotOptions: {pie: {allowPointSelect: true, cursor: 'pointer', dataLabels: {enabled: false}, showInLegend: true}},
+    series: [{type: 'pie',name: '{% trans "比例" %}',data: {{ outcome_by_types|safe }}}],
+    credits: {enabled: false},
+});
+</script>
+{% endif %}
+{% endblock %}

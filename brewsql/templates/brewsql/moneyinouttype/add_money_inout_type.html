@@ -1,0 +1,77 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '收支类型管理' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>{% trans '收支类型中文' %}</th>
+                            <th>{% trans '收支类型英文' %}</th>
+                            <th>{% trans '属于支出' %}</th>{% if perms.brewsql.change_moneyinouttype %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in inout_types %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ d.pk }}</td>
+                            <td>{{ d.money_in_out_type_cn }}</td>
+                            <td>{{ d.money_in_out_type_en }}</td>
+                            <td>{% if d.is_negative %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa fa-times"></i></label>{% endif %}</td>
+                            {% if perms.brewsql.change_moneyinouttype %}
+                            <td align="right">{% if not d.is_auto %}<a href="{% url 'brewsql:money_iot_update' d.pk %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}</td>{% endif %}
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-6">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans '添加收支类型' %}
+                <p>{{ form.non_field_errors }}</p>
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal"  method="post" action="{% url 'brewsql:money_inout_types' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-lg-3 control-label">{{ form.money_in_out_type_cn.label_tag }}</div>
+                        <div class="col-lg-9">
+                            {{ form.money_in_out_type_cn }}
+                            <p class="help-block">{{ form.money_in_out_type_cn.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-3 control-label">{{ form.money_in_out_type_en.label_tag }}</div>
+                        <div class="col-lg-9">
+                            {{ form.money_in_out_type_en }}
+                            <p class="help-block">{{ form.money_in_out_type_en.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-3 control-label">{{ form.is_negative.label_tag }}</div>
+                        <div class="col-lg-9">
+                            <div class="switch switch-square"
+                                data-on-label="<i class=' fa fa-check'></i>"
+                                data-off-label="<i class='fa fa-times'></i>">
+                                {{ form.is_negative }}
+                            </div>
+                            <p class="help-block">{{ form.is_negative.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
+                    </div>
+                </form>
+            </div>
+      </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/js/bootstrap-switch.js' %}"></script>
+{% endblock %}

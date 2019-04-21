@@ -1,0 +1,91 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '生产批次' %}{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="panel-body">
+        <div class="col-md-9">
+            <form class="form-inline" role="form" method="get">
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '起始' %}:</span>
+                        <input type="date" name="s" class="form-control" value="{% if request.GET.s %}{{ request.GET.s }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '截止' %}:</span>
+                        <input type="date" name="e" class="form-control" value="{% if request.GET.e %}{{ request.GET.e }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="q" placeholder="" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                        <span class="input-group-btn"><button class="btn btn-primary" type="submit">搜索</button></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3" align="right">
+            {% if perms.brewsql.add_brew %}
+            <a href="{% url 'brewsql:add_brew' %}?next={% url 'brewsql:brew_list' %}"><button type="button" class="btn btn-success">{% trans "新建批次" %}</button></a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+<section class="panel">
+    <div class="panel-body table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>{% trans '生产批次' %}</th>
+                    <th>{% trans '啤酒名称' %}</th>
+                    <th>{% trans '发酵罐' %}</th>
+                    <th>{% trans '开始日期' %}</th>
+                    <th>{% trans '酿酒师' %}</th>
+                    <th>{% trans '备注' %}</th>{% if perms.brewsql.change_brew %}
+                    <th></th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>{% for d in data %}
+                <tr class="{% cycle '' 'active' %}">
+                    <th>{{ d.brew_batch_code|default_if_none:"" }}</th>
+                    <td>{{ d.product_name }}</td>
+                    <td>{{ d.tank.tank_name }}</td>
+                    <td>{{ d.date_start|date:"Y-m-d" }}</td>
+                    <td>{{ d.operator }}</td>
+                    <td>{{ d.notes }}</td>
+                    <td align="right">
+                        {% if perms.brewsql.change_brew %}<a href="{% url 'brewsql:brew_update' d.pk %}?next={% url 'brewsql:brew_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}
+                        <a href="{% url 'brewsql:brew_detail' d.pk %}"><button class="btn btn-info btn-xs"><i class="fa fa-info-circle"></i></button></a>
+                        <a href="{% url 'brewsql:brew_detail_public' d.pk d.brew_key %}" target="_blank"><button class="btn btn-warning btn-xs"><i class="fa fa-share"></i></button></a>
+                    </td>
+                </tr>{% endfor %}
+            </tbody>
+        </table>{% if perms.brewsql.can_export_brew_data %}
+        <div align="right">
+            <a data-toggle="modal" href="#data_export"><span class="btn btn-default btn-sm">导出数据</span></a>
+            <div align="left" class="modal fade " id="data_export" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">{% trans '导出数据' %}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>{% trans '请确认是否要导出酿造批次数据！' %}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                            <a href="{% url 'brewsql-api:brew-xls' %}?s={{ request.GET.s }}&e={{ request.GET.e }}"><button class="btn btn-success" type="submit">{% trans '确认' %}</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>{% endif %}
+    </div>
+</section>
+<div align="right">
+    {% include 'brewsql/tablenav.html' %}
+</div>
+{% endblock %}

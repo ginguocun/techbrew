@@ -1,0 +1,9 @@
+<nav>
+    <ul class="pagination">{% if data.has_previous %}
+        <li><a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}page={{ data.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">«</span></a></li>{% else %}
+        <li class="disabled"><a href="" aria-label="Previous"><span aria-hidden="true">«</span></a></li>{% endif %}{% for pp in page_range %}
+        <li class=" {% if pp == data.number %} active{% endif %}"> <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}page={{ pp }}">{{ pp|safe }}<span class="sr-only">(current)</span></a></li> {% endfor%}{% if data.has_next %}
+        <li><a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}page={{ data.next_page_number }}" aria-label="Next"><span aria-hidden="true">»</span></a></li>{% else %}
+        <li class="disabled"><a href="" aria-label="Next"><span aria-hidden="true">»</span></a></li>{% endif %}
+    </ul>
+</nav>

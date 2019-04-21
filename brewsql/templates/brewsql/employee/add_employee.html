@@ -1,0 +1,187 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block title %}{% trans '添加员工' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-4">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>{% trans '姓名' %}</th>
+                            <th>{% trans '头衔' %}</th>
+                            <th>{% trans '部门' %}</th>{% if perms.brewsql.change_employee %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in data %}
+                        <tr>
+                            <td>{{ d.id|default_if_none:"" }}</td>
+                            <td>{{ d.last_name }}{{ d.first_name }}</td>
+                            <td>{{ d.title|default_if_none:"" }}</td>
+                            <td>{{ d.department|default_if_none:"" }}</td>{% if perms.brewsql.change_employee %}
+                            <td align="right"><a href="{% url 'brewsql:employee_update' d.pk %}?next={% url 'brewsql:add_employee' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div align="right">
+            {% include 'brewsql/tablenav.html' %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "添加员工" %}
+                {% if form.errors %}
+                {{ form.errors }}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="{% url 'brewsql:add_employee' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    {% if request.user.is_authenticated %}
+                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    {% endif %}
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.last_name.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.last_name }}
+                            <p class="help-block">{{ form.last_name.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.first_name.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.first_name }}
+                            <p class="help-block">{{ form.first_name.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.gender.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.gender }}
+                            <p class="help-block">{{ form.gender.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.email.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.email }}
+                            <p class="help-block">{{ form.email.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.mobile.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.mobile }}
+                            <p class="help-block">{{ form.mobile.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.wechat.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.wechat }}
+                            <p class="help-block">{{ form.wechat.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.title.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.title }}
+                            <p class="help-block">{{ form.title.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.department.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.department }}
+                            <p class="help-block">{{ form.department.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.birth.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.birth }}
+                            <p class="help-block">{{ form.birth.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.employee_state.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.employee_state }}
+                            <p class="help-block">{{ form.employee_state.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.joined.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.joined }}
+                            <p class="help-block">{{ form.joined.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.linked_account.label_tag }}</div>
+                        <div class="col-lg-4">
+                            <select name="linked_account" class="selectpicker show-tick form-control" data-live-search="true" id="id_linked_account">
+                                <option value="">---------</option>
+                                {% for u in app_users %}
+                                <option value="{{ u.pk }}" selected>{{ u }}</option>
+                                {% endfor %}
+                            </select>
+                            <p class="help-block">{{ form.linked_account.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.is_brewer.label_tag }}</div>
+                        <div class="col-lg-4">
+                            <div class="switch switch-square"
+                                data-on-label="<i class=' fa fa-check'></i>"
+                                data-off-label="<i class='fa fa-times'></i>">
+                                {{ form.is_brewer }}
+                            </div>
+                            <p class="help-block">{{ form.is_brewer.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.is_salesman.label_tag }}</div>
+                        <div class="col-lg-4">
+                            <div class="switch switch-square"
+                                data-on-label="<i class=' fa fa-check'></i>"
+                                data-off-label="<i class='fa fa-times'></i>">
+                                {{ form.is_salesman }}
+                            </div>
+                            <p class="help-block">{{ form.is_salesman.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.working.label_tag }}</div>
+                        <div class="col-lg-4">
+                            <div class="switch switch-square"
+                                data-on-label="<i class=' fa fa-check'></i>"
+                                data-off-label="<i class='fa fa-times'></i>">
+                                {{ form.working }}
+                            </div>
+                            <p class="help-block">{{ form.working.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.desc.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.desc }}
+                            <p class="help-block">{{ form.desc.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-2">
+        <section class="panel">
+            {% if perms.brewsql.add_employeestate %}
+            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:employee_state_list' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加员工状态' %}</a></button>{% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'flatlab/js/bootstrap-switch.js' %}"></script>
+{% endblock %}

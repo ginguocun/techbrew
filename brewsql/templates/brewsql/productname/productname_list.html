@@ -1,0 +1,52 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '产品名称' %}{% endblock %}
+{% block content %}
+{% get_current_language as LANGUAGE_CODE %}
+<div class="row">
+    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_productname %}
+        <a href="{% url 'brewsql:add_productname' %}?next={% url 'brewsql:product_name_list' %}"><button type="button" class="btn btn-primary">{% trans "新建名称" %}</button></a>{% endif %}
+    </div>
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans '产品编号' %}</th>
+                            <th>{% trans '产品名称' %}</th>
+                            <th>{% trans '产品类型' %}</th>
+                            <th>{% trans '酿酒师' %}</th>
+                            <th>{% trans '备注' %}</th>
+                            <th>{% trans '可用' %}</th>
+                            <th>{% trans '添加时间' %}</th>{% if perms.brewsql.change_productname %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ d.product_name_code }}</td>
+                            <td>{{ d.product_name_cn }}</td>
+                            <td>{{ d.product_type.product_type_name_cn }}</td>
+                            <td>{{ d.brewer.last_name }} {{ d.brewer.first_name }}</td>
+                            <td>{{ d.notes }}</td>
+                            <td>{{ d.show|yesno:"是,否" }}</td>
+                            <td>{{ d.datetime_created }}</td>{% if perms.brewsql.change_productname %}
+                            <td align="right">
+                                <a href="{% url 'brewsql:product_name_update' d.pk %}?next={% url 'brewsql:product_name_list' %}">
+                                    <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                                </a>
+                            </td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+<div align="right">
+    {% include 'brewsql/tablenav.html' %}
+</div>
+{% endblock %}

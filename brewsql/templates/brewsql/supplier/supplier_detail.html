@@ -1,0 +1,126 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '供应商详情' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <aside class="profile-nav col-lg-4">
+        <section class="panel">
+            <div class="user-heading round">
+                <!--<a href="#">-->
+                    <!--<img src="" alt="">-->
+                <!--</a>-->
+                <h1>{{ supplier_data.name }}</h1>
+                <p>{{ supplier_data.email }}</p>
+            </div>
+            <ul class="nav nav-pills nav-stacked">
+                <!--<li class="active"><a href="profile.html"> <i class="fa fa-user"></i> Profile</a></li>-->
+                <!--<li><a href="profile-activity.html"> <i class="fa fa-calendar"></i> Recent Activity <span class="label label-danger pull-right r-activity">9</span></a></li>-->
+                {% if perms.brewsql.change_supplier %}
+                <li><a href="{% url 'brewsql:supplier_update' supplier_data.pk %}?next={% url 'brewsql:supplier_detail' supplier_data.pk %}"> <i class="fa fa-edit"></i>{% trans "编辑资料" %}</a></li>{% endif %}
+            </ul>
+        </section>
+        <section class="panel">
+            <div class="panel-heading">
+                {% trans '供应商信息' %}
+            </div>
+            <div class="panel-body bio-graph-info">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p><span>{% trans '姓名' %} </span>: {{ supplier_data.name|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>Email </span>: {{ supplier_data.email|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '电话' %} </span>: {{ supplier_data.mobile|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '微信' %} </span>: {{ supplier_data.wechat|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '介绍' %} </span>: {{ supplier_data.desc|default_if_none:'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </aside>
+    <aside class="profile-info col-lg-8">
+        <section class="panel">
+            <div class="panel-body bio-graph-info">
+                <h1>{% trans '公司信息' %}</h1>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司名称' %} </span>: {{ supplier_data.supplier_company.company_name_cn|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司英文名' %} </span>: {{ supplier_data.supplier_company.company_name_en|default_if_none:'N/A' }}</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司电话' %} </span>: {{ supplier_data.supplier_company.company_tel|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司邮箱' %} </span>: {{ supplier_data.supplier_company.email|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司税号' %} </span>: {{ supplier_data.supplier_company.tax_code|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司类型' %} </span>: {{ supplier_data.supplier_company.company_type.company_type_cn|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '开户行' %} </span>: {{ supplier_data.supplier_company.bank|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '银行账户' %} </span>: {{ supplier_data.supplier_company.bank_account|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '公司地址' %} </span>: {{ supplier_data.supplier_company.company_address|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '公司介绍' %} </span>: {{ supplier_data.supplier_company.desc|default_if_none:'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% if data %}
+        <section class="panel">
+             <header class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6"><p>{% trans '货物采购记录' %}</p></div>
+                    <div class="col-md-6" align="right"><b>{% trans '合计' %}: ¥ {{ total_cost|floatformat:'-2' }}</b></div>
+                    <div class="col-md-12" align="right"><p>{{ total_cost_cn }}</p></div>
+                </div>
+            </header>
+            <div class="panel-body bio-graph-info">
+                <section class="panel table-responsive">
+                    <div class="panel-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{% trans '订单日期' %}</th>
+                                    <th>{% trans '原料批次' %}</th>
+                                    <th>{% trans '数量' %}</th>
+                                    <th>{% trans '金额' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>{% for item in data %}
+                                <tr class="{% cycle '' 'active' %}">
+                                    <td>{{ item.material_in_date|date:"Y-m-d"  }}</td>
+                                    <td>{{ item.material_batch }}</td>
+                                    <td>{{ item.amount|floatformat:-3 }}</td>
+                                    <td>¥ {{ item.material_cost_link.money_in_out|floatformat:-2 }}</td>
+                                </tr>{% endfor %}
+                            </tbody>
+                        </table>
+                        <div align="right">
+                            {% include 'brewsql/tablenav.html' %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+        {% endif %}
+    </aside>
+</div>
+{% endblock %}

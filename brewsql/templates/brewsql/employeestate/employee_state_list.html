@@ -1,0 +1,52 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '员工状态管理' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>{% trans '员工状态中文' %}</th>
+                            <th>{% trans '员工状态英文' %}</th>{% if perms.brewsql.change_employeestate %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ d.pk }}</td>
+                            <td>{{ d.employee_state_cn }}</td>
+                            <td>{{ d.employee_state_en }}</td>{% if perms.brewsql.change_employeestate %}
+                            <td align="right"><a href="{% url 'brewsql:employee_s_update' d.pk %}?next={% url 'brewsql:employee_state_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-6">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans '添加员工状态' %}
+                <p>{{ form.non_field_errors }}</p>
+            </header>
+            <div class="panel-body">
+                <form method="post" action="{% url 'brewsql:employee_state_list' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12">{{ form.employee_state_cn }}{{ form.employee_state_cn.errors }}</div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12">{{ form.employee_state_en }}{{ form.employee_state_en.errors }}</div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="col-sm-12" align="right"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
+                    </div>
+                </form>
+            </div>
+      </section>
+    </div>
+</div>
+{% endblock %}

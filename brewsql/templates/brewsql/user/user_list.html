@@ -1,0 +1,85 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '用户管理' %}{% endblock %}
+{% block content %}
+<div class="row">{% if perms.brewsql.add_employee %}{% if user_num_left >= 1 %}
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans '添加用户' %}
+                {% if form.errors %}<p>{% trans "提交的数据有误,请认真检查!" %}</p>{% endif %}
+                {% if user_created %}<p>{% trans "用户创建成功,请妥善保存帐号和密码!" %}</p>{% endif %}
+                {% if user_exist %}<p>{% trans "用户名" %}{{ user_exist.username }}{% trans "已经存在!" %}</p>{% endif %}
+            </header>
+            <div class="panel-body">
+                <div class="col-lg-9">
+                <form class="form-inline" method="post" action="{% url 'brewsql:user_list' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">{% trans '用户名' %}:</span>
+                            <input type="text" name="username" required id="id_username" class="form-control">{{ form.username.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">{% trans '密码' %}:</span>
+                            <input type="password" name="password" required id="id_password" class="form-control">{{ form.password.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <button type="submit" class="btn btn-danger">{% trans "添加" %}</button>
+                        </div>
+                    </div>
+                </form>
+                </div>
+                <div class="col-lg-3" align="right">
+                    <a href="{% url 'brewsql:group_list' %}"><label class="btn btn-primary">{% trans '权限分组' %}</label></a>
+                </div>
+            </div>
+      </section>
+    </div>{% endif %}{% endif %}
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans 'No.' %}</th>
+                            <th>{% trans '用户名' %}</th>
+                            <th>{% trans '姓氏' %}</th>
+                            <th>{% trans '名字' %}</th>
+                            <th>{% trans '邮箱' %}</th>
+                            <th>{% trans '注册于' %}</th>
+                            <th>{% trans '最后登录' %}</th>
+                            <th>{% trans '有效' %}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in users_have %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href="">{{ d.username }}</a></td>
+                            <td>{{ d.last_name|default_if_none:"" }}</td>
+                            <td>{{ d.first_name|default_if_none:"" }}</td>
+                            <td>{{ d.email|default_if_none:"" }}</td>
+                            <td>{{ d.date_joined|date:"Y-m-d H:i:m" }}</td>
+                            <td>{{ d.last_login|date:"Y-m-d H:i:m" }}</td>{% if d.is_active %}
+                            <td><span class="label label-primary">{% trans '是' %}</span></td>{% else %}<td><span class="label label-danger">{% trans '否' %}</span></td>{% endif %}
+                            {% if perms.brewsql.change_employee %}
+                            <td align="right"><a href="{% url 'brewsql:user_update' d.pk %}?next={% url 'brewsql:user_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-12">
+    {% if user_num_left >= 1 %}
+        <h4 align="right">{% trans '您还可添加' %}{{ user_num_left }}{% trans '位用户' %}</h4>
+        {% else %}
+        <h4 align="right">{% trans '用户数已满, 请联系 gin@jkjx.cn 购买额外用户数。' %}</h4>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{{ brew.brew_batch_code }}{% endblock %}
+{% block navbartop %}{% endblock %}
+{% block navbarside %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-10">
+        <section class="panel">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6" align="left">{% trans '产品名称' %}: {{ brew.product_name.product_name_cn }}</div>
+                    <div class="col-md-6" align="left">{% trans '酿造批次' %}: {{ brew.brew_batch_code }}</div>
+                    <div class="col-md-6" align="left">{% trans '发酵罐号' %}: {{ brew.tank.tank_name }}</div>
+                    <div class="col-md-6" align="left">{% trans '开始日期' %}: {{ brew.date_start|date:"Y-m-d" }}</div>
+                </div>
+            </div>
+        </section>
+        <section class="panel">
+            <div class="panel-body text-center">
+                <div id="fermentation_data"></div>
+            </div>
+        </section>
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans '记录时间' %}</th>
+                            <th>{% trans '天数' %}</th>
+                            <th>{% trans '相对密度' %}</th>
+                            <th>{% trans '糖度' %}</th>
+                            <th>{% trans 'pH' %}</th>
+                            <th>{% trans '真实温度/设置温度' %}</th>
+                            <th>{% trans '压力' %}</th>
+                            <th>{% trans '酵母数' %}</th>
+                            <th>{% trans '备注' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{% for f in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ f.recorded|date:"Y-m-d H:i:s" }}</td>
+                            <td>{% if f.delta_days %}{{ f.delta_days }}{% else %}0{% endif %}</td>
+                            <td>{{ f.sg|default_if_none:'' }}</td>
+                            <td>{{ f.plato|default_if_none:'' }}</td>
+                            <td>{{ f.ph|default_if_none:'' }}</td>
+                            <td>{{ f.t_real|default_if_none:'' }} / {{ f.t_set|default_if_none:'' }}</td>
+                            <td>{{ f.bar|default_if_none:'' }}</td>
+                            <td>{{ f.cell_mml|default_if_none:'' }}</td>
+                            <td>{{ f.notes }}</td>
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+                <div align="right">
+                    {% include 'brewsql/tablenav.html' %}
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/assets/highcharts/highcharts.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/exporting.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/export-data.js' %}"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script language="JavaScript">
+    Highcharts.chart('fermentation_data', {
+        credits: {enabled: false},
+        chart: {type: 'spline'},
+        title: {text: '{% trans "发酵监控" %}'},
+        subtitle: {text: ''},
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: { // don't display the dummy year
+                hour: '%H:%M',
+                day: '%m-%d',
+                month: '%b \'%y',
+                },
+            title: {text: 'Date'}
+        },
+        yAxis: {
+            title: {text: 'Plato / pH / Temp(C)'},
+            min: -5,
+            max: 30
+        },
+        tooltip: {
+            headerFormat: '{point.x:%Y-%m-%d %H:%M}<br>',
+            pointFormat: '{series.name}: {point.y:.2f}'
+        },
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+        colors: ['#6CF', '#39F', '#06C', '#036', '#000'],
+        series: [{name: 'Plato', data: [{% for d in plato_data %}[Date.UTC({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.min }}), {{ d.data }}],{% endfor %}]
+         }, {name: 'pH', data: [{% for d in ph_data %}[Date.UTC({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.min }}), {{ d.data }}],{% endfor %}]
+         }, {name: 'Real T', data: [{% for d in t_real %}[Date.UTC({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.min }}), {{ d.data }}],{% endfor %}]
+         }, {name: 'Set T', data: [{% for d in t_set %}[Date.UTC({{ d.year }}, {{ d.month }}, {{ d.day }}, {{ d.hour }}, {{ d.min }}), {{ d.data }}],{% endfor %}]
+         }]
+        });
+</script>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '入库记录' %}{% endblock %}
+{% block this_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'flatlab/assets/bootstrap-datepicker/css/datepicker.css' %}">
+{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="panel-body">
+        <div class="col-md-9">
+            <form class="form-inline" role="form" method="get">
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '起始' %}:</span>
+                        <input type="date" name="s" class="form-control" value="{% if request.GET.s %}{{ request.GET.s }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '截止' %}:</span>
+                        <input type="date" name="e" class="form-control" value="{% if request.GET.e %}{{ request.GET.e }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="q" placeholder="" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                        <span class="input-group-btn"><button class="btn btn-primary" type="submit">{% trans '搜索' %}</button></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3" align="right">{% if perms.brewsql.view_product %}
+            <a href="{% url 'brewsql:product_inventory' %}"><button type="button" class="btn btn-primary">{% trans "产品库存" %}</button></a>{% endif %}{% if perms.brewsql.add_pack %}
+            <a href="{% url 'brewsql:add_pack' %}?next={% url 'brewsql:pack_list' %}"><button type="button" class="btn btn-success">{% trans "产品入库" %}</button></a>{% endif %}
+        </div>
+    </div>
+</section>
+{% get_current_language as LANGUAGE_CODE %}
+<section class="panel">
+    <div class="panel-body table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>{% trans '入库日期' %}</th>
+                    <th>{% trans '天数' %}</th>
+                    <th>{% trans '灌装批号' %}</th>
+                    <th>{% trans '产品名称/规格' %}</th>
+                    <th>{% trans '数量' %}</th>
+                    <th>{% trans '剩余' %}</th>
+                    <th>{% trans '备注' %}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>{% for d in data %}
+                <tr class="{% cycle '' 'active' %} {% if not d.state %}is-not-active{% endif %}" valign="middle">
+                    <td>{{ d.pk }}</td>
+                    <td>{{ d.pack_date|date:"Y-m-d" }}</td>
+                    <td>{{ d.delta_days }} {% trans '天' %}</td>
+                    <th>{{ d.pack_batch_code }}</th>
+                    <td>[{{ d.product.product_code }}] {{ d.product.product_name.product_name_cn }} ({{ d.product.product_pack.product_pack_size_unit_cn }})</td>
+                    <td><span class="label label-success">{{ d.pack_num }}</span></td>
+                    <td><span class="label label-danger">{{ d.pack_num_left }}</span></td>
+                    <td>{{ d.notes }}</td>
+                    <td align="right">{% if perms.brewsql.view_report %}<a href=""><button class="btn btn-primary btn-xs"><i class="fa fa-file-text"></i></button></a>{% endif %} {% if perms.brewsql.change_pack %}
+                    <a href="{% url 'brewsql:pack_update' d.pk %}?next={% url 'brewsql:pack_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}</td>
+                </tr>{% endfor %}
+            </tbody>
+        </table>{% if perms.brewsql.can_export_pack_data %}
+        <div align="right">
+            <a data-toggle="modal" href="#data_export"><span class="btn btn-default btn-sm">{% trans '导出数据' %}</span></a>
+            <div align="left" class="modal fade " id="data_export" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">{% trans '导出数据' %}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>{% trans '请确认是否要导出灌装批次数据！' %}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                            <a href="{% url 'brewsql-api:pack-xls' %}?s={{ request.GET.s }}&e={{ request.GET.e }}"><button class="btn btn-success" type="submit">{% trans '确认' %}</button></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>{% endif %}
+    </div>
+</section>
+<div align="right">
+    {% include 'brewsql/tablenav.html' %}
+</div>
+<div class="clearfix"></div>
+<section class="row">
+    <div class="col-md-5">
+        <section class="panel">
+            <div class="panel-body text-center">
+                <div id="pie"></div>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-7">
+        <section class="panel">
+            <div class="panel-body text-center">
+                <div id="column"></div>
+            </div>
+        </section>
+    </div>
+</section>
+{% endblock %}
+{% block this_js %}
+<script type="text/javascript" src="{% static 'flatlab/assets/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/highcharts.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/exporting.js' %}"></script>
+<script src="{% static 'flatlab/assets/highcharts/modules/export-data.js' %}"></script>
+<script language="JavaScript">
+Highcharts.chart('pie', {
+    chart: {plotBackgroundColor: null, plotBorderWidth: null, plotShadow: false},
+    title: {text: '{% trans "产品生产比例" %}'},
+    xAxis: {categories: {{ column_data_c|safe }},crosshair: true, labels: {rotation: 15}},
+    yAxis: {min: 0, title: {text: '{% trans "生产数量" %}'}},
+    tooltip: {pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'},
+    plotOptions: {pie: {allowPointSelect: true, cursor: 'pointer', dataLabels: {enabled: false}, showInLegend: true}},
+    credits : {enabled: false},
+    series: [{type: 'pie', name: '{% trans "产品比例" %}', data: {{ pie_data|safe }}}]
+});
+</script>
+<script language="JavaScript">
+Highcharts.chart('column', {
+    chart: {type: 'column'},
+    title: {text: '{% trans "产品生产数量统计" %}'},
+    xAxis: {categories: {{ column_data_c|safe }},crosshair: true, labels: {rotation: 15}},
+    yAxis: {min: 0, title: {text: '{% trans "生产数量" %}'}},
+    tooltip: {
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y}</b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {column: {pointPadding: 0.2, borderWidth: 0}},
+    credits : {enabled: false},
+    series: {{ column_data_s|safe }}
+});
+</script>
+{% endblock %}

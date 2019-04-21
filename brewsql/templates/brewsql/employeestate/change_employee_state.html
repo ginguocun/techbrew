@@ -1,0 +1,40 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '员工状态更新' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-offset-3 col-lg-6">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "员工状态更新" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post">{% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-lg-4 control-label">{{ form.employee_state_cn.label_tag }}</div>
+                        <div class="col-lg-8">
+                            {{ form.employee_state_cn }}
+                            <p class="help-block">{{ form.employee_state_cn.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-4 control-label">{{ form.employee_state_en.label_tag }}</div>
+                        <div class="col-lg-8">
+                            {{ form.employee_state_en }}
+                            <p class="help-block">{{ form.employee_state_en.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

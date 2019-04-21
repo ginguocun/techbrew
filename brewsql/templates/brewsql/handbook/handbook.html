@@ -1,0 +1,40 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '使用说明' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-9">
+        {% for d in data %}
+            <div class="panel-group" id="tab_{{ d.pk }}">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="#accordion_{{ d.pk }}" data-toggle="collapse" class="accordion-toggle">
+                              {{ d.chapter }}. {{ d.chapter_name_cn }}
+                            </a>
+                            {% if perms.brewsql.change_handbook %}
+                            <a href="{% url 'brewsql:change_handbook' d.pk %}">
+                                <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                            </a>
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="panel-collapse collapse" id="accordion_{{ d.pk }}">
+                        <div class="panel-body">
+                            {{ d.chapter_content_cn|safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-lg-3">
+        <ul class="vertical-menu">
+            {% for d in data %}
+            <li><a href="#tab_{{ d.pk }}" data-toggle="tab"><span class="label label-primary">{{ d.chapter }}</span>  {{ d.chapter_name_cn }}</a></li>
+            {% endfor %}{% if perms.brewsql.add_handbook %}
+            <li><a href="{% url 'brewsql:add_handbook' %}"><i class="fa fa-plus"></i>  {% trans '添加' %}</a></li>{% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

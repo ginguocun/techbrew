@@ -1,0 +1,52 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '发酵罐' %}{% endblock %}
+{% block content %}
+<div class="row">{% if perms.brewsql.add_brew %}
+    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_brew %}
+        <a href="{% url 'brewsql:add_brew' %}?next={% url 'brewsql:tank_list' %}"><button type="button" class="btn btn-primary">{% trans "新建批次" %}</button></a>{% endif %}{% if perms.brewsql.change_tank %}
+        <a href="{% url 'brewsql:tank_update' %}?next={% url 'brewsql:tank_list' %}"><button type="button" class="btn btn-danger">{% trans "更新状态" %}</button></a>{% endif %}{% if perms.brewsql.add_fermentmonitor %}
+        <a href="{% url 'brewsql:new_ferment_record' %}?next={% url 'brewsql:tank_list' %}"><button type="button" class="btn btn-success">{% trans "记录数据" %}</button></a>{% endif %}
+    </div>{% endif %}
+    {% get_current_language as LANGUAGE_CODE %}
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans '发酵罐' %}</th>
+                            <th>{% trans '测量/设置温度' %}</th>
+                            <th>{% trans '啤酒名称' %}</th>
+                            <th>{% trans '生产批次' %}</th>
+                            <th>{% trans '容量' %}</th>
+                            <th>{% trans '状态' %}</th>
+                            <th>{% trans '入罐日期' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ d.tank_name }}</td>
+                            <td>{{ d.jkm_t_real|default_if_none:'N/A' }}/{{ d.jkm_t_set|default_if_none:'N/A'  }}</td>{% if LANGUAGE_CODE == 'en'%}
+                            <td>{{ d.current_brew.product_name.product_name_en|default_if_none:"" }}</td>{% else %}
+                            <td>{{ d.current_brew.product_name.product_name_cn|default_if_none:"" }}</td>{% endif %}
+                            <th>{% if perms.brewsql.view_brew %}
+                                    {% if d.current_brew %}<a href="{% url 'brewsql:brew_detail' d.current_brew.pk %}" target="_blank">{{ d.current_brew_code|default_if_none:"" }}</a>{% endif %}
+                                {% else %}
+                                    {{ d.current_brew_code|default_if_none:"" }}
+                                {% endif %}
+                            </th>
+                            <td>{{ d.tank_standard_volume }} L</td>
+                            <td>{{ d.tank_state|default_if_none:"" }}</td>
+                            <td>{{ d.current_brew.date_start|date:"Y-m-d" }}</td>
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div align="right">
+            {% include 'brewsql/tablenav.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '添加供应商' %}{% endblock %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "添加供应商" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="{% url 'brewsql:add_supplier' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    {% if request.user.is_authenticated %}
+                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    {% endif %}
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.supplier_company.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.supplier_company }}
+                            <p class="help-block">{{ form.supplier_company.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.name.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.name }}
+                            <p class="help-block">{{ form.name.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.gender.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.gender }}
+                            <p class="help-block">{{ form.gender.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.email.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.email }}
+                            <p class="help-block">{{ form.email.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.mobile.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.mobile }}
+                            <p class="help-block">{{ form.mobile.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.wechat.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.wechat }}
+                            <p class="help-block">{{ form.wechat.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.desc.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.desc }}
+                            <p class="help-block">{{ form.desc.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.is_active.label_tag }}</div>
+                        <div class="col-lg-10">
+                            <div class="switch switch-square"
+                                data-on-label="<i class=' fa fa-check'></i>"
+                                data-off-label="<i class='fa fa-times'></i>">
+                                {{ form.is_active }}
+                            </div>
+                            <p class="help-block">{{ form.is_active.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-2">
+        <section class="panel">
+            {% if perms.brewsql.add_company %}
+            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:add_company' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加公司' %}</a></button>{% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+<script src="{% static 'flatlab/js/bootstrap-switch.js' %}"></script>
+{% endblock %}

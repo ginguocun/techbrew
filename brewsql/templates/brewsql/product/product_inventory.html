@@ -1,0 +1,103 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n own_tag %}
+{% block title %}{% trans '产品库存' %}{% endblock %}
+{% block content %}{% get_current_language as LANGUAGE_CODE %}
+<div class="row">
+    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.change_product %}
+        <a href="{% url 'brewsql:product_list' %}"><button type="button" class="btn btn-primary">{% trans "产品管理" %}</button></a>{% endif %}{% if perms.brewsql.add_pack %}
+        <a href="{% url 'brewsql:add_pack' %}?next={% url 'brewsql:product_inventory' %}"><button type="button" class="btn btn-success">{% trans "产品入库" %}</button></a>{% endif %}
+    </div>
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <header class="panel-heading">
+                {% trans '产品库存汇总' %}
+            </header>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans '产品编号' %}</th>
+                            <th>{% trans '图片' %}</th>
+                            <th>{% trans '名称/规格' %}</th>
+                            <th>{% trans '排序系数' %}</th>
+                            <th>{% trans '产品类型' %}</th>
+                            <th>{% trans '产品归类' %}</th>
+                            <th>{% trans '酒吧报价' %}</th>
+                            <th>{% trans '生产总量' %}</th>
+                            <th>{% trans '销售总量' %}</th>
+                            <th>{% trans '产品库存' %}</th>
+                            <th>{% trans '生产次数' %}</th>
+                            <th>{% trans '销售次数' %}</th>
+                            <th>{% trans '销售总额' %}</th>{% if perms.brewsql.change_product %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in t1 %}{% if d.product_left_sum > 0 %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <th>{{ d.product_code }}</th>
+                            <td>{% if d.image %}<a href="{{ d.image|qiniu }}"><img src="{{ d.image|qiniu }}" height="50"></a>{% endif %}</td>
+                            <td>{{ d.product_name.product_name_cn }}<br>{{ d.product_pack.product_pack_size_unit_cn }}</td>
+                            <td><span class="label label-default">{{ d.index }}</span></td>
+                            <td>{{ d.product_name.product_type.product_type_name_cn }}</td>
+                            <td>{% if d.product_category %}{% for c in d.product_category.all %} <label class="badge bg-default %}">{{ c.product_category_cn }}</label> <br>{% endfor %}{% endif %}</td>
+                            <td>¥ {{ d.bar_price }}</td>
+                            <td><span class="label label-success">{{ d.product_pack_sum|default_if_none:0 }}</span></td>
+                            <td><span class="label label-warning">{{ d.product_sale_sum|default_if_none:0 }}</span></td>
+                            <td><span class="label label-danger">{{ d.product_left_sum }}</span></td>
+                            <td>{{ d.product_pack_count|default_if_none:0 }}</td>
+                            <td>{{ d.product_sale_count|default_if_none:0 }}</td>
+                            <td>¥ {{ d.product_sale_price|default_if_none:0 }}</td>{% if perms.brewsql.change_product %}
+                            <td align="right"><a href="{% url 'brewsql:product_update' d.pk %}?next={% url 'brewsql:product_inventory' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                        </tr>{% endif %}{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <header class="panel-heading">
+                {% trans '可出库批次' %}
+            </header>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans '灌装批号' %}</th>
+                            <th>{% trans '产品库存' %}</th>
+                            <th>{% trans '产品编号' %}</th>
+                            <th>{% trans '产品名称' %}</th>
+                            <th>{% trans '产品规格' %}</th>
+                            <th>{% trans '生产总量' %}</th>
+                            <th>{% trans '出库次数' %}</th>
+                            <th>{% trans '销售总额' %}</th>
+                            <th>{% trans '操作员' %}</th>
+                            <th>{% trans '入库日期' %}</th>
+                            <th>{% trans '天数' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in t2 %}{% if d.pack_num_left > 0 %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <th>{{ d.pack_batch_code }}</th>
+                            <td><span class="label label-danger">{{ d.pack_num_left }}</span></td>
+                            <td>{{ d.product.product_code }}</td>{% if LANGUAGE_CODE == 'en'%}
+                            <td>{{ d.product.product_name.product_name_en }}</td>
+                            <td>{{ d.product.product_pack.product_pack_size_unit_en }}</td>{% else %}
+                            <td>{{ d.product.product_name.product_name_cn }}</td>
+                            <td>{{ d.product.product_pack.product_pack_size_unit_cn }}</td>{% endif %}
+                            <td><span class="label label-success">{{ d.pack_num }}</span></td>
+                            <td>{{ d.pack_sale_count }}</td>
+                            <td>¥ {{ d.pack_sale_price|default_if_none:0 }}</td>
+                            <td>{{ d.employee }}</td>
+                            <td>{{ d.pack_date|date:"Y-m-d" }}</td>
+                            <td>{{ d.delta_days }} {% trans '天' %}</td>
+                        </tr>{% endif %}{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

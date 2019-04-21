@@ -1,0 +1,99 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '原料出库' %}{% endblock %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "原料出库" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+                <p>{{ error_msg }}</p>
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="{% url 'brewsql:add_material_out' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    {% if request.user.is_authenticated %}
+                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    {% endif %}
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.brew.label_tag }}</div>
+                        <div class="col-lg-10">
+                            <select name="brew" class="selectpicker show-tick form-control" data-live-search="true" id="id_brew" required="">
+                                <option value="">---------</option>
+                                {% if request.GET.brew_id %}
+                                    {% for brew in brews %}
+                                        {% if request.GET.brew_id|floatformat:'0' == brew.pk|floatformat:'0' %}
+                                            <option value="{{ brew.pk }}" selected="selected">{{ brew }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% for brew in brews %}
+                                        <option value="{{ brew.pk }}">{{ brew }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                            <p class="help-block">{{ form.brew.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.material_batch.label_tag }}</div>
+                        <div class="col-lg-10">
+                            <select name="material_batch" class="selectpicker show-tick form-control" data-live-search="true" id="id_material_batch" required="">
+                                <option value="" selected="">---------</option>
+                                {% for bb in material_batches %}{% if bb.material_batch_total_left > 0 %}
+                                    <option value="{{ bb.pk }}">{{ bb }} </option>{% endif %}
+                                {% endfor %}
+                            </select>
+                            <p class="help-block">{{ form.material_in.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.material_out_date.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.material_out_date }}
+                            <p class="help-block">{{ form.material_out_date.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.amount.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.amount }}
+                            <p class="help-block">{{ form.amount.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.recorder.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.recorder }}
+                            <p class="help-block">{{ form.recorder.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.notes.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.notes }}
+                            <p class="help-block">{{ form.notes.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-2">
+        <section class="panel">{% if perms.brewsql.add_employee %}
+            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加记录人员' %}</a></button>{% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+{% endblock %}

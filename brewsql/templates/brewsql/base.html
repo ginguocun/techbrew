@@ -1,0 +1,72 @@
+<!DOCTYPE html>{% load i18n static staticfiles %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="Guoqun Jin">
+        <meta name="keyword" content="TechBrew, brewery">
+        <link rel="shortcut icon" href="{% static 'flatlab/favicon.ico' %}">
+        <title>{% block title %}TechBrew{% endblock %}</title>
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'flatlab/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'flatlab/css/bootstrap-reset.css' %}">
+        <!--external css-->
+        <link rel="stylesheet" type="text/css" href="{% static 'flatlab/assets/font-awesome/css/font-awesome.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'flatlab/css/owl.carousel.css' %}">
+        <!--right slidebar-->
+        <link rel="stylesheet" type="text/css" href="{% static 'flatlab/css/slidebars.css' %}">
+        <!-- Custom styles for this template -->
+        <link rel="stylesheet" type="text/css" href="{% static 'flatlab/css/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'flatlab/css/style-responsive.css' %}">
+        {% block this_css %}{% endblock %}
+    </head>
+    <body>
+        <section id="container" >
+            <!--header start-->
+            {% block navbartop %}{% include 'brewsql/navbartop.html' %}{% endblock %}
+            <!--header end-->
+            <!--sidebar start-->
+            {% block navbarside %}{% include 'brewsql/navbarside.html' %}{% endblock %}
+            <!--sidebar end-->
+            <!--main content start-->
+            <section id="main-content">
+                <section class="wrapper">
+                    {% block content %}{% endblock %}
+                </section>
+            </section>
+            {% block footer %}{% include 'brewsql/footer.html' %}{% endblock %}
+            <!--main content end-->
+        </section>
+        <!-- js placed at the end of the document so the pages load faster -->
+        <script type="text/javascript" src="{% static 'flatlab/js/jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'flatlab/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'flatlab/js/jquery.cookie.js' %}"></script>
+        <script type="text/javascript" class="include" src="{% static 'flatlab/js/jquery.dcjqaccordion.2.7.js' %}"></script>
+        <script type="text/javascript" src="{% static 'flatlab/js/jquery.scrollTo.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'flatlab/js/jquery.nicescroll.js' %}"></script>
+        <script type="text/javascript" src="{% static 'flatlab/js/owl.carousel.js' %}"></script>
+        <script type="text/javascript" src="{% static 'flatlab/js/jquery.customSelect.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'flatlab/js/respond.min.js' %}"></script>
+
+        <!--common script for all pages-->
+        <script type="text/javascript" src="{% static 'flatlab/js/common-scripts.js' %}"></script>
+
+        <!--script for this page-->
+        <script  type="text/javascript">
+            $(document).ready(function(){
+                $("#owl-brewsql").owlCarousel({
+                  navigation : true,
+                  slideSpeed : 300,
+                  paginationSpeed : 400,
+                  singleItem : true,
+                  autoPlay:true
+                });
+            });
+            $(function(){
+              $('select.styled').customSelect();
+            });
+        </script>
+        {% block this_js %}{% endblock %}
+    </body>
+</html>

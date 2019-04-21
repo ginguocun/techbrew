@@ -1,0 +1,139 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '客户详情' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <aside class="profile-nav col-lg-4">
+        <section class="panel">
+            <div class="user-heading round">
+                {% if client_data.avatar %}
+                <a href="{{ client_data.avatar }}">
+                    <img src="{{ client_data.avatar }}" alt="avatar">
+                </a>
+                {% endif %}
+                <h1>{{ client_data.name }}</h1>
+                <p>{{ client_data.email }}</p>
+            </div>
+            <ul class="nav nav-pills nav-stacked">
+                <!--<li class="active"><a href="profile.html"> <i class="fa fa-user"></i> Profile</a></li>-->
+                <!--<li><a href="profile-activity.html"> <i class="fa fa-calendar"></i> Recent Activity <span class="label label-danger pull-right r-activity">9</span></a></li>-->
+                {% if perms.brewsql.change_client and client_data %}
+                <li><a href="{% url 'brewsql:client_update' client_data.pk %}?next={% url 'brewsql:client_detail' client_data.pk %}"> <i class="fa fa-edit"></i>{% trans "编辑资料" %}</a></li>{% endif %}
+            </ul>
+        </section>
+        <section class="panel">
+            <div class="panel-heading">
+                {% trans '客户信息' %}
+            </div>
+            <div class="panel-body bio-graph-info">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p><span>{% trans '姓名' %} </span>: {{ client_data.name|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '昵称' %} </span>: {{ client_data.nickname|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '性别' %} </span>: {{ client_data.get_gender_display|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '手机' %} </span>: {{ client_data.mobile|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>Email </span>: {{ client_data.email|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '微信' %} </span>: {{ client_data.wechat|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '介绍' %} </span>: {{ client_data.desc|default_if_none:'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </aside>
+    <aside class="profile-info col-lg-8">
+        <section class="panel">
+            <div class="panel-body bio-graph-info">
+                <h1>{% trans '公司信息' %}</h1>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司名称' %} </span>: {{ client_data.client_company.company_name_cn|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司英文名' %} </span>: {{ client_data.client_company.company_name_en|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司电话' %} </span>: {{ client_data.client_company.company_tel|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司邮箱' %} </span>: {{ client_data.client_company.email|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司税号' %} </span>: {{ client_data.client_company.tax_code|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '公司类型' %} </span>: {{ client_data.client_company.company_type.company_type_cn|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '开户行' %} </span>: {{ client_data.client_company.bank|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><span>{% trans '银行账户' %} </span>: {{ client_data.client_company.bank_account|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '公司地址' %} </span>: {{ client_data.client_company.company_address|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '公司介绍' %} </span>: {{ client_data.client_company.desc|default_if_none:'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% if data %}
+        <section class="panel">
+            <header class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6"><p>{% trans '客户采购记录' %}</p></div>
+                    <div class="col-md-6" align="right"><b>{% trans '合计' %}: ¥ {{ total_income|floatformat:'-2' }}</b></div>
+                    <div class="col-md-12" align="right"><p>{{ total_income_cn }}</p></div>
+                </div>
+            </header>
+            <div class="panel-body bio-graph-info">
+                <section class="panel table-responsive">
+                    <div class="panel-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{% trans '订单日期' %}</th>
+                                    <th>{% trans '单号' %}</th>
+                                    <th>{% trans '产品' %}</th>
+                                    <th>{% trans '数量' %}</th>
+                                    <th>{% trans '金额' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>{% for item in data %}
+                                <tr class="{% cycle '' 'active' %}">
+                                    <th>{{ item.sale_date|date:"Y-m-d"  }}</th>
+                                    <td>{% if perms.brewsql.view_saleorder %}
+                                        <a href="{% url 'brewsql:sale_order_detail' item.sale_order.pk %}">{{ item.sale_order }}</a>
+                                        {% else %}
+                                        {{ item.sale_order }}{% endif %}
+                                    </td>
+                                    <td>{{ item.pack.product }}</td>
+                                    <td>{{ item.sale_num }}</td>
+                                    <th>¥ {{ item.sale_price }}</th>
+                                </tr>{% endfor %}
+                            </tbody>
+                        </table>
+                        <div align="right">
+                            {% include 'brewsql/tablenav.html' %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+        {% endif %}
+    </aside>
+</div>
+{% endblock %}

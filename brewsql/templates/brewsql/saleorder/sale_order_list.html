@@ -1,0 +1,255 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '销售订单' %}{% endblock %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/table-responsive.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="panel-body">
+        <div class="col-lg-11">
+            <form class="form-inline" role="form" method="get">
+                <div class="form-group">
+                    <select name="c" class="selectpicker show-tick form-control" data-live-search='true'>
+                        <option value="">{% trans '所有' %}</option>{% if request.GET.c == '1' %}
+                        <option value="1" selected>{% trans '待发货' %}</option>{% else %}
+                        <option value="1">{% trans '待出库' %}</option>{% endif %}{% if request.GET.c == '2' %}
+                        <option value="2" selected>{% trans '已发货' %}</option>{% else %}
+                        <option value="2">{% trans '已出库' %}</option>{% endif %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select name="d" class="selectpicker show-tick form-control" data-live-search='true'>
+                        <option value="">{% trans '所有' %}</option>{% if request.GET.d == '1' %}
+                        <option value="1" selected>{% trans '待收款' %}</option>{% else %}
+                        <option value="1">{% trans '待收款' %}</option>{% endif %}{% if request.GET.d == '2' %}
+                        <option value="2" selected>{% trans '已收款' %}</option>{% else %}
+                        <option value="2">{% trans '已收款' %}</option>{% endif %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '起始' %}:</span>
+                        <input type="date" name="s" class="form-control" value="{% if request.GET.s %}{{ request.GET.s }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon">{% trans '截止' %}:</span>
+                        <input type="date" name="e" class="form-control" value="{% if request.GET.e %}{{ request.GET.e }}{% endif %}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="q" placeholder="" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                        <span class="input-group-btn"><button class="btn btn-primary" type="submit">{% trans '搜索' %}</button></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-1" align="right">
+            {% if perms.brewsql.add_saleorder %}
+            <a href="{% url 'brewsql:add_saleorder' %}?next={% url 'brewsql:sale_order_list' %}"><button type="button" class="btn btn-danger">{% trans "创建订单" %}</button></a>{% endif %}
+        </div>
+    </div>
+</section>
+{% for d in data %}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <a href="#accordion0_{{ d.pk }}" data-toggle="collapse" class="accordion-toggle">
+                <div class="row">
+                    <div class="col-md-3">{% trans '订单编号' %}: {{ d.sale_order_code|default_if_none:'N/A' }}</div>
+                    <div class="col-md-3">{% trans '订单金额' %}: ¥ {{ d.total_price|floatformat:"-2" }}</div>
+                    <div class="col-md-2">{% trans '订单日期' %}: {{ d.sale_order_date|date:"Y-m-d" }}</div>
+                    <div class="col-md-2">{% trans '销售员' %}: {{ d.employee }}</div>
+                    <div class="col-md-2" align="right">
+                        {% if perms.brewsql.confirm_sale and not d.is_delivered %}
+                        <a data-toggle="modal" href="#saleOrderDeliver_{{ d.pk }}"><label class="btn btn-primary">{% trans '发货' %}</label></a>
+                        <div class="modal fade " id="saleOrderDeliver_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" align="left">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'brewsql:sale_order_good_deliver' %}">{% csrf_token %}
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">{% trans '请确认发货' %}</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{% trans '单号' %}：{{ d.sale_order_code|default_if_none:'N/A' }}</p>
+                                            <p>{% trans '日期' %}：{{ d.sale_order_date|date:"Y-m-d" }}</p>
+                                            <p>{% trans '货物' %}：</p>
+                                            {% if d.product_items %}{% for i in d.product_items %}
+                                            <p>
+                                                {{ forloop.counter }}. {{ i.pack.pack_batch_code }} {{ i.pack.product.product_name }} {{ i.pack.product.product_pack }} * {{ i.sale_num }}
+                                            </p>
+                                            {% endfor %}{% endif %}
+                                            <input type="hidden" name="sale_order_id" value="{{ d.pk }}">
+                                            <input type="hidden" name="next" value="{% url 'brewsql:sale_order_list' %}?c=1">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                                            <button class="btn btn-success" type="submit">{% trans '确认' %}</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if perms.brewsql.confirm_fee_receive and not d.fee_received %}
+                        <a data-toggle="modal" href="#saleOrderPay_{{ d.pk }}"><label class="btn btn-warning">{% trans '收款' %}</label></a>
+                        <div class="modal fade " id="saleOrderPay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" align="left">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'brewsql:sale_order_fee_receive' %}">{% csrf_token %}
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">{% trans '请确认收款' %}</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>{% trans '单号' %}：{{ d.sale_order_code|default_if_none:'N/A' }}</p>
+                                            <p>{% trans '日期' %}：{{ d.sale_order_date|date:"Y-m-d" }}</p>
+                                            <p>{% trans '合计' %}：¥ {{ d.total_price|floatformat:"-2" }}</p>
+                                            <p>{% trans '货物' %}：</p>
+                                            {% if d.product_items %}{% for i in d.product_items %}
+                                            <p>
+                                                {{ forloop.counter }}. {{ i.pack.product.product_name }} {{ i.pack.product.product_pack }} * {{ i.sale_num }} = ¥ {{ i.sale_price }}
+                                            </p>
+                                            {% endfor %}{% endif %}
+                                            <input type="hidden" name="sale_order_id" value="{{ d.pk }}">
+                                            <input type="hidden" name="next" value="{% url 'brewsql:sale_order_list' %}?d=1">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                                            <button class="btn btn-success" type="submit">{% trans '确认' %}</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <a href="{% url 'brewsql:sale_order_detail' d.pk %}"><label class="btn btn-info"><i class="fa fa-home"></i></label></a>
+                    </div>
+                </div>
+            </a>
+        </h4>
+    </div>
+    <div class="panel-collapse collapse in" id="accordion0_{{ d.pk }}">
+        <div class="panel-body">
+            <div class="col-md-9">
+                <table frame=void>
+                    <tbody>
+                        <tr><td>{% trans '客户' %}: {{ d.client.name|default_if_none:'N/A' }}</td><td>{% trans '手机' %}: {{ d.client.mobile|default_if_none:'N/A' }}</td></tr>
+                        <tr><td colspan="2">{% trans '公司' %}: {{ d.client.client_company.company_name_cn|default_if_none:'N/A' }}</td></tr>
+                        <tr><td colspan="2">{% trans '地址' %}: {{ d.client.client_company.company_address|default_if_none:'N/A' }}</td></tr>
+                        <tr><td colspan="2">{% trans '备注' %}: {{ d.notes|default_if_none:'' }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3" align="right">
+                {% if not d.is_delivered and perms.brewsql.add_sale %}
+                <a href="{% url 'brewsql:add_sale' %}?next={% url 'brewsql:sale_order_list' %}&sale_order_id={{ d.pk }}">
+                     <button type="button" class="btn btn-shadow btn-primary btn-sm"><i class="fa fa-plus"></i> {% trans '添加商品' %}</button>
+                </a>
+                {% endif %}
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-md-12">
+                <section id="flip-scroll">
+                    <table class="table table-striped table-condensed cf">
+                        <thead class="cf">
+                            <tr>
+                                <th>#</th>
+                                <th>{% trans '编号' %}</th>
+                                <th>{% trans '产品名称' %}</th>
+                                <th>{% trans '产品规格' %}</th>
+                                <th>{% trans '灌装批次' %}</th>
+                                <th>{% trans '数量' %}</th>
+                                <th>{% trans '小计' %}</th>
+                                <th>{% trans '已出库' %}</th>
+                                <th>{% trans '已收款' %}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>{% if d.product_items %}{% for i in d.product_items %}
+                            <tr class="{% if not i.is_active %}is-not-active{% endif %}">
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ i.pack.product.product_code }}</td>
+                                <td>{{ i.pack.product.product_name }}</td>
+                                <td>{{ i.pack.product.product_pack }}</td>
+                                <td>{{ i.pack.pack_batch_code }}</td>
+                                <td>{{ i.sale_num }}</td>
+                                <td>¥ {{ i.sale_price }}</td>
+                                <td>{% if i.is_confirmed %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
+                                <td>{% if i.fee_received %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
+                                <td align="right">
+                                    {% if not i.is_confirmed and perms.brewsql.confirm_sale %}
+                                    <a data-toggle="modal" href="#myModal_{{ i.pk }}"><button class="btn btn-warning btn-xs"><i class="fa fa-sign-out"></i></button></a>
+                                    <div align="left" class="modal fade " id="myModal_{{ i.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" action="{% url 'brewsql:sale_confirm' %}">{% csrf_token %}
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                        <h4 class="modal-title">{% trans '请确认发货' %}</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>{% trans '单号' %}：{{ i.sale_order.sale_order_code|default_if_none:'N/A' }}</p>
+                                                        <p>{% trans '产品' %}：[{{ i.pack.product.product_code }}] {{ i.pack.product.product_name.product_name_cn }} ({{ i.pack.product.product_pack.product_pack_size_unit_cn }})</p>
+                                                        <p>{% trans '数量' %}：{{ i.sale_num }}</p>
+                                                            <input type="hidden" name="sale_id" value="{{ i.pk }}">
+                                                            <input type="hidden" name="next" value="{% url 'brewsql:sale_order_list' %}?c=1">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                                                        <button class="btn btn-success" type="submit">{% trans '确认' %}</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% if not i.fee_received and perms.brewsql.confirm_fee_receive %}
+                                    <a data-toggle="modal" href="#salePay_{{ i.pk }}"><button class="btn btn-danger btn-xs"><i class="fa fa-money"></i></button></a>
+                                    <div align="left" class="modal fade " id="salePay_{{ i.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" action="{% url 'brewsql:sale_pay' %}">{% csrf_token %}
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                        <h4 class="modal-title">{% trans '请确认收款' %}</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>{% trans '单号' %}：{{ i.sale_order.sale_order_code|default_if_none:'N/A' }}</p>
+                                                        <p>{% trans '产品' %}：[{{ i.pack.product.product_code }}] {{ i.pack.product.product_name.product_name_cn }} ({{ i.pack.product.product_pack.product_pack_size_unit_cn }})</p>
+                                                        <p>{% trans '数量' %}：{{ i.sale_num }}</p>
+                                                        <p>{% trans '金额' %}：¥ {{ i.sale_price }}</p>
+                                                        <input type="hidden" name="sale_id" value="{{ i.pk }}">
+                                                        <input type="hidden" name="next" value="{% url 'brewsql:sale_order_list' %}?d=1">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                                                        <button class="btn btn-success" type="submit">{% trans '确认' %}</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}{% endif %}
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+            <div class="col-md-12" align="right">
+                {% trans '合计' %}：{{ d.total_price }} 元
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<div align="right">
+    {% include 'brewsql/tablenav.html' %}
+</div>
+{% endblock %}

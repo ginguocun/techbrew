@@ -1,0 +1,346 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '添加糖化记录' %}{% endblock %}
+{% block this_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'flatlab/css/bootstrap-select.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'flatlab/assets/bootstrap-datepicker/css/datepicker.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'flatlab/assets/bootstrap-timepicker/compiled/timepicker.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'flatlab/assets/bootstrap-datetimepicker/css/datetimepicker.css' %}">
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "添加糖化记录" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal tasi-form" method="post" action="{% url 'brewsql:add_brewmonitor' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    {% if request.user.is_authenticated %}
+                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="panel red-background">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <div class="col-md-3 control-label">{{ form.brew_date.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            {{ form.brew_date }}
+                                            <p class="help-block">{{ form.brew_date.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group last">
+                                        <div class="col-md-3 control-label">{{ form.brewer.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            {{ form.brewer }}
+                                            <p class="help-block">{{ form.brewer.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3 control-label">{{ form.brew.label_tag }}</div>
+                                        <div class="col-md-9">
+                                            {{ form.brew }}
+                                            <p class="help-block">{{ form.brew.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3 control-label">{{ form.brew_monitor_code.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            {{ form.brew_monitor_code }}
+                                            <p class="help-block">{{ form.brew_monitor_code.errors }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3 control-label">{{ form.batch_volume.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.batch_volume }}
+                                    <p class="help-block">{{ form.batch_volume.errors }}</p>
+                                </div>
+                                <div class="col-md-3 control-label">{{ form.mash_volume.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.mash_volume }}
+                                    <p class="help-block">{{ form.mash_volume.errors }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3 control-label">{{ form.initial_water.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.initial_water }}
+                                    <p class="help-block">{{ form.initial_water.errors }}</p>
+                                </div>
+                                <div class="col-md-3 control-label">{{ form.initial_tem.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.initial_tem }}
+                                    <p class="help-block">{{ form.initial_tem.errors }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3 control-label">{{ form.sparge_water.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.sparge_water }}
+                                    <p class="help-block">{{ form.sparge_water.errors }}</p>
+                                </div>
+                                <div class="col-md-3 control-label">{{ form.sparge_tem.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.sparge_tem }}
+                                    <p class="help-block">{{ form.sparge_tem.errors }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3 control-label">{{ form.after_boiling_add_water.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.after_boiling_add_water }}
+                                    <p class="help-block">{{ form.after_boiling_add_water.errors }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3 control-label">{{ form.boiling_full_volume.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.boiling_full_volume }}
+                                    <p class="help-block">{{ form.boiling_full_volume.errors }}</p>
+                                </div>
+                                <div class="col-md-3 control-label">{{ form.boiling_full_tem.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.boiling_full_tem }}
+                                    <p class="help-block">{{ form.boiling_full_tem.errors }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3 control-label">{{ form.notes.label_tag }}</div>
+                                <div class="col-md-9">
+                                    {{ form.notes }}
+                                    <p class="help-block">{{ form.notes.errors }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="panel green-background">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <div class="col-md-3 control-label">{{ form.ph_mash_0.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.ph_mash_0 }}
+                                            <p class="help-block">{{ form.ph_mash_0.errors }}</p>
+                                        </div>
+                                        <div class="col-md-3 control-label">{{ form.ph_mash_1.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.ph_mash_1 }}
+                                            <p class="help-block">{{ form.ph_mash_1.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3 control-label">{{ form.brix_0.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.brix_0 }}
+                                            <p class="help-block">{{ form.brix_0.errors }}</p>
+                                        </div>
+                                        <div class="col-md-3 control-label">{{ form.ph_0.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.ph_0 }}
+                                            <p class="help-block">{{ form.ph_0.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3 control-label">{{ form.brix_1.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.brix_1 }}
+                                            <p class="help-block">{{ form.brix_1.errors }}</p>
+                                        </div>
+                                        <div class="col-md-3 control-label">{{ form.ph_1.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.ph_1 }}
+                                            <p class="help-block">{{ form.ph_1.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3 control-label">{{ form.brix_2.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.brix_2 }}
+                                            <p class="help-block">{{ form.brix_2.errors }}</p>
+                                        </div>
+                                        <div class="col-md-3 control-label">{{ form.ph_2.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.ph_2 }}
+                                            <p class="help-block">{{ form.ph_2.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3 control-label">{{ form.brix_3.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.brix_3 }}
+                                            <p class="help-block">{{ form.brix_3.errors }}</p>
+                                        </div>
+                                        <div class="col-md-3 control-label">{{ form.ph_3.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.ph_3 }}
+                                            <p class="help-block">{{ form.ph_3.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3 control-label">{{ form.og_wort.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.og_wort }}
+                                            <p class="help-block">{{ form.og_wort.errors }}</p>
+                                        </div>
+                                        <div class="col-md-3 control-label">{{ form.ph_wort.label_tag }}</div>
+                                        <div class="col-md-3">
+                                            {{ form.ph_wort }}
+                                            <p class="help-block">{{ form.ph_wort.errors }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel yellow-background">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <div class="col-md-2 control-label">{{ form.malt_add_start.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.malt_add_start }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.malt_add_start.errors }}</p>
+                                        </div>
+                                        <div class="col-md-2 control-label">{{ form.malt_add_end.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.malt_add_end }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.malt_add_end.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-2 control-label">{{ form.recycle_start.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.recycle_start }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.recycle_start.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-2 control-label">{{ form.into_boiling.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.into_boiling }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.into_boiling.errors }}</p>
+                                        </div>
+                                        <div class="col-md-2 control-label">{{ form.boiling_full.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.boiling_full }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.boiling_full.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-2 control-label">{{ form.boiling_start.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.boiling_start }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.boiling_start.errors }}</p>
+                                        </div>
+                                        <div class="col-md-2 control-label">{{ form.boiling_end.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.boiling_end }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.boiling_end.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-2 control-label">{{ form.whirlpool_end.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.whirlpool_end }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.whirlpool_end.errors }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-2 control-label">{{ form.enter_fermenter_start.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.enter_fermenter_start }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.enter_fermenter_start.errors }}</p>
+                                        </div>
+                                        <div class="col-md-2 control-label">{{ form.enter_fermenter_end.label_tag }}</div>
+                                        <div class="col-md-4">
+                                            <div class="input-group bootstrap-timepicker">
+                                                {{ form.enter_fermenter_end }}
+                                                <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button"><i class="fa fa-clock-o"></i></button>
+                                                </span>
+                                            </div>
+                                            <p class="help-block">{{ form.enter_fermenter_end.errors }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-3 control-label">{{ form.enter_fermenter_volume.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.enter_fermenter_volume }}
+                                    <p class="help-block">{{ form.enter_fermenter_volume.errors }}</p>
+                                </div>
+                                <div class="col-md-3 control-label">{{ form.enter_fermenter_tem.label_tag }}</div>
+                                <div class="col-md-3">
+                                    {{ form.enter_fermenter_tem }}
+                                    <p class="help-block">{{ form.enter_fermenter_tem.errors }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script type="text/javascript" src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'flatlab/assets/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+<script type="text/javascript" src="{% static 'flatlab/assets/bootstrap-timepicker/js/bootstrap-timepicker.js' %}"></script>
+<script type="text/javascript" src="{% static 'flatlab/assets/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js' %}"></script>
+<script type="text/javascript" src="{% static 'flatlab/js/advanced-form-components.js' %}"></script>
+{% endblock %}

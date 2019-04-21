@@ -1,0 +1,157 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '原料批次详情' %}{% endblock %}
+{% block content %}
+<div class="row">
+    <aside class="profile-nav col-lg-5">
+        <section class="panel">
+            <div class="user-heading round">
+                <!--<a href="#">-->
+                    <!--<img src="" alt="">-->
+                <!--</a>-->
+                <h4>{% trans '批次编号' %}</h4>
+                <h3>{{ data.material_batch_code }}</h3>
+            </div>
+            <ul class="nav nav-pills nav-stacked">
+                <!--<li class="active"><a href="profile.html"> <i class="fa fa-user"></i> Profile</a></li>-->
+                <!--<li><a href="profile-activity.html"> <i class="fa fa-calendar"></i> Recent Activity <span class="label label-danger pull-right r-activity">9</span></a></li>-->
+                {% if perms.brewsql.change_materialbatch %}
+                <li><a href="{% url 'brewsql:material_batch_update' data.pk %}?next={% url 'brewsql:material_batch_detail' data.pk %}"> <i class="fa fa-edit"></i>{% trans "编辑资料" %}</a></li>{% endif %}
+            </ul>
+        </section>
+        <section class="panel">
+            <div class="panel-heading">
+                {% trans '原料批次信息' %}
+            </div>
+            <div class="panel-body bio-graph-info">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p><span>{% trans '原料编号' %} </span>: {{ data.material.material_code|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '原料中文名' %} </span>: {{ data.material.material_cn|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '原料英文名' %} </span>: {{ data.material.material_en|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '包装规格' %} </span>: {{ data.material_pack_size_unit|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '保质期' %} </span>: {{ data.expire_date|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '参数' %} </span>: {{ data.para|default_if_none:'N/A' }}</p>
+                    </div>
+                    <div class="col-md-12">
+                        <p><span>{% trans '备注' %} </span>: {{ data.notes|default_if_none:'N/A' }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </aside>
+    <aside class="profile-info col-lg-7">
+        <section>
+            <div class="row state-overview">
+                <div class="col-lg-6">
+                    <section class="panel">
+                        <div class="symbol green">
+                            <i class="fa fa-sign-in"></i>
+                        </div>
+                        <div class="value">
+                            <h4 class="count">{{ material_in_amount.material_in_amount }}</h4>
+                            <p>{% trans '入库总量' %}</p>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-lg-6">
+                    <section class="panel">
+                        <div class="symbol yellow">
+                            <i class="fa  fa-sign-out"></i>
+                        </div>
+                        <div class="value">
+                            <h4 class=" count2">{{ material_out_amount.material_out_amount }}</h4>
+                            <p>{% trans '出库总量' %}</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+        <section class="panel">
+             <header class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6"><p>{% trans '采购记录' %}</p></div>
+                    <div class="col-md-6" align="right"><b>{% trans '合计' %}: ¥ {{ total_cost|floatformat:'-2' }}</b></div>
+                    <div class="col-md-12" align="right"><p>{{ total_cost_cn }}</p></div>
+                </div>
+            </header>
+            <div class="panel-body bio-graph-info">
+                <div class="row">
+                    <section class="panel table-responsive">
+                        <div class="panel-body">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>{% trans '订单日期' %}</th>
+                                        <th>{% trans '数量' %}</th>
+                                        <th>{% trans '供应商' %}</th>
+                                        <th>{% trans '金额' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>{% for item in material_in %}
+                                    <tr class="{% cycle '' 'active' %}">
+                                        <td>{{ item.pk }}</td>
+                                        <td>{{ item.material_in_date|date:"Y-m-d"  }}</td>
+                                        <td>{{ item.amount|floatformat:-3 }}</td>
+                                        <td>{{ item.supplier }}</td>
+                                        <td>¥ {{ item.material_cost_link.money_in_out|floatformat:-2 }}</td>
+                                    </tr>{% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+        <section class="panel">
+             <header class="panel-heading">
+                <div class="row">
+                    <div class="col-md-6"><p>{% trans '使用记录' %}</p></div>
+                </div>
+            </header>
+            <div class="panel-body bio-graph-info">
+                <div class="row">
+                    <section class="panel table-responsive">
+                        <div class="panel-body">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>{% trans '订单日期' %}</th>
+                                        <th>{% trans '数量' %}</th>
+                                        <th>{% trans '酿造批次' %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>{% for item in material_out %}
+                                    <tr class="{% cycle '' 'active' %}">
+                                        <td>{{ item.pk }}</td>
+                                        <td>{{ item.material_out_date|date:"Y-m-d"  }}</td>
+                                        <td>{{ item.amount|floatformat:-3 }}</td>
+                                        <td>{% if perms.brewsql.view_brew %}
+                                                {% if item.brew %}<a href="{% url 'brewsql:brew_detail' item.brew_id %}">{{ item.brew }}</a>{% endif %}
+                                            {% else %}
+                                                {{ item.brew|default_if_none:'' }}
+                                            {% endif %}
+                                        </td>
+                                    </tr>{% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </aside>
+</div>
+{% endblock %}

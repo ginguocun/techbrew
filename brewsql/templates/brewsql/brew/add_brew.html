@@ -1,0 +1,75 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '新建生产批次' %}{% endblock %}
+{% block this_css %}<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "新建生产批次" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="{% url 'brewsql:add_brew' %}?next={{ request.GET.next }}">{% csrf_token %}
+                    {% if request.user.is_authenticated %}
+                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    {% endif %}
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.product_name.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.product_name }}
+                            <p class="help-block">{{ form.product_name.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.tank.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.tank }}
+                            <p class="help-block">{{ form.tank.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.operator.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.operator }}
+                            <p class="help-block">{{ form.operator.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.brew_batch_code.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.brew_batch_code }}
+                            <p class="help-block">{{ form.brew_batch_code.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.date_start.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.date_start }}
+                            <p class="help-block">{{ form.date_start.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.notes.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.notes }}
+                            <p class="help-block">{{ form.notes.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-2">
+        <section class="panel">{% if perms.brewsql.add_productname %}
+            <button class="btn btn-warning btn-block" type="button"><a href="{% url 'brewsql:add_productname' %}?next={% url 'brewsql:add_brew' %}" target="_blank"><i class="fa fa-plus"></i> {% trans '添加产品名称' %}</a></button>{% endif %}{% if perms.brewsql.add_employee %}
+            <button class="btn btn-success btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}?next={% url 'brewsql:add_brew' %}" target="_blank"><i class="fa fa-plus"></i> {% trans '添加操作人员' %}</a></button>{% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>{% endblock %}

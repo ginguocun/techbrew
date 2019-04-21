@@ -1,0 +1,62 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n own_tag %}
+{% block title %}{% trans '产品管理' %}{% endblock %}
+{% block content %}
+{% get_current_language as LANGUAGE_CODE %}
+<div class="row">
+    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_productname %}
+        <a href="{% url 'brewsql:product_name_list' %}"><button type="button" class="btn btn-primary">{% trans "名称管理" %}</button></a>{% endif %}{% if perms.brewsql.add_productpacksizeunit %}
+        <a href="{% url 'brewsql:product_pack_list' %}"><button type="button" class="btn btn-success">{% trans "包装管理" %}</button></a>{% endif %}
+    </div>
+    <div class="col-lg-12">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{% trans '产品编号' %}</th>
+                            <th>{% trans '图片' %}</th>
+                            <th>{% trans '名称' %}/{% trans '规格' %}</th>
+                            <th>{% trans '参数' %}</th>
+                            <th>{% trans '产品归类' %}</th>
+                            <th>{% trans '排序系数' %}</th>
+                            <th>{% trans '产品类型' %}</th>
+                            <th>{% trans '市场' %}/{% trans '酒吧' %}/{% trans '经销商' %}</th>
+                            <th>{% trans '显示' %}/Banner</th>
+                    </thead>
+                    <tbody>
+                        {% for d in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <th>{{ d.product_code }}</th>
+                            <td>{% if d.image %}<a href="{{ d.image|qiniu }}"><img src="{{ d.image|qiniu }}" height="50"></a>{% endif %}</td>
+                            <td>
+                                {{ d.product_name.product_name_cn }}<br>
+                                {{ d.product_pack.product_pack_size_unit_cn }}
+                            </td>
+                            <td>
+                                {% trans '风格' %}: {{ d.product_style|default_if_none:'' }}<br>
+                                {% trans 'ABV' %}: {{ d.abv|default_if_none:'' }} %<br>
+                                {% trans '原麦汁' %}: {{ d.plato|default_if_none:'' }} P<br>
+                                {% trans 'IBU' %}: {{ d.ibu|default_if_none:'' }}<br>
+                            </td>
+                            <td>{% if d.product_category %}{% for c in d.product_category.all %} <label class="badge bg-default %}">{{ c.product_category_cn }}</label> <br>{% endfor %}{% endif %}</td>
+                            <td>{{ d.index }}</td>
+                            <td>{{ d.product_name.product_type.product_type_name_cn }}</td>
+                            <td>¥ {{ d.public_price }}<br>
+                                ¥ {{ d.bar_price }}<br>
+                                ¥ {{ d.supplier_price }}
+                            </td>
+                            <td>{% if d.is_show %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %} {% if d.is_banner %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>{% if perms.brewsql.change_product %}
+                            <td align="right"><a href="{% url 'brewsql:product_update' d.pk %}?next={% url 'brewsql:product_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</div>
+<div align="right">
+    {% include 'brewsql/tablenav.html' %}
+</div>
+{% endblock %}

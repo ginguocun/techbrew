@@ -1,0 +1,112 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '记录发酵数据' %}{% endblock %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+{% get_current_language as LANGUAGE_CODE %}
+<div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
+        <section class="panel">
+            <header class="panel-heading">
+                {% trans "记录发酵数据" %}
+                {% if form.errors %}
+                <p>{% trans "您提交的数据有误,请认真检查!" %}</p>
+                {% endif %}
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal" method="post" action="{% if pk %}{% url 'brewsql:new_ferment_record_2' pk %}{% else %}{% url 'brewsql:new_ferment_record' %}?next={{ request.GET.next }}{% endif %}">{% csrf_token %}
+                    {% if request.user.is_authenticated %}
+                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    {% endif %}
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.brew.label_tag }}</div>
+                        <div class="col-lg-10">
+                            <select name="brew" class="selectpicker show-tick form-control" data-live-search="true" id="id_brew" required="">
+                                <option value="">---------</option>
+                                {% for bb in brew_batches %}
+                                {% if LANGUAGE_CODE == 'en'%}
+                                    <option value="{{ bb.pk }}" selected="{% if forloop.counter == 1 %}selected{% endif %}">{{ bb.tank.tank_name }} [{{ bb.brew_batch_code }}] {{ bb.product_name.product_name_en }} / {{ bb.tank.tank_state.tank_state_en }} [{{ bb.delta_days }} Days] </option>
+                                {% else %}
+                                    <option value="{{ bb.pk }}" selected="{% if forloop.counter == 1 %}selected{% endif %}">{{ bb.tank.tank_name }} [{{ bb.brew_batch_code }}] {{ bb.tank.tank_state.tank_state_cn }} {{ bb.product_name.product_name_cn }}  [{{ bb.delta_days }} 天] </option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                            <p class="help-block">{{ form.brew.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.t_real.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.t_real }}
+                            <p class="help-block">{{ form.t_real.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.t_set.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.t_set }}
+                            <p class="help-block">{{ form.t_set.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.sg_plato.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.sg_plato }}
+                            <p class="help-block">{{ form.sg_plato.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label"><label for="id_ph">pH:</label></div>
+                        <div class="col-lg-4">
+                            <input type="number" name="ph" step="0.01" class="form-control" id="id_ph">
+                            <p class="help-block">{{ form.ph.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.cell_mml.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.cell_mml }}
+                            <p class="help-block">{{ form.cell_mml.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.bar.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.bar }}
+                            <p class="help-block">{{ form.bar.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.recorder.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.recorder }}
+                            <p class="help-block">{{ form.recorder.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.recorded.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.recorded }}
+                            <p class="help-block">{{ form.recorded.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.notes.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.notes }}
+                            <p class="help-block">{{ form.notes.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12" align="right">
+                            <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="col-lg-2">
+        <section class="panel">{% if perms.brewsql.add_employeestate %}
+            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加记录人员' %}</a></button>{% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+{% endblock %}
