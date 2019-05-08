@@ -297,7 +297,7 @@ class BrewUpdateForm(ModelForm):
 class FermentMonitorForm(ModelForm):
     class Meta:
         model = FermentMonitor
-        fields = ['brew', 'sg_plato', 'sg', 'plato', 'ph', 't_real', 't_set', 'bar',
+        fields = ['brew', 'sg_plato', 'sg', 'plato', 'ph', 't_real', 't_set', 'bar', 'diacetyl', 'qc_report',
                   'dry_hop', 'slag', 'notes', 'cell_mml', 'recorder', 'recorded', 'created_by']
         widgets = {
             'brew': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
@@ -309,6 +309,8 @@ class FermentMonitorForm(ModelForm):
             't_real': NumberInput(attrs={'class': 'form-control'}),
             't_set': NumberInput(attrs={'class': 'form-control'}),
             'bar': NumberInput(attrs={'class': 'form-control'}),
+            'diacetyl': NumberInput(attrs={'class': 'form-control'}),
+            'qc_report': FileInput(attrs={'class': 'form-control'}),
             'cell_mml': NumberInput(attrs={'class': 'form-control',
                                            'placeholder': _('million/ml')}),
             'recorder': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
@@ -415,7 +417,7 @@ class BrewMonitorUpdateForm(ModelForm):
 class FermentMonitorUpdateForm(ModelForm):
     class Meta:
         model = FermentMonitor
-        fields = ['brew', 'sg_plato', 'sg', 'plato', 'ph', 't_real', 't_set', 'bar',
+        fields = ['brew', 'sg_plato', 'sg', 'plato', 'ph', 't_real', 't_set', 'bar', 'diacetyl', 'qc_report',
                   'dry_hop', 'slag', 'notes', 'cell_mml', 'recorder', 'recorded', 'created_by']
         widgets = {
             'brew': Select(attrs={'class': 'form-control', 'readonly': 'True'}),
@@ -427,6 +429,8 @@ class FermentMonitorUpdateForm(ModelForm):
             't_real': NumberInput(attrs={'class': 'form-control'}),
             't_set': NumberInput(attrs={'class': 'form-control'}),
             'bar': NumberInput(attrs={'class': 'form-control'}),
+            'diacetyl': NumberInput(attrs={'class': 'form-control'}),
+            'qc_report': FileInput(attrs={'class': 'form-control'}),
             'cell_mml': NumberInput(attrs={'class': 'form-control', 'placeholder': _('百万每毫升')}),
             'recorder': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'notes': Textarea(attrs={'class': 'form-control'}),
