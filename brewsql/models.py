@@ -862,7 +862,7 @@ class Recipe(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         verbose_name=_('酿酒师'),
-        limit_choices_to={'is_salesman': True},
+        limit_choices_to={'is_brewer': True},
     )
     materials = models.TextField(_('原材料'), max_length=1000, null=True)
     mashing = models.TextField(_('糖化工艺'), max_length=1000, null=True)
@@ -1039,9 +1039,12 @@ class BrewMonitor(models.Model):
     whirlpool_end = models.TimeField(_('旋沉结束'), null=True, blank=True)
     enter_fermenter_start = models.TimeField(_('入罐开始'), null=True, blank=True)
     enter_fermenter_end = models.TimeField(_('入罐结束'), null=True, blank=True)
-    brewer = models.ManyToManyField(
+    brewer = models.ForeignKey(
         Employee,
+        null=True,
         verbose_name=_('酿酒师'),
+        on_delete=models.SET_NULL,
+        limit_choices_to={'is_brewer': True}
     )
     created_by = models.IntegerField(_('创建人'), null=True, blank=True)
     notes = models.TextField(_('备注'), max_length=1000, null=True, blank=True)
@@ -1096,6 +1099,10 @@ class FermentMonitor(models.Model):
                                 blank=True, validators=[MaxValueValidator(35), MinValueValidator(-5)])
     bar = models.DecimalField(_('压力(Bar)'), max_digits=3, decimal_places=2, null=True,
                               blank=True, validators=[MaxValueValidator(3), MinValueValidator(0)])
+    diacetyl = models.DecimalField(
+        _('双乙酰(mg/mL)'), max_digits=3, decimal_places=2, null=True,
+        blank=True, validators=[MaxValueValidator(2), MinValueValidator(0)])
+    qc_report = models.FileField(_('质检报告'), null=True, blank=True)
     dry_hop = models.DecimalField(_('酒花干投量'), max_digits=5, decimal_places=2, null=True,
                                   blank=True)
     slag = models.DecimalField(_('排渣量'), max_digits=4, decimal_places=2, null=True, blank=True)

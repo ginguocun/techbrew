@@ -323,7 +323,7 @@ class BrewMonitorForm(ModelForm):
         exclude = ['datetime_created', 'datetime_updated']
         widgets = {
             'brew_monitor_code': TextInput(attrs={'class': 'form-control'}),
-            'brewer': SelectMultiple(attrs={'class': 'form-control'}),
+            'brewer': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'brew': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'brew_date': DateInput(attrs={'class': 'form-control', 'type': 'date',
                                           'value': str(timezone.localdate()), }),
@@ -371,7 +371,7 @@ class BrewMonitorUpdateForm(ModelForm):
         exclude = ['datetime_created', 'datetime_updated']
         widgets = {
             'brew_monitor_code': TextInput(attrs={'class': 'form-control'}),
-            'brewer': SelectMultiple(attrs={'class': 'form-control'}),
+            'brewer': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'brew': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'brew_date': DateInput(attrs={'class': 'form-control'}),
             'batch_volume': NumberInput(attrs={'class': 'form-control'}),
