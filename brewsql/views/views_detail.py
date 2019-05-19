@@ -104,7 +104,7 @@ def brew_ferment_m(ferment_ms=None):
 
 def brew_data(request, pk=1):
     brew = get_object_or_404(Brew, pk=pk)
-    ferment_ms = FermentMonitor.objects.filter(brew_id=brew.id).order_by('recorded')
+    ferment_ms = FermentMonitor.objects.filter(brew_id=brew.pk).order_by('recorded')
     ob_data = object_paginator(request, ferment_ms, per_page_count=10)
     [plato_data, ph_data, t_real, t_set] = brew_ferment_m(ferment_ms)
     context = dict()

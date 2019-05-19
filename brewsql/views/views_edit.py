@@ -141,7 +141,7 @@ class EmployeeUpdate(TechBrewUpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['app_users'] = User.objects.filter(groups__permissions__content_type__app_label=app_name).distinct()
+        context['app_users'] = User.objects.all()
         return context
 
     @method_decorator([login_required, permission_required('{0}.change_employee'.format(app_name))])
@@ -274,7 +274,7 @@ class MaterialOutUpdate(TechBrewUpdateView):
 class FermentMonitorDelete(TechBrewDeleteView):
     model = FermentMonitor
     template_name_suffix = '/fermentmonitor_confirm_delete'
-    success_url = '/{0}/ferment_monitor_list/'.format(app_name)
+    success_url = '/ferment_monitor_list/'
 
     @method_decorator([login_required, permission_required('{0}.delete_fermentmonitor'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
@@ -335,7 +335,7 @@ class MoneyInOutUpdate(UpdateView):
 
 class MoneyInOutDelete(DeleteView):
     model = MoneyInOut
-    success_url = '/{0}/money_io_list/'.format(app_name)
+    success_url = '/money_io_list/'
     template_name_suffix = '/delete_moneyinout'
 
     def get_success_url(self):
@@ -808,7 +808,7 @@ class HandBookUpdate(TechBrewUpdateView):
 
 class MaterialInDelete(DeleteView):
     model = MaterialIn
-    success_url = '/{0}/material_in_list/'.format(app_name)
+    success_url = '/material_in_list/'
     template_name_suffix = '/delete_materialin'
 
     def get_success_url(self):
@@ -843,7 +843,7 @@ class MaterialInDelete(DeleteView):
 
 class MaterialOutDelete(TechBrewDeleteView):
     model = MaterialOut
-    success_url = '/{0}/material_out_list/'.format(app_name)
+    success_url = '/material_out_list/'
     template_name_suffix = '/delete_materialout'
 
     @method_decorator([login_required, permission_required('{0}.delete_materialout'.format(app_name))])
@@ -865,11 +865,8 @@ class UserUpdate(UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name_suffix = '/update_user'
-    success_url = '/{0}/users/'.format(app_name)
-    queryset = User.objects.filter(Q(
-        user_permissions__content_type__app_label=app_name) | Q(
-        groups__permissions__content_type__app_label=app_name)).filter(
-        is_superuser=False).distinct().order_by('id')
+    success_url = '/users/'
+    queryset = User.objects.filter(is_superuser=False)
 
     def get_success_url(self):
         if self.request.GET:
@@ -905,8 +902,8 @@ class GroupUpdate(UpdateView):
     model = Group
     form_class = GroupForm
     template_name_suffix = '/update_group'
-    success_url = '/{0}/groups/'.format(app_name)
-    queryset = Group.objects.filter(permissions__content_type__app_label=app_name).distinct().order_by('id')
+    success_url = '/groups/'
+    queryset = Group.objects.all()
 
     def get_success_url(self):
         if self.request.GET:
@@ -922,12 +919,6 @@ class GroupUpdate(UpdateView):
     def form_valid(self, form):
         if form.is_valid:
             model = form.save(commit=False)
-            if app_name not in model.name:
-                model.name = '{0}-{1}'.format(app_name, model.name)
-                while Group.objects.filter(name=model.name):
-                    k = 1
-                    model.name = '{0}({1})'.format(model.name, k)
-                    k += 1
             model.save()
             if model:
                 LogEntry.objects.log_action(

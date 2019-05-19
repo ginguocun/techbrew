@@ -76,7 +76,7 @@ class EmployeeCreate(TechBrewCreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         employees = object_paginator(self.request, Employee.objects.all(), per_page_count=5)
-        context['app_users'] = User.objects.filter(groups__permissions__content_type__app_label=app_name).distinct()
+        context['app_users'] = User.objects.all()
         context['data'] = employees['data']
         context['page_range'] = employees['page_range']
         return context
@@ -754,7 +754,7 @@ class GroupCreate(CreateView):
     model = Group
     form_class = GroupForm
     template_name_suffix = '/group_list'
-    success_url = '/{0}/groups/'.format(app_name)
+    success_url = '/groups/'
 
     def get_success_url(self):
         if self.request.GET:
@@ -769,7 +769,7 @@ class GroupCreate(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['groups'] = Group.objects.filter(permissions__content_type__app_label=app_name).distinct()
+        context['groups'] = Group.objects.all()
         return context
 
     def form_valid(self, form):

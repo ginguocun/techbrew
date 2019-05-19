@@ -886,19 +886,19 @@ class GroupForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
         self.fields['permissions'] = ModelMultipleChoiceField(
-            queryset=Permission.objects.filter(content_type__app_label=app_name).distinct(),
+            queryset=Permission.objects.all(),
             required=True,
             label=_('权限'),
             error_messages={'required': "以下是必填项"},
-            widget=SelectMultiple(
-                attrs={'class': 'form-control'}),
+            widget=SelectMultiple(attrs={'class': 'form-control'}),
         )
 
     class Meta:
         model = Group
         fields = ['name', 'permissions']
         widgets = {
-            'name': TextInput(attrs={'class': 'form-control',
-                                     'value': '{0}-staff'.format(app_name),
-                                     'placeholder': '{0}{1}{2}'.format(_('请以'), app_name, _('开头'))})
+            'name': TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': _('分组名称')})
         }
