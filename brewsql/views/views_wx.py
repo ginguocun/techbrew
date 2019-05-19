@@ -3,7 +3,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status, response
-from tb2.settings import QINIU_BUCKET_DOMAIN, JWT_SIGNING_KEY
+from django.conf import settings
 from django.core.paginator import Paginator
 from django_filters.rest_framework import DjangoFilterBackend
 import json
@@ -33,13 +33,13 @@ def create_user_by_openid(openid=None):
 
 
 def token_generate(payload):
-    jwt_token = jwt.encode(payload, JWT_SIGNING_KEY, algorithm='HS256')
+    jwt_token = jwt.encode(payload, settings.JWT_SIGNING_KEY, algorithm='HS256')
     return jwt_token.decode('utf-8')
 
 
 def token_verify(token):
     try:
-        payload = jwt.decode(token, JWT_SIGNING_KEY, algorithms=['HS256'])
+        payload = jwt.decode(token, settings.JWT_SIGNING_KEY, algorithms=['HS256'])
         logger.info("token verified success")
         logger.info("payload: {0}".format(payload))
         pk = payload.get('pk')
@@ -145,7 +145,7 @@ def product_to_dict(p, level=None):
     else:
         d['style'] = None
     if p.image:
-        d['image'] = 'http://{0}{1}'.format(QINIU_BUCKET_DOMAIN, p.image)
+        d['image'] = 'http://{0}{1}'.format(settings.MEDIA_URL, p.image)
     else:
         d['image'] = None
     if p.public_price:

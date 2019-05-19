@@ -128,13 +128,13 @@
                         <div class="col-lg-4">
                             {{ form.image }}
                             <p class="help-block">
-                                {% if data.image %}<a href="{{ data.image|qiniu }}">{% trans '当前图片' %}<img src="{{ data.image|qiniu }}" height="25"></a>{% endif %}
+                                {% if data.image %}<a href="{{ MEDIA_URL }}{{ data.image }}">{% trans '当前图片' %}<img src="{{ MEDIA_URL }}{{ data.image }}" height="25"></a>{% endif %}
                                 {{ form.image.errors }}</p>
                         </div>
                         <div class="col-lg-2 control-label">{{ form.files.label_tag }}</div>
                         <div class="col-lg-4">
                             {{ form.files }}
-                            <p class="help-block">{% if data.files  %}<a href="{{ data.files|qiniu }}" target="_blank"><span class="btn btn-info btn-xs">{% trans '资料' %}</span></a>{% endif %}{{ form.files.errors }}</p>
+                            <p class="help-block">{% if data.files  %}<a href="{{ MEDIA_URL }}{{ data.files }}" target="_blank"><span class="btn btn-info btn-xs">{% trans '资料' %}</span></a>{% endif %}{{ form.files.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">
@@ -142,7 +142,7 @@
                         <div class="col-lg-4">
                             {{ form.image_banner }}
                             <p class="help-block">
-                                {% if data.image_banner %}<a href="{{ data.image_banner|qiniu }}">{% trans '当前图片' %}<img src="{{ data.image_banner|qiniu }}" height="25"></a>{% endif %}
+                                {% if data.image_banner %}<a href="{{ MEDIA_URL }}{{ data.image_banner }}">{% trans '当前图片' %}<img src="{{ MEDIA_URL }}{{ data.image_banner }}" height="25"></a>{% endif %}
                                 {{ form.image_banner.errors }}</p>
                         </div>
                     </div>

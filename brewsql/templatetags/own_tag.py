@@ -1,13 +1,6 @@
 from django import template
-from tb2.settings import QINIU_BUCKET_DOMAIN
 
 register = template.Library()
-
-
-@register.filter(name='qiniu')
-def make_qiniu_url(source_string):
-    res = 'http://{0}{1}'.format(QINIU_BUCKET_DOMAIN, source_string)
-    return res
 
 
 @register.filter(name='mobile')

@@ -28,7 +28,7 @@
                         {% for d in data %}
                         <tr class="{% cycle '' 'active' %}">
                             <th>{{ d.product_code }}</th>
-                            <td>{% if d.image %}<a href="{{ d.image|qiniu }}"><img src="{{ d.image|qiniu }}" height="50"></a>{% endif %}</td>
+                            <td>{% if d.image %}<a href="{{ MEDIA_URL }}{{ d.image }}"><img src="{{ MEDIA_URL }}{{ d.image }}" height="50"></a>{% endif %}</td>
                             <td>
                                 {{ d.product_name.product_name_cn }}<br>
                                 {{ d.product_pack.product_pack_size_unit_cn }}

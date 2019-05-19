@@ -709,19 +709,14 @@ class HandBookCreate(TechBrewCreateView):
 @login_required
 @permission_required('{0}.add_employee'.format(app_name))
 def create_s_user(request):
-    max_users_num = settings.MAX_USERS_NUM
     template_name = '{0}/user/user_list.html'.format(app_name)
     form = AuthenticationForm
     user_created = None
-    users_num = 1
     permission = Permission.objects.get(
         codename='view_product',
         content_type=ContentType.objects.get_for_model(Product),
     )
     users_have = User.objects.filter(is_superuser=False).distinct().order_by('id')
-    if users_have.exists():
-        users_num = len(users_have)
-    user_num_left = max_users_num - users_num
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -730,24 +725,20 @@ def create_s_user(request):
             if user_exist.exists():
                 return render(request, template_name=template_name,
                               context={'form': form, 'user_exist': user_exist,
-                                       'users_have': users_have, 'user_num_left': user_num_left})
-            if user_num_left >= 1:
-                user_created = User.objects.create_user(username, '', password)
-                user_created.user_permissions.add(permission)
-                if user_created:
-                    LogEntry.objects.log_action(
-                        user_id=request.user.pk,
-                        content_type_id=get_content_type_for_model(user_created).pk,
-                        object_id=user_created.pk,
-                        object_repr=str(user_created),
-                        action_flag=ADDITION,
-                    )
-                users_have = User.objects.filter(is_superuser=False).distinct().order_by('id')
-                users_num = len(users_have)
-                user_num_left = max_users_num - users_num
+                                       'users_have': users_have})
+            user_created = User.objects.create_user(username, '', password)
+            user_created.user_permissions.add(permission)
+            if user_created:
+                LogEntry.objects.log_action(
+                    user_id=request.user.pk,
+                    content_type_id=get_content_type_for_model(user_created).pk,
+                    object_id=user_created.pk,
+                    object_repr=str(user_created),
+                    action_flag=ADDITION,
+                )
+            users_have = User.objects.filter(is_superuser=False).distinct().order_by('id')
     return render(request, template_name=template_name,
-                  context={'form': form, 'user_created': user_created,
-                           'users_have': users_have, 'user_num_left': user_num_left})
+                  context={'form': form, 'user_created': user_created, 'users_have': users_have})
 
 
 class GroupCreate(CreateView):

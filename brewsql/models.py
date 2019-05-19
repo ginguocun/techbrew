@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
-from .storage import ImageStorage
 from .apps import GeneralConfig
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -1102,9 +1101,8 @@ class FermentMonitor(models.Model):
     diacetyl = models.DecimalField(
         _('双乙酰(mg/mL)'), max_digits=3, decimal_places=2, null=True,
         blank=True, validators=[MaxValueValidator(2), MinValueValidator(0)])
-    qc_report = models.FileField(_('质检报告'), null=True, blank=True)
-    dry_hop = models.DecimalField(_('酒花干投量'), max_digits=5, decimal_places=2, null=True,
-                                  blank=True)
+    qc_report = models.FileField(_('质检报告'), upload_to='process/qc', null=True, blank=True)
+    dry_hop = models.DecimalField(_('酒花干投量'), max_digits=5, decimal_places=2, null=True, blank=True)
     slag = models.DecimalField(_('排渣量'), max_digits=4, decimal_places=2, null=True, blank=True)
     notes = models.TextField(_('备注'), max_length=1000, null=True, blank=True)
     cell_mml = models.DecimalField(_('酵母数'), max_digits=6, decimal_places=2, null=True, blank=True)
@@ -1249,15 +1247,10 @@ class Product(models.Model):
         null=True,
         verbose_name=_('产品包装')
     )
-    logo = models.FileField(_('logo'), upload_to='{0}/product/logos'.format(app_name),
-                            null=True, blank=True, storage=ImageStorage())
-    image = models.FileField(_('图片'), upload_to='{0}/product/image'.format(app_name),
-                             null=True, blank=True, storage=ImageStorage())
-    image_banner = models.FileField(
-        _('Banner图片'), upload_to='{0}/product/image'.format(app_name),
-        null=True, blank=True, storage=ImageStorage())
-    files = models.FileField(_('资料'), upload_to='{0}/product/files'.format(app_name),
-                             null=True, blank=True, storage=ImageStorage())
+    logo = models.ImageField(_('logo'), upload_to='product/logo', null=True, blank=True)
+    image = models.ImageField(_('图片'), upload_to='product/image', null=True, blank=True)
+    image_banner = models.ImageField(_('Banner图片'), upload_to='product/banner', null=True, blank=True)
+    files = models.FileField(_('资料'), upload_to='product/files', null=True, blank=True)
     product_category = models.ManyToManyField(
         ProductCategory,
         blank=True,
@@ -1363,7 +1356,8 @@ class Product(models.Model):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'product_code', 'product_name', 'is_show', 'is_banner', 'supplier_price', 'bar_price', 'public_price')
+    list_display = ('pk', 'product_code', 'product_name', 'is_show', 'is_banner', 'supplier_price', 'bar_price',
+                    'public_price')
 
 
 class MaterialIn(models.Model):

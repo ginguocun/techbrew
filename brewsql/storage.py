@@ -3,19 +3,6 @@ from qiniustorage.backends import QiniuStorage
 
 class ImageStorage(QiniuStorage):
 
-    # def _clean_name(self, name):
-    #     import os
-    #     import time
-    #     import random
-    #     import re
-    #
-    #     ext = os.path.splitext(name)[1]
-    #     d = os.path.dirname(name)
-    #     name = name.replace(d, '').replace(ext, '')
-    #     matchObj = re.match(r'', name)
-    #     clean_name = os.path.join(d, '{0}{1}{2}'.format(time.strftime('%Y%m%d%H%M%S'), random.randint(0, 100), ext))
-    #     return clean_name
-
     def _clean_name(self, name):
         import os
         import time
