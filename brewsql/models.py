@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models import Sum, Count, Q
-from django.contrib import admin
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
@@ -31,12 +30,6 @@ class BankAccount(models.Model):
         return '{0} {1}'.format(self.bank, self.bank_account)
 
 
-@admin.register(BankAccount)
-class BankAccountAdmin(admin.ModelAdmin):
-    list_display = ('bank_account', 'bank', 'bank_address', 'desc')
-    search_fields = ['bank_account']
-
-
 class EmployeeState(models.Model):
     employee_state_cn = models.CharField(_('员工状态-中文'), max_length=100, null=True, unique=True)
     employee_state_en = models.CharField(_('员工状态-英文'), max_length=100, null=True, unique=True, blank=True)
@@ -55,11 +48,6 @@ class EmployeeState(models.Model):
 
     def __str__(self):
         return '{0}'.format(self.employee_state_cn)
-
-
-@admin.register(EmployeeState)
-class EmployeeStateAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'employee_state_cn', 'employee_state_en')
 
 
 class Employee(models.Model):
@@ -121,14 +109,6 @@ class Employee(models.Model):
         return '{0}{1}'.format(self.last_name, self.first_name)
 
 
-@admin.register(Employee)
-class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email', 'mobile', 'wechat', 'title', 'is_brewer', 'is_salesman',
-                    'datetime_created', 'datetime_updated')
-    list_filter = ('is_brewer', 'is_salesman')
-    search_fields = ['first_name', 'last_name']
-
-
 class CompanyType(models.Model):
     company_type_en = models.CharField(_('公司类型英文'), max_length=100, null=True, unique=True, blank=True)
     company_type_cn = models.CharField(_('公司类型中文'), max_length=100, null=True, unique=True)
@@ -147,11 +127,6 @@ class CompanyType(models.Model):
 
     def __str__(self):
         return '{0}'.format(self.company_type_cn)
-
-
-@admin.register(CompanyType)
-class CompanyTypeAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'company_type_en', 'company_type_cn')
 
 
 class Company(models.Model):
@@ -193,13 +168,6 @@ class Company(models.Model):
         return '{0} {1}'.format(self.company_name_cn, self.company_name_en)
 
 
-@admin.register(Company)
-class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'company_name_cn', 'company_name_en', 'email', 'company_tel', 'company_type', 'desc')
-    list_filter = ('company_type',)
-    search_fields = ['company_name_cn', 'company_name_en']
-
-
 class ClientLevel(models.Model):
     level_code = models.SmallIntegerField(_('等级编号'), null=True, unique=True, blank=True)
     level_cn = models.CharField(_('中文级别'), max_length=100, null=True, unique=True)
@@ -223,11 +191,6 @@ class ClientLevel(models.Model):
 
     def __str__(self):
         return "{0}".format(self.level_cn)
-
-
-@admin.register(ClientLevel)
-class ClientLevelAdmin(admin.ModelAdmin):
-    list_display = ('level_code', 'level_cn', 'level_en')
 
 
 class Client(models.Model):
@@ -280,12 +243,6 @@ class Client(models.Model):
         return '{0} {1}'.format(self.name, self.client_company)
 
 
-@admin.register(Client)
-class ClientAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'mobile', 'wechat', 'client_company', 'is_active')
-    search_fields = ['name', 'desc']
-
-
 class Supplier(models.Model):
     name = models.CharField(_('姓名'), max_length=100)
     gender = models.CharField(_('性别'), choices=(('0', '未知'), ('1', '男'), ('2', '女')), max_length=10,
@@ -320,12 +277,6 @@ class Supplier(models.Model):
         return '{0} {1}'.format(self.name, self.supplier_company)
 
 
-@admin.register(Supplier)
-class SupplierAdmin(admin.ModelAdmin):
-    list_display = ('name', 'mobile', 'wechat', 'supplier_company', 'desc')
-    search_fields = ['name', 'desc']
-
-
 class TankState(models.Model):
     tank_state_en = models.CharField(_('发酵罐状态英文'), max_length=200, null=True, blank=True)
     tank_state_cn = models.CharField(_('发酵罐状态中文'), max_length=200, null=True)
@@ -340,11 +291,6 @@ class TankState(models.Model):
 
     def __str__(self):
         return "{0}".format(self.tank_state_cn)
-
-
-@admin.register(TankState)
-class TankStateAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'tank_state_en', 'tank_state_cn', 'with_product')
 
 
 class Tank(models.Model):
@@ -393,14 +339,6 @@ class Tank(models.Model):
         return "{0} {1}".format(self.tank_name, self.tank_state)
 
 
-@admin.register(Tank)
-class TankAdmin(admin.ModelAdmin):
-    list_display = ('tank_code', 'tank_name', 'tank_state', 'tank_standard_volume',
-                    'current_brew_code', 'notes', 'tank_info_updated')
-    list_filter = ('tank_standard_volume', 'tank_state',)
-    search_fields = ['tank_name', 'tank_code', 'notes', 'current_brew_code']
-
-
 class TankSateUpdate(models.Model):
     tank = models.ForeignKey(
         Tank,
@@ -447,11 +385,6 @@ class Warehouse(models.Model):
         return "{0} {1}".format(self.place_code, self.place_desc)
 
 
-@admin.register(Warehouse)
-class WarehouseAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'place_code', 'place_desc')
-
-
 class MoneyInOutType(models.Model):
     money_in_out_type_cn = models.CharField(_('收支类型中文'), max_length=200, null=True, unique=True)
     money_in_out_type_en = models.CharField(_('收支类型英文'), max_length=200, null=True, blank=True)
@@ -472,9 +405,6 @@ class MoneyInOutType(models.Model):
 
     def __str__(self):
         return '{0}'.format(self.money_in_out_type_cn)
-
-
-admin.site.register(MoneyInOutType)
 
 
 class MoneyInOut(models.Model):
@@ -534,14 +464,6 @@ class MoneyInOut(models.Model):
         return '{0} 元'.format(self.money_in_out)
 
 
-@admin.register(MoneyInOut)
-class MoneyInOutAdmin(admin.ModelAdmin):
-    list_display = ('datetime_created', 'money_in_out', 'money_in_out_type', 'notes', 'recorded_by', 'confirmed_by',
-                    'datetime_updated')
-    list_filter = ('money_in_out_type', 'recorded_by', 'is_confirmed', 'is_active')
-    search_fields = ['notes', ]
-
-
 class MaterialCategory(models.Model):
     material_category_code = models.CharField(_('原料分类编号'), max_length=10, null=True, unique=True)
     material_category_en = models.CharField(_('原料分类英文名'), max_length=100, null=True, unique=True, blank=True)
@@ -559,12 +481,6 @@ class MaterialCategory(models.Model):
             self.material_category_code,
             self.material_category_cn,
         )
-
-
-@admin.register(MaterialCategory)
-class MaterialCategoryAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'material_category_code', 'material_category_en', 'material_category_cn',)
-    search_fields = ['material_category_code', 'material_category_en', 'material_category_cn']
 
 
 class MaterialPackSizeUnit(models.Model):
@@ -586,13 +502,6 @@ class MaterialPackSizeUnit(models.Model):
 
     def __str__(self):
         return "{0} {1}".format(str(self.material_pack_size).rstrip('0').rstrip('.'), self.material_pack_unit)
-
-
-@admin.register(MaterialPackSizeUnit)
-class MaterialPackSizeUnitCategoryAdmin(admin.ModelAdmin):
-    list_display = ('material_pack_size', 'material_pack_unit')
-    list_filter = ('material_pack_size', 'material_pack_unit',)
-    search_fields = ['material_pack_size', 'material_pack_unit']
 
 
 class Material(models.Model):
@@ -626,14 +535,6 @@ class Material(models.Model):
 
     def __str__(self):
         return '[{0}] {1}'.format(self.material_code, self.material_cn)
-
-
-@admin.register(Material)
-class MaterialAdmin(admin.ModelAdmin):
-    list_display = ('material_code', 'material_en', 'material_cn', 'material_category', 'notes',
-                    'account_code', 'datetime_updated')
-    list_filter = ('material_category',)
-    search_fields = ['material_code', 'material_en', 'material_cn', 'notes']
 
 
 class MaterialBatch(models.Model):
@@ -716,14 +617,6 @@ class MaterialBatch(models.Model):
         )
 
 
-@admin.register(MaterialBatch)
-class MaterialBatchAdmin(admin.ModelAdmin):
-    list_display = ('material_batch_code', 'material', 'material_pack_size_unit', 'expire_date',
-                    'para', 'datetime_updated', 'notes', 'state')
-    list_filter = ('material_pack_size_unit', 'material')
-    search_fields = ['material_batch_code', 'notes', 'para']
-
-
 class ProductType(models.Model):
     product_type_code = models.CharField(_('类型编号'), max_length=10, unique=True)
     product_type_name_cn = models.CharField(_('类型中文名'), max_length=100, unique=True)
@@ -739,11 +632,6 @@ class ProductType(models.Model):
 
     def __str__(self):
         return "{0}".format(self.product_type_name_cn)
-
-
-@admin.register(ProductType)
-class ProductTypeAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'product_type_code', 'product_type_name_cn', 'product_type_name_en', 'is_show')
 
 
 class ProductCategory(models.Model):
@@ -777,14 +665,6 @@ class ProductCategory(models.Model):
 
     def __str__(self):
         return '{0}'.format(self.product_category_cn)
-
-
-@admin.register(ProductCategory)
-class ProductCategoryAdmin(admin.ModelAdmin):
-    list_display = ('product_category_cn', 'product_category_en', 'product_category_desc_cn',
-                    'product_category_desc_en', 'is_show', 'datetime_created', 'datetime_updated')
-    search_fields = ['product_category_cn', 'product_category_en',
-                     'product_category_desc_cn', 'product_category_desc_en']
 
 
 class ProductName(models.Model):
@@ -838,15 +718,6 @@ class ProductName(models.Model):
         return "[{0}] {1}".format(self.product_name_code, self.product_name_cn)
 
 
-@admin.register(ProductName)
-class ProductNameAdmin(admin.ModelAdmin):
-    list_display = ('product_name_code', 'product_name_cn', 'product_name_en', 'brewer', 'client',
-                    'current_recipe', 'product_type', 'notes', 'is_show', 'datetime_updated')
-    list_filter = ('brewer', 'client', 'product_type')
-    search_fields = ['product_name_code', 'product_name_cn', 'product_name_en',
-                     'product_name_cn_pre', 'product_name_en_pre', 'notes']
-
-
 class Recipe(models.Model):
     recipe_code = models.CharField(_('配方编号'), max_length=50, unique=True, null=True)
     recipe_name = models.CharField(_('配方名称'), max_length=50, null=True, blank=True)
@@ -887,11 +758,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return '{0} {1}'.format(self.recipe_code, self.recipe_name)
-
-
-@admin.register(Recipe)
-class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'recipe_code', 'recipe_name', 'datetime_created', 'datetime_updated')
 
 
 class Brew(models.Model):
@@ -985,13 +851,6 @@ class Brew(models.Model):
         )
 
 
-@admin.register(Brew)
-class BrewAdmin(admin.ModelAdmin):
-    list_display = ('brew_batch_code', 'product_name', 'recipe', 'tank', 'date_start', 'operator', 'notes')
-    list_filter = ('tank', 'product_name')
-    search_fields = ['brew_batch_code', 'notes']
-
-
 class BrewMonitor(models.Model):
     brew_monitor_code = models.CharField(_('糖化批次号'), max_length=30, unique=True, null=True, blank=True)
     brew = models.ForeignKey(
@@ -1070,14 +929,6 @@ class BrewMonitor(models.Model):
         )
 
 
-@admin.register(BrewMonitor)
-class BrewMonitorAdmin(admin.ModelAdmin):
-    list_display = ('brew_monitor_code', 'brew', 'brew_date', 'og_wort',
-                    'ph_mash_1', 'malt_add_start', 'enter_fermenter_start')
-    list_filter = ('brewer',)
-    search_fields = ['brew_monitor_code']
-
-
 class FermentMonitor(models.Model):
     brew = models.ForeignKey(
         Brew,
@@ -1144,13 +995,6 @@ class FermentMonitor(models.Model):
         )
 
 
-@admin.register(FermentMonitor)
-class FermentMonitorAdmin(admin.ModelAdmin):
-    list_display = ('brew', 'sg', 'plato', 'ph', 't_real', 't_set', 'bar', 'notes', 'delta_days')
-    list_filter = ('brew',)
-    search_fields = ['notes']
-
-
 class ProductPackSizeUnit(models.Model):
     product_pack_size = models.DecimalField(_('包装规格'), max_digits=6, decimal_places=1, null=True)
     product_pack_unit = models.CharField(_('规格单位'), max_length=20, null=True, choices=(('mL', 'mL'), ('L', 'L')))
@@ -1193,15 +1037,6 @@ class ProductPackSizeUnit(models.Model):
         )
 
 
-@admin.register(ProductPackSizeUnit)
-class ProductPackSizeUnitAdmin(admin.ModelAdmin):
-    list_display = ('product_pack_code', 'product_pack_size', 'product_pack_unit', 'product_pack_type_en',
-                    'product_pack_type_cn', 'datetime_updated')
-    list_filter = ('product_pack_size',)
-    search_fields = ['product_pack_code', 'product_pack_size', 'product_pack_unit',
-                     'product_pack_type_en', 'product_pack_type_cn']
-
-
 class ProductStyle(models.Model):
     product_style_cn = models.CharField(_('中文名称'), max_length=200, null=True)
     product_style_en = models.CharField(_('英文名称'), max_length=200, null=True, blank=True)
@@ -1224,13 +1059,6 @@ class ProductStyle(models.Model):
 
     def __str__(self):
         return '{0}'.format(self.product_style_cn)
-
-
-@admin.register(ProductStyle)
-class ProductStyleAdmin(admin.ModelAdmin):
-    list_display = ('product_style_cn', 'product_style_en', 'product_style_desc_cn', 'product_style_desc_en',
-                    'datetime_created', 'datetime_updated')
-    search_fields = ['product_style_cn', 'product_style_en', 'product_style_desc_cn', 'product_style_desc_en']
 
 
 class Product(models.Model):
@@ -1279,6 +1107,30 @@ class Product(models.Model):
     datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
+
+    @property
+    def logo_url(self):
+        if self.logo:
+            return self.logo.name
+        return None
+
+    @property
+    def image_url(self):
+        if self.image:
+            return self.image.name
+        return None
+
+    @property
+    def image_banner_url(self):
+        if self.image_banner:
+            return self.image_banner.name
+        return None
+
+    @property
+    def files_url(self):
+        if self.files:
+            return self.files.name
+        return None
 
     @property
     def product_pack_sum(self):
@@ -1354,12 +1206,6 @@ class Product(models.Model):
         )
 
 
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'product_code', 'product_name', 'is_show', 'is_banner', 'supplier_price', 'bar_price',
-                    'public_price')
-
-
 class MaterialIn(models.Model):
     material_in_date = models.DateField(_('日期'), null=True)
     material_batch = models.ForeignKey(
@@ -1416,13 +1262,6 @@ class MaterialIn(models.Model):
         return '{0} {1}'.format(
             self.material_batch,
             self.warehouse)
-
-
-@admin.register(MaterialIn)
-class MaterialInAdmin(admin.ModelAdmin):
-    list_display = ('material_batch', 'warehouse', 'amount', 'recorder', 'notes', 'is_confirmed')
-    list_filter = ('warehouse', 'is_confirmed')
-    search_fields = ['notes', ]
 
 
 class MaterialOut(models.Model):
@@ -1482,13 +1321,6 @@ class MaterialOut(models.Model):
             self.recorder,
             self.datetime_created
         )
-
-
-@admin.register(MaterialOut)
-class MaterialOutAdmin(admin.ModelAdmin):
-    list_display = ('material_batch', 'brew', 'amount', 'recorder', 'notes', 'confirmed', 'checked')
-    list_filter = ('brew', 'confirmed', 'checked')
-    search_fields = ['notes', ]
 
 
 class Pack(models.Model):
@@ -1589,13 +1421,6 @@ class Pack(models.Model):
         )
 
 
-@admin.register(Pack)
-class PackAdmin(admin.ModelAdmin):
-    list_display = ('pack_batch_code', 'brew', 'product', 'pack_date', 'pack_num', 'confirmed', 'datetime_updated')
-    list_filter = ('product', 'employee', 'confirmed')
-    search_fields = ['notes', ]
-
-
 class Report(models.Model):
     report_code = models.CharField(_('报告编号'), max_length=30, unique=True, null=True, blank=True)
     pack = models.ForeignKey(
@@ -1646,14 +1471,6 @@ class Report(models.Model):
         )
 
 
-@admin.register(Report)
-class ReportAdmin(admin.ModelAdmin):
-    list_display = ('report_code', 'pack', 'report_date', 'employee', 'ebc', 'foam', 'abv', 'plato', 'total_acid',
-                    'co2', 'diacetyl', 'notes', 'is_active', 'is_confirmed', 'datetime_updated')
-    list_filter = ('employee', 'is_active', 'is_confirmed')
-    search_fields = ['notes', ]
-
-
 class ClientAddress(models.Model):
     client = models.ForeignKey(
         Client,
@@ -1685,12 +1502,6 @@ class ClientAddress(models.Model):
             self.pk,
             self.client,
         )
-
-
-@admin.register(ClientAddress)
-class ClientAddressAdmin(admin.ModelAdmin):
-    list_display = ('client', 'province_name', 'city_name', 'county_name', 'detail_info', 'user_name', 'tel_number')
-    search_fields = ['detail_info', 'user_name']
 
 
 class OrderState(models.Model):
@@ -1725,11 +1536,6 @@ class OrderState(models.Model):
 
     def __str__(self):
         return "{0}".format(self.order_state_cn)
-
-
-@admin.register(OrderState)
-class OrderStateAdmin(admin.ModelAdmin):
-    list_display = ('order_state_cn', 'order_state_en')
 
 
 class SaleOrder(models.Model):
@@ -1795,14 +1601,6 @@ class SaleOrder(models.Model):
         return "{0}".format(self.sale_order_code)
 
 
-@admin.register(SaleOrder)
-class SaleOrderAdmin(admin.ModelAdmin):
-    list_display = ('sale_order_code', 'sale_order_date', 'order_state', 'employee', 'client',
-                    'created_by', 'notes', 'is_active', 'datetime_created', 'datetime_updated')
-    list_filter = ('order_state', 'employee', 'client', 'is_active')
-    search_fields = ['notes', ]
-
-
 class Sale(models.Model):
     sale_order = models.ForeignKey(
         SaleOrder,
@@ -1857,14 +1655,6 @@ class Sale(models.Model):
         return '{0} {1} {2}'.format(self.pk, self.pack, self.sale_num)
 
 
-@admin.register(Sale)
-class SaleAdmin(admin.ModelAdmin):
-    list_display = ('sale_order', 'pack', 'sale_num', 'sale_price', 'notes', 'is_sale', 'is_active', 'is_confirmed',
-                    'fee_received', 'datetime_created', 'datetime_updated')
-    list_filter = ('sale_order', 'pack', 'is_sale', 'is_active', 'is_confirmed', 'fee_received')
-    search_fields = ['notes', ]
-
-
 class HandBook(models.Model):
     chapter = models.IntegerField(_('编号'), null=True)
     chapter_code = models.CharField(_('章节标签'), max_length=30, null=True)
@@ -1892,9 +1682,3 @@ class HandBook(models.Model):
             self.chapter,
             self.chapter_name_cn,
         )
-
-
-@admin.register(HandBook)
-class HandBookAdmin(admin.ModelAdmin):
-    list_display = ('chapter', 'chapter_code', 'chapter_name_cn', 'chapter_name_en',
-                    'datetime_created', 'datetime_updated')

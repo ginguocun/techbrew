@@ -10,3 +10,4 @@ static/rest_framework
 brewsql/migrations/*.py
 !brewsql/migrations/__init__.py
 debug.log
+

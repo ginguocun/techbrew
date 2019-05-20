@@ -24,12 +24,12 @@ def oss2_serve(request, path):
     else:
         full_path = path
     try:
-        oj = bucket.get_object(str(full_path[1:]).encode())
+        oj = bucket.get_object(str(full_path[1:]).encode('utf-8'))
     except oss2.exceptions.NoSuchKey:
         raise Http404(_('"%(path)s" does not exist') % {'path': full_path})
     content_type, encoding = mimetypes.guess_type(str(full_path))
     content_type = content_type or 'application/octet-stream'
-    response = FileResponse(oj, content_type=content_type)
+    response = FileResponse(oj, content_type=content_type, as_attachment=True)
     if encoding:
         response["Content-Encoding"] = encoding
     return response

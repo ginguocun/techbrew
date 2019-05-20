@@ -242,7 +242,7 @@ def add_ferment_monitor(request, pk=None):
         brew_batches = Brew.objects.filter(pk=pk)
         redirect_to = reverse('{0}:brew_detail'.format(app_name), kwargs={"pk": pk})
     if request.method == 'POST':
-        form = ob(request.POST)
+        form = ob(request.POST, request.FILES)
         if form.is_valid():
             r = request.POST
             if form.cleaned_data['sg_plato']:
@@ -255,7 +255,7 @@ def add_ferment_monitor(request, pk=None):
                 new_data = deepcopy(r)
                 new_data['sg'] = Decimal(str(round(sg, 3)))
                 new_data['plato'] = Decimal(str(round(plato, 1)))
-                new_form = ob(new_data)
+                new_form = ob(new_data, request.FILES)
                 if new_form.is_valid():
                     new_form.save()
                 if new_form.errors:
