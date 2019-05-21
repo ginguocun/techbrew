@@ -150,7 +150,9 @@ def tanks_overview(request):
     data = dict()
     tank_states = TankState.objects.all()
     for tank_state in tank_states:
-        data[tank_state] = Tank.objects.filter(tank_state_id=tank_state.id).order_by('-current_brew_code')
+        tanks = Tank.objects.filter(tank_state_id=tank_state.id).order_by('-current_brew_code')
+        if tanks.exists():
+            data[tank_state] = tanks
     return render(request, template_name=template_name, context={'data': data})
 
 
