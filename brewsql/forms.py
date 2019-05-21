@@ -605,7 +605,7 @@ class SaleUpdateForm(ModelForm):
 class TankStateUpdateForm(ModelForm):
     class Meta:
         model = TankSateUpdate
-        fields = ['tank', 'tank_state_pre', 'tank_state_now', 'created_by']
+        fields = ['tank', 'tank_state_now', 'created_by']
         widgets = {
             'tank': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'tank_state_now': Select(attrs={'class': 'selectpicker show-tick form-control',

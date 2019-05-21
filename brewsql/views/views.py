@@ -127,13 +127,6 @@ def home_page_data():
     return {'categories': categories, 'gb_production': gb_production, 'gb_sales': gb_sales, 'gb_left': gb_left}
 
 
-# def update_money_io_date():
-#     ms = MoneyInOut.objects.filter(money_in_out_date=None)
-#     for m in ms:
-#         m.money_in_out_date = str(m.datetime_created)[:10]
-#         m.save()
-
-
 @login_required
 @permission_required('{0}.view_fermentmonitor'.format(app_name))
 def ferment_monitor_list(request):
@@ -157,15 +150,13 @@ def tanks_overview(request):
     data = dict()
     tank_states = TankState.objects.all()
     for tank_state in tank_states:
-        if tank_state.with_product:
-            data[tank_state] = Tank.objects.filter(tank_state_id=tank_state.id).order_by('-current_brew_code')
+        data[tank_state] = Tank.objects.filter(tank_state_id=tank_state.id).order_by('-current_brew_code')
     return render(request, template_name=template_name, context={'data': data})
 
 
 @login_required
 @permission_required('{0}.view_product'.format(app_name))
 def home_overview(request):
-    # update_money_io_date()  # TODO Need to remove after update success
     template_name = '{0}/home/overview.html'.format(app_name)
     hpd = home_page_data()
     total_brews = Brew.objects.all()

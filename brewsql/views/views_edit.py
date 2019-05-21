@@ -68,18 +68,20 @@ def tank_update(request,
                 ob=TankStateUpdateForm, 
                 redirect='{0}:tanks_overview'.format(app_name)):
     tanks = Tank.objects.all().order_by('id')
-    tank_states = TankState.objects.filter(pk__lte=5)
+    tank_states = TankState.objects.all()
     if request.method == 'POST':
         form = ob(request.POST)
         if form.is_valid():
-            r = request.POST
-            tank_select = Tank.objects.get(id=form.data.get('tank'))
-            new_data = form.cleaned_data
-            new_data['tank_state_pre'] = tank_select.tank_state_id
-            new_data['tank'] = r['tank']
-            new_data['tank_state_now'] = r['tank_state_now']
-            new_form = ob(new_data)
-            new_form.save()
+            model = form.save(commit=False)
+            model.save()
+            if model:
+                LogEntry.objects.log_action(
+                    user_id=request.user.pk,
+                    content_type_id=get_content_type_for_model(model).pk,
+                    object_id=model.pk,
+                    object_repr=str(model),
+                    action_flag=CHANGE,
+                )
             # # TODO 短信发送接口
             # params = str({'name': request.user.username,
             #               'tank': Tank.objects.get(pk=r['tank']).tank_name,
@@ -91,7 +93,7 @@ def tank_update(request,
             #                                        para=params)
             # if not rsp:
             #     pass
-            Tank.objects.filter(id=form.data.get('tank')).update(tank_state_id=int(r['tank_state_now']))
+            Tank.objects.filter(id=form.data.get('tank')).update(tank_state_id=int(request.POST['tank_state_now']))
         elif form.errors:
             return render(request,
                           template_name=template_name,
