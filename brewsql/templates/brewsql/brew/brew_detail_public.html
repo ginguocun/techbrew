@@ -31,9 +31,10 @@
                             <th>{% trans '相对密度' %}</th>
                             <th>{% trans '糖度' %}</th>
                             <th>{% trans 'pH' %}</th>
-                            <th>{% trans '真实温度/设置温度' %}</th>
+                            <th>{% trans '真实/设置温度' %}</th>
                             <th>{% trans '压力' %}</th>
                             <th>{% trans '酵母数' %}</th>
+                            <th>{% trans '双乙酰(mg/L)' %}</th>
                             <th>{% trans '备注' %}</th>
                         </tr>
                     </thead>
@@ -47,6 +48,7 @@
                             <td>{{ f.t_real|default_if_none:'' }} / {{ f.t_set|default_if_none:'' }}</td>
                             <td>{{ f.bar|default_if_none:'' }}</td>
                             <td>{{ f.cell_mml|default_if_none:'' }}</td>
+                            <td>{{ f.diacetyl|default_if_none:'' }}</td>
                             <td>{{ f.notes }}</td>
                         </tr>{% endfor %}
                     </tbody>

@@ -22,6 +22,7 @@
                             <th>{% trans '真实/设置温度' %}</th>
                             <th>{% trans 'Bar' %}</th>
                             <th>{% trans '酵母数' %}</th>
+                            <th>{% trans '双乙酰(mg/L)' %}</th>
                             <th>{% trans '记录人' %}</th>
                             <th>{% trans '备注' %}</th>{% if perms.brewsql.delete_fermentmonitor %}
                             <th></th>{% endif %}
@@ -40,6 +41,7 @@
                             <td>{{ d.t_real|default_if_none:"" }}{% if d.t_set is not None %}/{% endif %}{{ d.t_set|default_if_none:"" }}</td>
                             <td>{{ d.bar|default_if_none:"" }}</td>
                             <td>{{ d.cell_mml|default_if_none:"" }}</td>
+                            <td>{{ d.diacetyl|default_if_none:"" }}</td>
                             <td>{{ d.recorder }}</td>
                             <td>{{ d.notes }}{% if d.qc_report %}<a href="{{ MEDIA_URL }}{{ d.qc_report }}">{% trans '资料' %}</a>{% endif %}</td>{% if perms.brewsql.delete_fermentmonitor %}
                             <td><a href="{% url 'brewsql:ferment_monitor_delete' d.pk %}?next={% url 'brewsql:ferment_monitor_list' %}"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></a></td>{% endif %}
