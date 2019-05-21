@@ -7,11 +7,12 @@ from django.urls import re_path
 from django.conf import settings
 from django.conf.urls import include
 # from django.conf.urls.i18n import i18n_patterns
-from django.http import FileResponse, Http404
+from django.http import Http404, HttpResponseRedirect
+# from django.http import FileResponse
+# import mimetypes
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
 from .views import *
-import mimetypes
 import oss2
 
 
@@ -24,15 +25,20 @@ def oss2_serve(request, path):
     else:
         full_path = path
     try:
-        oj = bucket.get_object(str(full_path[1:]).encode('utf-8'))
+        secret_url = bucket.sign_url('GET', full_path[1:], 5 * 60)
     except oss2.exceptions.NoSuchKey:
         raise Http404(_('"%(path)s" does not exist') % {'path': full_path})
-    content_type, encoding = mimetypes.guess_type(str(full_path))
-    content_type = content_type or 'application/octet-stream'
-    response = FileResponse(oj, content_type=content_type, as_attachment=True)
-    if encoding:
-        response["Content-Encoding"] = encoding
-    return response
+    return HttpResponseRedirect(redirect_to=secret_url)
+    # try:
+    #     oj = bucket.get_object(str(full_path[1:]).encode('utf-8'))
+    # except oss2.exceptions.NoSuchKey:
+    #     raise Http404(_('"%(path)s" does not exist') % {'path': full_path})
+    # content_type, encoding = mimetypes.guess_type(str(full_path))
+    # content_type = content_type or 'application/octet-stream'
+    # response = FileResponse(oj, content_type=content_type, as_attachment=True)
+    # if encoding:
+    #     response["Content-Encoding"] = encoding
+    # return response
 
 
 urlpatterns = [
