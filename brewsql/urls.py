@@ -9,7 +9,7 @@ app_name = GeneralConfig.name
 urlpatterns = [
     re_path(r'^$', views.home_overview, name='home'),
     # 酿造批次管理
-    re_path(r'^brew_batch_list/$', views.brew_list, name='brew_list'),
+    re_path(r'^brew_batch_list/$', views.BrewListView.as_view(), name='brew_list'),
     re_path(r'^brew/(?P<pk>\d+)/$', views_detail.brew_detail, name='brew_detail'),
     path('brew/<int:pk>/<slug:brew_key>/', views_detail.brew_detail_public, name='brew_detail_public'),
     re_path(r'^add_brew/$', views_add.BrewCreate.as_view(), name='add_brew'),
@@ -18,7 +18,7 @@ urlpatterns = [
     re_path(r'^add_brew_record/$', views_add.BrewMonitorCreate.as_view(), name='add_brewmonitor'),
     re_path(r'^change_brew_record/(?P<pk>\d+)/$', views_edit.BrewMonitorUpdate.as_view(), name='change_brewmonitor'),
     # 酿造管理-发酵监控
-    re_path(r'^ferment_monitor_list/$', views.ferment_monitor_list, name='ferment_monitor_list'),
+    re_path(r'^ferment_monitor_list/$', views.FermentMonitorListView.as_view(), name='ferment_monitor_list'),
     re_path(r'^new_ferment_record/$', views_add.add_ferment_monitor, name='new_ferment_record'),
     re_path(r'^new_ferment_record/(?P<pk>\d+)/$', views_add.add_ferment_monitor, name='new_ferment_record_2'),
     re_path(r'^ferment_monitor_delete/(?P<pk>\d+)/$', views_edit.FermentMonitorDelete.as_view(),
@@ -27,11 +27,11 @@ urlpatterns = [
     re_path(r'^add_report/$', views_add.ReportCreate.as_view(), name='add_report'),
     re_path(r'^report_update/(?P<pk>\d+)/$', views_edit.ReportUpdate.as_view(), name='report_update'),
     # 发酵罐
-    re_path(r'^tank_list/$', views.tank_list, name='tank_list'),
+    re_path(r'^tank_list/$', views.TankListView.as_view(), name='tank_list'),
     re_path(r'^tanks_overview/$', views.tanks_overview, name='tanks_overview'),
     re_path(r'^tank_update/$', views_edit.tank_update, name='tank_update'),
     # 员工管理
-    re_path(r'^employee_list/$', views.employee_list, name='employee_list'),
+    re_path(r'^employee_list/$', views.EmployeeListView.as_view(), name='employee_list'),
     re_path(r'^add_employee/$', views_add.EmployeeCreate.as_view(), name='add_employee'),
     re_path(r'^employee_update/(?P<pk>\d+)/$', views_edit.EmployeeUpdate.as_view(), name='employee_update'),
     re_path(r'^employee_state_list/$', views_add.EmployeeStateCreate.as_view(), name='employee_state_list'),
@@ -40,17 +40,17 @@ urlpatterns = [
     re_path(r'^client_level_list/$', views_add.ClientLevelCreate.as_view(), name='client_level_list'),
     re_path(r'^client_level_update/(?P<pk>\d+)/$', views_edit.ClientLevelUpdate.as_view(), name='client_level_update'),
     # 客户管理
-    re_path(r'^client_list/$', views.client_list, name='client_list'),
+    re_path(r'^client_list/$', views.ClientListView.as_view(), name='client_list'),
     re_path(r'^client/(?P<pk>\d+)/$', views_detail.client_detail, name='client_detail'),
     re_path(r'^add_client/$', views_add.ClientCreate.as_view(), name='add_client'),
     re_path(r'^client_update/(?P<pk>\d+)/$', views_edit.ClientUpdate.as_view(), name='client_update'),
     # 供应商管理
-    re_path(r'^supplier_list/$', views.supplier_list, name='supplier_list'),
+    re_path(r'^supplier_list/$', views.SupplierListView.as_view(), name='supplier_list'),
     re_path(r'^supplier/(?P<pk>\d+)/$', views_detail.supplier_detail, name='supplier_detail'),
     re_path(r'^add_supplier/$', views_add.SupplierCreate.as_view(), name='add_supplier'),
     re_path(r'^supplier_update/(?P<pk>\d+)/$', views_edit.SupplierUpdate.as_view(), name='supplier_update'),
     # 公司信息管理
-    re_path(r'^company_list/$', views.company_list, name='company_list'),
+    re_path(r'^company_list/$', views.CompanyListView.as_view(), name='company_list'),
     re_path(r'^add_company/$', views_add.CompanyCreate.as_view(), name='add_company'),
     re_path(r'^company_update/(?P<pk>\d+)/$', views_edit.CompanyUpdate.as_view(), name='company_update'),
     # 产品风格
@@ -59,28 +59,28 @@ urlpatterns = [
             name='product_style_update'),
     # 产品管理
     re_path(r'^product_inventory/$', views.product_inventory, name='product_inventory'),
-    re_path(r'^product_list/$', views.product_list, name='product_list'),
+    re_path(r'^product_list/$', views.ProductListView.as_view(), name='product_list'),
     re_path(r'^product_update/(?P<pk>\d+)/$', views_edit.ProductUpdate.as_view(), name='product_update'),
     # 产品包装管理
-    re_path(r'^product_pack_list/$', views.product_pack_list, name='product_pack_list'),
+    re_path(r'^product_pack_list/$', views.ProductPackSizeUnitListView.as_view(), name='product_pack_list'),
     re_path(r'^add_product_pack/$', views_add.ProductPackSizeUnitCreate.as_view(), name='add_productpacksizeunit'),
     re_path(r'^product_pack_update/(?P<pk>\d+)/$', views_edit.ProductPackUpdate.as_view(), name='product_pack_update'),
     # 产品归类管理
-    re_path(r'^product_category_list/$', views.product_category_list, name='product_category_list'),
+    re_path(r'^product_category_list/$', views.ProductCategoryListView.as_view(), name='product_category_list'),
     re_path(r'^add_product_category/$', views_add.ProductCategoryCreate.as_view(), name='add_productcategory'),
     re_path(r'^product_category_update/(?P<pk>\d+)/$', views_edit.ProductCategoryUpdate.as_view(),
             name='product_category_update'),
     # 产品名称管理
-    re_path(r'^product_name_list/$', views.product_name_list, name='product_name_list'),
+    re_path(r'^product_name_list/$', views.ProductNameListView.as_view(), name='product_name_list'),
     re_path(r'^add_product_name/$', views_add.ProductNameCreate.as_view(), name='add_productname'),
     re_path(r'^product_name_update/(?P<pk>\d+)/$', views_edit.ProductNameUpdate.as_view(),
             name='product_name_update'),
     # 产品入库管理
-    re_path(r'^pack_list/$', views.pack_list, name='pack_list'),
+    re_path(r'^pack_list/$', views.PackListView.as_view(), name='pack_list'),
     re_path(r'^add_pack/$', views_add.add_pack, name='add_pack'),
     re_path(r'^pack_update/(?P<pk>\d+)/$', views_edit.PackUpdate.as_view(), name='pack_update'),
     # 产品出库单号管理
-    re_path(r'^sale_order_list/$', views.sale_order_list, name='sale_order_list'),
+    re_path(r'^sale_order_list/$', views.SaleOrderListView.as_view(), name='sale_order_list'),
     re_path(r'^sale_order_list_wx/$', views.sale_order_list_wx, name='sale_order_list_wx'),
     re_path(r'^add_sale_order/$', views_add.SaleOrderCreate.as_view(), name='add_saleorder'),
     re_path(r'^sale_order_update/(?P<pk>\d+)/$', views_edit.SaleOrderUpdate.as_view(), name='sale_order_update'),

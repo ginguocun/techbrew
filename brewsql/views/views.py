@@ -1,8 +1,10 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
 from django.db.models.functions import TruncMonth
-from ..utils import object_paginator, table_create, validate_date
+from ..utils import object_paginator, validate_date
+from django.views.generic import ListView
+from django.utils.decorators import method_decorator
 import json
 from ..forms import *
 
@@ -127,20 +129,26 @@ def home_page_data():
     return {'categories': categories, 'gb_production': gb_production, 'gb_sales': gb_sales, 'gb_left': gb_left}
 
 
-@login_required
-@permission_required('{0}.view_fermentmonitor'.format(app_name))
-def ferment_monitor_list(request):
-    template_name = '{0}/fermentmonitor/ferment_monitor_list.html'.format(app_name)
-    context = table_create(request, FermentMonitor, order_by='-id')
-    return render(request, template_name=template_name, context=context)
+class FermentMonitorListView(ListView):
+    model = FermentMonitor
+    context_object_name = 'data'
+    template_name_suffix = '/ferment_monitor_list'
+    paginate_by = 20
+
+    @method_decorator([login_required, permission_required('{0}.view_fermentmonitor'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(FermentMonitorListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_tank'.format(app_name))
-def tank_list(request):
-    template_name = '{0}/tank/tank_list.html'.format(app_name)
-    context = table_create(request, Tank)
-    return render(request, template_name=template_name, context=context)
+class TankListView(ListView):
+    model = Tank
+    context_object_name = 'data'
+    template_name_suffix = '/tank_list'
+    paginate_by = 20
+
+    @method_decorator([login_required, permission_required('{0}.view_tank'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(TankListView, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -203,72 +211,100 @@ def home_overview(request):
     return render(request, template_name=template_name, context=context)
 
 
-@login_required
-@permission_required('{0}.view_employee'.format(app_name))
-def employee_list(request):
-    template_name = '{0}/employee/employee_list.html'.format(app_name)
-    context = table_create(request, Employee)
-    return render(request, template_name=template_name, context=context)
+class EmployeeListView(ListView):
+    model = Employee
+    context_object_name = 'data'
+    template_name_suffix = '/employee_list'
+    paginate_by = 20
+
+    @method_decorator([login_required, permission_required('{0}.view_employee'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(EmployeeListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_client'.format(app_name))
-def client_list(request):
-    template_name = '{0}/client/client_list.html'.format(app_name)
-    object_list = Client.objects.all()
-    if request.user:
-        linked_employee = Employee.objects.filter(linked_account=request.user.id)
-        if linked_employee.exists():
-            object_list = object_list.filter(created_by=request.user.id)
-    return render(request, template_name=template_name, context=object_paginator(request, object_list))
+class SupplierListView(ListView):
+    model = Supplier
+    context_object_name = 'data'
+    template_name_suffix = '/supplier_list'
+    paginate_by = 20
+
+    @method_decorator([login_required, permission_required('{0}.view_supplier'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(SupplierListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_supplier'.format(app_name))
-def supplier_list(request):
-    template_name = '{0}/supplier/supplier_list.html'.format(app_name)
-    context = table_create(request, Supplier)
-    return render(request, template_name=template_name, context=context)
+class ClientListView(ListView):
+    model = Client
+    context_object_name = 'data'
+    template_name_suffix = '/client_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        object_list = Client.objects.all()
+        if self.request.user:
+            linked_employee = Employee.objects.filter(linked_account=self.request.user.id)
+            if linked_employee.exists():
+                object_list = object_list.filter(created_by=self.request.user.id)
+        return object_list
+
+    @method_decorator([login_required, permission_required('{0}.view_client'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(ClientListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_company'.format(app_name))
-def company_list(request):
-    template_name = '{0}/company/company_list.html'.format(app_name)
-    context = table_create(request, Company)
-    return render(request, template_name=template_name, context=context)
+class CompanyListView(ListView):
+    model = Company
+    context_object_name = 'data'
+    template_name_suffix = '/company_list'
+    paginate_by = 20
+
+    @method_decorator([login_required, permission_required('{0}.view_company'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(CompanyListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_productname'.format(app_name))
-def product_name_list(request):
-    template_name = '{0}/productname/productname_list.html'.format(app_name)
-    context = table_create(request, ProductName)
-    return render(request, template_name=template_name, context=context)
+class ProductNameListView(ListView):
+    model = ProductName
+    context_object_name = 'data'
+    template_name_suffix = '/productname_list'
+    paginate_by = 20
+
+    @method_decorator([login_required, permission_required('{0}.view_productname'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(ProductNameListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_productcategory'.format(app_name))
-def product_category_list(request):
-    template_name = '{0}/productcategory/productcategory_list.html'.format(app_name)
-    context = table_create(request, ProductCategory)
-    return render(request, template_name=template_name, context=context)
+class ProductCategoryListView(ListView):
+    model = ProductCategory
+    context_object_name = 'data'
+    template_name_suffix = '/productcategory_list'
+    paginate_by = 20
+
+    @method_decorator([login_required, permission_required('{0}.view_productcategory'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(ProductCategoryListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_productpacksizeunit'.format(app_name))
-def product_pack_list(request):
-    template_name = '{0}/productpacksizeunit/productpacksizeunit_list.html'.format(app_name)
-    context = table_create(request, ProductPackSizeUnit)
-    return render(request, template_name=template_name, context=context)
+class ProductPackSizeUnitListView(ListView):
+    model = ProductPackSizeUnit
+    context_object_name = 'data'
+    template_name_suffix = '/productpacksizeunit_list'
+    paginate_by = 20
+
+    @method_decorator([login_required, permission_required('{0}.view_productpacksizeunit'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(ProductPackSizeUnitListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_product'.format(app_name))
-def product_list(request):
-    template_name = '{0}/product/product_list.html'.format(app_name)
-    context = table_create(request, Product, order_by='index')
-    return render(request, template_name=template_name, context=context)
+class ProductListView(ListView):
+    model = Product
+    context_object_name = 'data'
+    template_name_suffix = '/product_list'
+    paginate_by = 20
+
+    @method_decorator([login_required, permission_required('{0}.view_product'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(ProductListView, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -286,135 +322,154 @@ def product_inventory(request):
     return render(request, template_name=template_name, context=content)
 
 
-@login_required
-@permission_required('{0}.view_brew'.format(app_name))
-def brew_list(request):
-    template_name = '{0}/brew/brew_list.html'.format(app_name)
-    s = request.GET.get('s')
-    e = request.GET.get('e')
-    q = request.GET.get('q')
-    object_list = Brew.objects.all()
-    if validate_date(s):
-        object_list = object_list.filter(date_start__gte=validate_date(s))
-    if validate_date(e):
-        object_list = object_list.filter(date_start__lte=validate_date(e))
-    if q:
-        object_list = object_list.filter(
-            Q(brew_batch_code__icontains=q) | Q(notes__icontains=q) | Q(
-                product_name__product_name_cn__icontains=q) | Q(
-                product_name__product_name_en__icontains=q) | Q(
-                product_name__product_name_code__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list)
-    context = dict()
-    context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
-    return render(request, template_name=template_name, context=context)
+class BrewListView(ListView):
+    model = Brew
+    context_object_name = 'data'
+    template_name_suffix = '/brew_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        q = self.request.GET.get('q')
+        object_list = Brew.objects.all()
+        if validate_date(s):
+            object_list = object_list.filter(date_start__gte=validate_date(s))
+        if validate_date(e):
+            object_list = object_list.filter(date_start__lte=validate_date(e))
+        if q:
+            object_list = object_list.filter(
+                Q(brew_batch_code__icontains=q) | Q(notes__icontains=q) | Q(
+                    product_name__product_name_cn__icontains=q) | Q(
+                    product_name__product_name_en__icontains=q) | Q(
+                    product_name__product_name_code__icontains=q)).distinct()
+        return object_list
+
+    @method_decorator([login_required, permission_required('{0}.view_brew'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(BrewListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_pack'.format(app_name))
-def pack_list(request):
-    template_name = '{0}/pack/pack_list.html'.format(app_name)
-    s = request.GET.get('s')
-    e = request.GET.get('e')
-    q = request.GET.get('q')
-    error_msg = ''
-    pie_data = list()
-    column_data_category = list()
-    column_data_series = list()
-    object_list = Pack.objects.all()
-    if validate_date(s):
-        object_list = object_list.filter(pack_date__gte=validate_date(s))
-    if validate_date(e):
-        object_list = object_list.filter(pack_date__lte=validate_date(e))
-    if q:
-        object_list = object_list.filter(
-            Q(pack_batch_code__icontains=q) | Q(notes__icontains=q) | Q(
-                product__product_name__product_name_cn__icontains=q) | Q(
-                product__product_name__product_name_en__icontains=q) | Q(
-                product__product_name__product_name_code__icontains=q)).distinct()
-    if object_list:
-        ps = Product.objects.all()
-        pns = ProductName.objects.all()
-        pps = ProductPackSizeUnit.objects.all()
-        pack_sum_a = object_list.aggregate(pack_sum=Sum('pack_num'))
-        if pack_sum_a and ps:
-            if pack_sum_a['pack_sum']:
-                for p in ps:
-                    pack_sum_p = object_list.filter(product_id=p.pk).aggregate(pack_sum=Sum('pack_num'))
-                    if pack_sum_p['pack_sum']:
-                        pie_data.append({'name': '{0} ({1})'.format(p.product_name.product_name_cn,
-                                                                    p.product_pack.product_pack_size_unit_cn),
-                                        'y': round(pack_sum_p['pack_sum']/pack_sum_a['pack_sum']*100, 2)})
-                for pn in pns:
-                    column_data_category.append(pn.product_name_cn)
-                for pp in pps:
-                    pack_data = list()
+class PackListView(ListView):
+    model = Pack
+    context_object_name = 'data'
+    template_name_suffix = '/pack_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        q = self.request.GET.get('q')
+        object_list = Pack.objects.all()
+        if validate_date(s):
+            object_list = object_list.filter(pack_date__gte=validate_date(s))
+        if validate_date(e):
+            object_list = object_list.filter(pack_date__lte=validate_date(e))
+        if q:
+            object_list = object_list.filter(
+                Q(pack_batch_code__icontains=q) | Q(notes__icontains=q) | Q(
+                    product__product_name__product_name_cn__icontains=q) | Q(
+                    product__product_name__product_name_en__icontains=q) | Q(
+                    product__product_name__product_name_code__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        object_list = self.get_queryset()
+        error_msg = ''
+        context = dict()
+        pie_data = list()
+        column_data_category = list()
+        column_data_series = list()
+        if object_list:
+            ps = Product.objects.all()
+            pns = ProductName.objects.all()
+            pps = ProductPackSizeUnit.objects.all()
+            pack_sum_a = object_list.aggregate(pack_sum=Sum('pack_num'))
+            if pack_sum_a and ps:
+                if pack_sum_a['pack_sum']:
+                    for p in ps:
+                        pack_sum_p = object_list.filter(product_id=p.pk).aggregate(pack_sum=Sum('pack_num'))
+                        if pack_sum_p['pack_sum']:
+                            pie_data.append({'name': '{0} ({1})'.format(p.product_name.product_name_cn,
+                                                                        p.product_pack.product_pack_size_unit_cn),
+                                             'y': round(pack_sum_p['pack_sum'] / pack_sum_a['pack_sum'] * 100, 2)})
                     for pn in pns:
-                        pack_sum_pp = object_list.filter(
-                            product__product_name_id=pn.pk).filter(
-                            product__product_pack_id=pp.pk).aggregate(pack_sum=Sum('pack_num'))
-                        if pack_sum_pp:
-                            if pack_sum_pp['pack_sum']:
-                                pack_data.append(pack_sum_pp['pack_sum'])
-                            else:
-                                pack_data.append(0)
-                    column_data_series.append({'name': pp.product_pack_size_unit_cn,
-                                               'data': pack_data})
-    object_p_data = object_paginator(request, object_list, per_page_count=10)
-    context = dict()
-    context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
-    context['error_msg'] = error_msg
-    context['pie_data'] = json.dumps(pie_data)
-    context['column_data_c'] = json.dumps(column_data_category)
-    context['column_data_s'] = json.dumps(column_data_series)
-    return render(request, template_name=template_name, context=context)
+                        column_data_category.append(pn.product_name_cn)
+                    for pp in pps:
+                        pack_data = list()
+                        for pn in pns:
+                            pack_sum_pp = object_list.filter(
+                                product__product_name_id=pn.pk).filter(
+                                product__product_pack_id=pp.pk).aggregate(pack_sum=Sum('pack_num'))
+                            if pack_sum_pp:
+                                if pack_sum_pp['pack_sum']:
+                                    pack_data.append(pack_sum_pp['pack_sum'])
+                                else:
+                                    pack_data.append(0)
+                        column_data_series.append({'name': pp.product_pack_size_unit_cn,
+                                                   'data': pack_data})
+        context['error_msg'] = error_msg
+        context['pie_data'] = json.dumps(pie_data)
+        context['column_data_c'] = json.dumps(column_data_category)
+        context['column_data_s'] = json.dumps(column_data_series)
+        return super().get_context_data(**context)
+
+    @method_decorator([login_required, permission_required('{0}.view_pack'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(PackListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_saleorder'.format(app_name))
-def sale_order_list(request):
-    template_name = '{0}/saleorder/sale_order_list.html'.format(app_name)
-    c = request.GET.get('c')
-    d = request.GET.get('d')
-    s = request.GET.get('s')
-    e = request.GET.get('e')
-    q = request.GET.get('q')
-    context = dict()
-    object_list = SaleOrder.objects.all()
-    if request.user:
-        linked_employee = Employee.objects.filter(linked_account=request.user.id)
-        if linked_employee.exists():
-            object_list = object_list.filter(employee=linked_employee.first())
-    context['order_num_all'] = object_list.count()
-    if c:
-        if c == '1':
-            object_list = object_list.filter(is_delivered=False).order_by('pk')
-        elif c == '2':
-            object_list = object_list.filter(is_delivered=True).order_by('-pk')
-    if d:
-        if d == '1':
-            object_list = object_list.filter(fee_received=False)
-        elif d == '2':
-            object_list = object_list.filter(fee_received=True)
-    if validate_date(s):
-        object_list = object_list.filter(sale_order_date__gte=validate_date(s))
-    if validate_date(e):
-        object_list = object_list.filter(sale_order_date__lte=validate_date(e))
-    if q:
-        object_list = object_list.filter(Q(
-            sale_order_code__icontains=q) | Q(
-            client__name__icontains=q) | Q(
-            client__mobile__icontains=q) | Q(
-            client__client_company__company_name_cn__icontains=q) | Q(
-            client__client_company__company_name_en__icontains=q) | Q(
-            client__client_company__company_address__icontains=q) | Q(
-            notes__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list, per_page_count=20)
-    context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
-    return render(request, template_name=template_name, context=context)
+class SaleOrderListView(ListView):
+    model = SaleOrder
+    context_object_name = 'data'
+    template_name_suffix = '/sale_order_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        c = self.request.GET.get('c')
+        d = self.request.GET.get('d')
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        q = self.request.GET.get('q')
+        object_list = SaleOrder.objects.all()
+        if self.request.user:
+            linked_employee = Employee.objects.filter(linked_account=self.request.user.id)
+            if linked_employee.exists():
+                object_list = object_list.filter(employee=linked_employee.first())
+        if c:
+            if c == '1':
+                object_list = object_list.filter(is_delivered=False).order_by('pk')
+            elif c == '2':
+                object_list = object_list.filter(is_delivered=True).order_by('-pk')
+        if d:
+            if d == '1':
+                object_list = object_list.filter(fee_received=False)
+            elif d == '2':
+                object_list = object_list.filter(fee_received=True)
+        if validate_date(s):
+            object_list = object_list.filter(sale_order_date__gte=validate_date(s))
+        if validate_date(e):
+            object_list = object_list.filter(sale_order_date__lte=validate_date(e))
+        if q:
+            object_list = object_list.filter(Q(
+                sale_order_code__icontains=q) | Q(
+                client__name__icontains=q) | Q(
+                client__mobile__icontains=q) | Q(
+                client__client_company__company_name_cn__icontains=q) | Q(
+                client__client_company__company_name_en__icontains=q) | Q(
+                client__client_company__company_address__icontains=q) | Q(
+                notes__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        object_list = self.get_queryset()
+        context = dict()
+        context['order_num_all'] = object_list.count()
+        return super().get_context_data(**context)
+
+    @method_decorator([login_required, permission_required('{0}.view_brew'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(SaleOrderListView, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -451,7 +506,7 @@ def sale_order_list_wx(request):
             notes__icontains=q)).distinct()
     object_p_data = object_paginator(request, object_list, per_page_count=20)
     context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
+    context['page_obj'] = object_p_data['page_obj']
     context['order_states'] = list()
     order_states = OrderState.objects.all()
     for o_s in order_states:
@@ -505,7 +560,7 @@ def sale_list(request):
                 pack__product__product_name__product_name_code__icontains=q)).distinct()
     object_p_data = object_paginator(request, object_list, per_page_count=20)
     context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
+    context['page_obj'] = object_p_data['page_obj']
     if object_list:
         object_list = object_list.filter(is_active=True)
         ps = Product.objects.all()
@@ -569,7 +624,7 @@ def moneyinout_list(request):
         object_list = object_list.filter(Q(notes__icontains=q)).distinct()
     object_p_data = object_paginator(request, object_list, per_page_count=10)
     context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
+    context['page_obj'] = object_p_data['page_obj']
     context['money_io_t'] = MoneyInOutType.objects.all()
     context['in_out_month'] = json.dumps(io_per_month_column()[0])
     context['income_info'] = json.dumps(io_per_month_column()[1])
@@ -596,7 +651,7 @@ def material_list(request):
             material_cn__icontains=q) | Q(material_code__icontains=q)).distinct()
     object_p_data = object_paginator(request, object_list)
     context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
+    context['page_obj'] = object_p_data['page_obj']
     context['material_category'] = MaterialCategory.objects.all()
     return render(request, template_name=template_name, context=context)
 
@@ -623,7 +678,7 @@ def material_batch_list(request):
             material_batch_code__icontains=q)).distinct()
     object_p_data = object_paginator(request, object_list)
     context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
+    context['page_obj'] = object_p_data['page_obj']
     context['material_category'] = MaterialCategory.objects.all()
     return render(request, template_name=template_name, context=context)
 
@@ -658,7 +713,7 @@ def material_in_list(request):
             material_batch__material__material_code__icontains=q)).distinct()
     object_p_data = object_paginator(request, object_list)
     context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
+    context['page_obj'] = object_p_data['page_obj']
     context['material_category'] = MaterialCategory.objects.all()
     return render(request, template_name=template_name, context=context)
 
@@ -687,7 +742,7 @@ def material_out_list(request):
             material_batch__material__material_code__icontains=q)).distinct()
     object_p_data = object_paginator(request, object_list)
     context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
+    context['page_obj'] = object_p_data['page_obj']
     context['material_category'] = MaterialCategory.objects.all()
     return render(request, template_name=template_name, context=context)
 
@@ -738,5 +793,5 @@ def user_action_list(request):
                 change_message__icontains=q)).distinct()
     object_p_data = object_paginator(request, object_list)
     context['data'] = object_p_data['data']
-    context['page_range'] = object_p_data['page_range']
+    context['page_obj'] = object_p_data['page_obj']
     return render(request, template_name=template_name, context=context)

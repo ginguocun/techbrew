@@ -64,10 +64,11 @@ def convert_num_to_chinese(t_price):
 
 def object_paginator(request, object_list, per_page_count=20, nav_l=3):
     paginator = Paginator(object_list, per_page_count)
+    # paginator, page, queryset, is_paginated = self.paginate_queryset(queryset, page_size)
     page = request.GET.get('page')
     if page is None:
         page = 1
-    data = paginator.get_page(page)
+    queryset = paginator.get_page(page)
     page_range = []
     for p in range(1, paginator.num_pages + 1):
         if abs(p - int(page)) - (int(nav_l) / 2) <= 0:
@@ -76,15 +77,12 @@ def object_paginator(request, object_list, per_page_count=20, nav_l=3):
             page_range.append(p)
         elif int(page) - paginator.num_pages + nav_l // 2 >= 0 and p - paginator.num_pages + nav_l - 1 >= 0:
             page_range.append(p)
-    return {'data': data, 'page_range': page_range}
-
-
-def table_create(request, oj, order_by=None, per_page_count=20, nav_l=3):
-    if order_by:
-        object_list = oj.objects.get_queryset().order_by(order_by)
-    else:
-        object_list = oj.objects.all()
-    return object_paginator(request, object_list, per_page_count=per_page_count, nav_l=nav_l)
+    return {
+                'paginator': paginator,
+                'page_obj': page,
+                'is_paginated': True,
+                'data': queryset
+            }
 
 
 def plato2sg(plato=12):
