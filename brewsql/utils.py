@@ -80,6 +80,7 @@ def object_paginator(request, object_list, per_page_count=20, nav_l=3):
     return {
                 'paginator': paginator,
                 'page_obj': page,
+                'page_range': page,
                 'is_paginated': True,
                 'data': queryset
             }

@@ -341,6 +341,7 @@ class TankState(models.Model):
     tank_state_en = models.CharField(_('发酵罐状态英文'), max_length=200, null=True, blank=True)
     tank_state_cn = models.CharField(_('发酵罐状态中文'), max_length=200, null=True)
     with_product = models.BooleanField(_('是否生产'), default=True)
+    can_start = models.BooleanField(_('可以入罐'), default=False)
 
     objects = models.Manager()
 

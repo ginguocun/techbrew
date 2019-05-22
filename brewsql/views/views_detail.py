@@ -26,7 +26,7 @@ def client_detail(request, pk):
         order_d = object_paginator(request, order_list, per_page_count=10)
         if order_d:
             order_data = order_d['data']
-            order_pr = order_d['page_range']
+            order_pr = order_d['page_obj']
     total_income = order_list.aggregate(total_income=Sum('sale_price_link__money_in_out'))
     total_income_cn = ''
     if total_income['total_income']:
@@ -37,7 +37,7 @@ def client_detail(request, pk):
     context = dict()
     context['client_data'] = client
     context['data'] = order_data
-    context['page_range'] = order_pr
+    context['page_obj'] = order_pr
     context['total_income'] = total_income
     context['total_income_cn'] = total_income_cn
     return render(request, '{0}/client/client_detail.html'.format(app_name), context=context)
@@ -54,7 +54,7 @@ def supplier_detail(request, pk):
         order_d = object_paginator(request, order_list, per_page_count=10)
         if order_d:
             order_data = order_d['data']
-            order_pr = order_d['page_range']
+            order_pr = order_d['page_obj']
     total_cost = order_list.aggregate(total_cost=Sum('material_cost_link__money_in_out'))
     total_cost_cn = ''
     if total_cost['total_cost']:
@@ -68,7 +68,7 @@ def supplier_detail(request, pk):
     context = dict()
     context['supplier_data'] = supplier
     context['data'] = order_data
-    context['page_range'] = order_pr
+    context['page_obj'] = order_pr
     context['total_cost'] = total_cost
     context['total_cost_cn'] = total_cost_cn
     return render(request, '{0}/supplier/supplier_detail.html'.format(app_name), context=context)
@@ -114,7 +114,7 @@ def brew_data(request, pk=1):
     context['t_real'] = t_real
     context['t_set'] = t_set
     context['data'] = ob_data['data']
-    context['page_range'] = ob_data['page_range']
+    context['page_obj'] = ob_data['page_obj']
     context['brew_monitors'] = BrewMonitor.objects.filter(brew=brew)
     context['packs'] = Pack.objects.filter(brew=brew)
     context['sales'] = Sale.objects.filter(pack__brew=brew)
