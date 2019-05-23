@@ -355,7 +355,7 @@ class TankState(models.Model):
 
 
 class Tank(models.Model):
-    tank_code = models.CharField(_('发酵罐编号 '), max_length=30, unique=True)
+    tank_code = models.CharField(_('发酵罐编号'), max_length=30, null=True, unique=True)
     tank_name = models.CharField(_('发酵罐名'), max_length=100, null=True)
     tank_state = models.ForeignKey(
         TankState,
