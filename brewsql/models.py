@@ -1106,7 +1106,7 @@ class BrewMonitor(models.Model):
 
     def get_absolute_url(self):
         if self.brew:
-            return reverse('{0}:brew_detail'.format(app_name), kwargs={'pk': self.brew.pk})
+            return reverse('{0}:brew_detail'.format(app_name), kwargs={'pk': getattr(self.brew, 'pk')})
         return reverse('{0}:ferment_monitor_list'.format(app_name))
 
     class Meta:
@@ -1179,15 +1179,21 @@ class FermentMonitor(models.Model):
     objects = models.Manager()
 
     @property
+    def qc_report_name(self):
+        if self.qc_report:
+            return str(self.qc_report).replace('process/qc/', '')
+        return None
+
+    @property
     def delta_days(self):
         delta_days = None
         if self.recorded:
-            delta_days = (self.recorded.date() - self.brew.date_start).days
+            delta_days = (getattr(self.recorded, 'date') - getattr(self.brew, 'date_start')).days
         return delta_days
 
     def get_absolute_url(self):
         if self.brew:
-            return reverse('{0}:brew_detail'.format(app_name), kwargs={'pk': self.brew_id})
+            return reverse('{0}:brew_detail'.format(app_name), kwargs={'pk': getattr(self.brew, 'pk')})
         return reverse('{0}:ferment_monitor_list'.format(app_name))
 
     class Meta:
@@ -1584,8 +1590,9 @@ class MaterialOut(models.Model):
     def material_out_cost(self):
         cost = 0
         if self.material_batch and self.amount:
-            if self.material_batch.material_cost_each:
-                cost = float(self.amount) * float(self.material_batch.material_cost_each)
+            if getattr(self.material_batch, 'material_cost_each'):
+                # todo
+                cost = float(self.amount) * float(getattr(self.material_batch, 'material_cost_each'))
         return round(cost, 2)
 
     def get_absolute_url(self):
@@ -1686,6 +1693,7 @@ class Pack(models.Model):
     def pack_num_left(self):
         _('库存')
         if self.pack_sale_num and self.pack_num:
+            # todo
             return self.pack_num - int(self.pack_sale_num)
         return self.pack_num
 
@@ -1771,9 +1779,10 @@ class Report(models.Model):
 
     def get_absolute_url(self):
         if self.pack:
-            return reverse('{0}:brew_detail'.format(app_name), kwargs={'pk': self.pack.brew.pk})
-        else:
-            return None
+            brew = getattr(self.pack, 'brew')
+            if brew:
+                return reverse('{0}:brew_detail'.format(app_name), kwargs={'pk': getattr(brew, 'pk')})
+        return reverse('{0}:brew_list'.format(app_name))
 
     class Meta:
         ordering = ['-pk']
@@ -1999,7 +2008,7 @@ class Sale(models.Model):
 
     def get_absolute_url(self):
         if self.sale_order:
-            return reverse('{0}:sale_order_detail'.format(app_name), kwargs={'pk': self.sale_order.pk})
+            return reverse('{0}:sale_order_detail'.format(app_name), kwargs={'pk': getattr(self.sale_order, 'pk')})
         return reverse('{0}:sale_list'.format(app_name))
 
     class Meta:

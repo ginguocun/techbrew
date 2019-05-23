@@ -43,7 +43,7 @@
                             <td>{{ d.cell_mml|default_if_none:"" }}</td>
                             <td>{{ d.diacetyl|default_if_none:"" }}</td>
                             <td>{{ d.recorder }}</td>
-                            <td>{{ d.notes }}{% if d.qc_report %}<a href="{{ MEDIA_URL }}{{ d.qc_report }}">{% trans '资料' %}</a>{% endif %}</td>{% if perms.brewsql.delete_fermentmonitor %}
+                            <td>{{ d.notes }}{% if d.qc_report %}<br><a href="{{ MEDIA_URL }}{{ d.qc_report }}"><span class="btn btn-info btn-xs">{{ d.qc_report_name }}</span></a>{% endif %}</td>{% if perms.brewsql.delete_fermentmonitor %}
                             <td><a href="{% url 'brewsql:ferment_monitor_delete' d.pk %}?next={% url 'brewsql:ferment_monitor_list' %}"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></a></td>{% endif %}
                         </tr>
                         {% endfor %}
