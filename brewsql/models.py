@@ -1188,7 +1188,7 @@ class FermentMonitor(models.Model):
     def delta_days(self):
         delta_days = None
         if self.recorded:
-            delta_days = (getattr(self.recorded, 'date') - getattr(self.brew, 'date_start')).days
+            delta_days = (self.recorded.date() - getattr(self.brew, 'date_start')).days
         return delta_days
 
     def get_absolute_url(self):
