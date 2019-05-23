@@ -26,7 +26,6 @@
                             <select name="tank" class="selectpicker show-tick form-control" data-live-search="true" required="" id="id_tank">
                                 <option value="" selected="">---------</option>
                                 {% for tank in tanks %}
-                                    {% if tank.tank_state_id <= 4 %}
                                     <option value="{{ tank.id }}">
                                         {{ tank.tank_name }}
                                         {% if LANGUAGE_CODE == 'en'%}
@@ -36,9 +35,10 @@
                                             {{ tank.tank_state.tank_state_cn }}
                                             {{ tank.current_brew.product_name.product_name_cn }}
                                         {% endif %}
+                                        {% if tank.current_brew %}
                                         [{{ tank.current_brew.delta_days }}天]
+                                        {% endif %}
                                     </option>
-                                    {% endif %}
                                 {% endfor %}
                             </select>
                             <p class="help-block">{{ form.tank.errors }}</p>
