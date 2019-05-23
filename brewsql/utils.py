@@ -1,4 +1,5 @@
-from django.core.paginator import Paginator
+from django.core.paginator import InvalidPage, Paginator
+from django.http import Http404
 import math
 import datetime
 import re
@@ -62,28 +63,30 @@ def convert_num_to_chinese(t_price):
     return s
 
 
-def object_paginator(request, object_list, per_page_count=20, nav_l=3):
-    paginator = Paginator(object_list, per_page_count)
-    # paginator, page, queryset, is_paginated = self.paginate_queryset(queryset, page_size)
-    page = request.GET.get('page')
-    if page is None:
-        page = 1
-    queryset = paginator.get_page(page)
-    page_range = []
-    for p in range(1, paginator.num_pages + 1):
-        if abs(p - int(page)) - (int(nav_l) / 2) <= 0:
-            page_range.append(p)
-        elif int(page) - nav_l // 2 <= 0 and p <= nav_l:
-            page_range.append(p)
-        elif int(page) - paginator.num_pages + nav_l // 2 >= 0 and p - paginator.num_pages + nav_l - 1 >= 0:
-            page_range.append(p)
-    return {
-                'paginator': paginator,
-                'page_obj': page,
-                'page_range': page,
-                'is_paginated': True,
-                'data': queryset
-            }
+def object_paginator(request, object_list, page_size=20):
+    paginator = Paginator(object_list, page_size)
+    page = request.GET.get('page', 1)
+    try:
+        page_number = int(page)
+    except ValueError:
+        if page == 'last':
+            page_number = paginator.num_pages
+        else:
+            raise Http404(_("Page is not 'last', nor can it be converted to an int."))
+    try:
+        page = paginator.page(page_number)
+    except InvalidPage as e:
+        raise Http404(_('Invalid page (%(page_number)s): %(message)s') % {
+            'page_number': page_number,
+            'message': str(e)
+        })
+    context = {
+        'paginator': paginator,
+        'page_obj': page,
+        'is_paginated': True,
+        'data': page.object_list
+    }
+    return context
 
 
 def plato2sg(plato=12):

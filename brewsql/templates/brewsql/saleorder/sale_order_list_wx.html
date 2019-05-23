@@ -12,7 +12,7 @@
             <form class="form-inline" role="form" method="get">
                 <div class="form-group">
                     <select name="c" class="selectpicker show-tick form-control" data-live-search='true'>
-                        <option value="">{% trans '所有' %}[{{ order_num_all }}]</option>{% for state in order_states %}
+                        <option value="">{% trans '所有' %}</option>{% for state in order_states %}
                         {% if state.state.pk|floatformat:'0' == request.GET.c|floatformat:'0' %}
                             <option value="{{ state.state.pk }}" selected>{{ state.state }}[{{ state.state_count }}]</option>
                         {% else %}

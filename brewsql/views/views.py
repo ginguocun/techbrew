@@ -2,11 +2,12 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
 from django.db.models.functions import TruncMonth
-from ..utils import object_paginator, validate_date
+from ..utils import validate_date
 from django.views.generic import ListView
 from django.utils.decorators import method_decorator
 import json
 from ..forms import *
+from ..utils import object_paginator
 
 
 app_name = GeneralConfig.name
@@ -373,10 +374,9 @@ class PackListView(ListView):
                     product__product_name__product_name_code__icontains=q)).distinct()
         return object_list
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         object_list = self.get_queryset()
-        error_msg = ''
-        context = dict()
         pie_data = list()
         column_data_category = list()
         column_data_series = list()
@@ -408,11 +408,10 @@ class PackListView(ListView):
                                     pack_data.append(0)
                         column_data_series.append({'name': pp.product_pack_size_unit_cn,
                                                    'data': pack_data})
-        context['error_msg'] = error_msg
         context['pie_data'] = json.dumps(pie_data)
         context['column_data_c'] = json.dumps(column_data_category)
         context['column_data_s'] = json.dumps(column_data_series)
-        return super().get_context_data(**context)
+        return context
 
     @method_decorator([login_required, permission_required('{0}.view_pack'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
@@ -461,290 +460,338 @@ class SaleOrderListView(ListView):
                 notes__icontains=q)).distinct()
         return object_list
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        object_list = self.get_queryset()
-        context = dict()
-        context['order_num_all'] = object_list.count()
-        return super().get_context_data(**context)
-
     @method_decorator([login_required, permission_required('{0}.view_brew'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(SaleOrderListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_saleorder'.format(app_name))
-def sale_order_list_wx(request):
-    template_name = '{0}/saleorder/sale_order_list_wx.html'.format(app_name)
-    c = request.GET.get('c')
-    d = request.GET.get('d')
-    s = request.GET.get('s')
-    e = request.GET.get('e')
-    q = request.GET.get('q')
-    context = dict()
-    object_list = SaleOrder.objects.filter(is_from_wx=True)
-    context['order_num_all'] = object_list.count()
-    if c:
-        object_list = object_list.filter(order_state_id=c).order_by('pk')
-    if d:
-        if d == '1':
-            object_list = object_list.filter(fee_received=False)
-        elif d == '2':
-            object_list = object_list.filter(fee_received=True)
-    if validate_date(s):
-        object_list = object_list.filter(sale_order_date__gte=validate_date(s))
-    if validate_date(e):
-        object_list = object_list.filter(sale_order_date__lte=validate_date(e))
-    if q:
-        object_list = object_list.filter(Q(
-            sale_order_code__icontains=q) | Q(
-            client__name__icontains=q) | Q(
-            client__mobile__icontains=q) | Q(
-            client__client_company__company_name_cn__icontains=q) | Q(
-            client__client_company__company_name_en__icontains=q) | Q(
-            client__client_company__company_address__icontains=q) | Q(
-            notes__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list, per_page_count=20)
-    context['data'] = object_p_data['data']
-    context['page_obj'] = object_p_data['page_obj']
-    context['order_states'] = list()
-    order_states = OrderState.objects.all()
-    for o_s in order_states:
-        context['order_states'].append({'state': o_s,
-                                        'state_count': object_list.filter(order_state_id=o_s.pk).count()},)
-    context['order_num'] = object_list.count()
-    return render(request, template_name=template_name, context=context)
+class SaleOrderWxListView(ListView):
+    model = SaleOrder
+    context_object_name = 'data'
+    template_name_suffix = '/sale_order_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        c = self.request.GET.get('c')
+        d = self.request.GET.get('d')
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        q = self.request.GET.get('q')
+        object_list = SaleOrder.objects.filter(is_from_wx=True)
+        if c:
+            object_list = object_list.filter(order_state_id=c).order_by('pk')
+        if d:
+            if d == '1':
+                object_list = object_list.filter(fee_received=False)
+            elif d == '2':
+                object_list = object_list.filter(fee_received=True)
+        if validate_date(s):
+            object_list = object_list.filter(sale_order_date__gte=validate_date(s))
+        if validate_date(e):
+            object_list = object_list.filter(sale_order_date__lte=validate_date(e))
+        if q:
+            object_list = object_list.filter(Q(
+                sale_order_code__icontains=q) | Q(
+                client__name__icontains=q) | Q(
+                client__mobile__icontains=q) | Q(
+                client__client_company__company_name_cn__icontains=q) | Q(
+                client__client_company__company_name_en__icontains=q) | Q(
+                client__client_company__company_address__icontains=q) | Q(
+                notes__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        object_list = self.get_queryset()
+        order_states = OrderState.objects.all()
+        context['order_states'] = list()
+        for o_s in order_states:
+            context['order_states'].append({'state': o_s,
+                                            'state_count': object_list.filter(order_state_id=o_s.pk).count()}, )
+        return context
+
+    @method_decorator([login_required, permission_required('{0}.view_brew'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(SaleOrderWxListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_sale'.format(app_name))
-def sale_list(request):
-    template_name = '{0}/sale/sale_list.html'.format(app_name)
-    c = request.GET.get('c')
-    d = request.GET.get('d')
-    s = request.GET.get('s')
-    e = request.GET.get('e')
-    q = request.GET.get('q')
-    error_msg = ''
-    context = dict()
-    pie_data = list()
-    column_data_category = list()
-    column_data_series = list()
-    if c:
-        if c == '1':
-            object_list = Sale.objects.filter(is_confirmed=False).order_by('pk')
-        elif c == '2':
-            object_list = Sale.objects.filter(is_confirmed=True).order_by('-pk')
+class SaleListView(ListView):
+    model = Sale
+    context_object_name = 'data'
+    template_name_suffix = '/sale_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        c = self.request.GET.get('c')
+        d = self.request.GET.get('d')
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        q = self.request.GET.get('q')
+        if c:
+            if c == '1':
+                object_list = Sale.objects.filter(is_confirmed=False).order_by('pk')
+            elif c == '2':
+                object_list = Sale.objects.filter(is_confirmed=True).order_by('-pk')
+            else:
+                object_list = Sale.objects.all()
         else:
             object_list = Sale.objects.all()
-    else:
-        object_list = Sale.objects.all()
-    if request.user:
-        linked_employee = Employee.objects.filter(linked_account=request.user.id)
-        if linked_employee.exists():
-            object_list = object_list.filter(sale_order__employee=linked_employee.first())
-    if d:
-        if d == '1':
-            object_list = object_list.filter(fee_received=False).order_by('-pk')
-        elif d == '2':
-            object_list = object_list.filter(fee_received=True).order_by('-pk')
-    if validate_date(s):
-        object_list = object_list.filter(sale_date__gte=validate_date(s))
-    if validate_date(e):
-        object_list = object_list.filter(sale_date__lte=validate_date(e))
-    if q:
-        object_list = object_list.filter(
-            Q(sale_order__sale_order_code__icontains=q) | Q(notes__icontains=q) | Q(
-                pack__product__product_name__product_name_cn__icontains=q) | Q(
-                pack__product__product_name__product_name_en__icontains=q) | Q(
-                pack__product__product_name__product_name_code__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list, per_page_count=20)
-    context['data'] = object_p_data['data']
-    context['page_obj'] = object_p_data['page_obj']
-    if object_list:
-        object_list = object_list.filter(is_active=True)
-        ps = Product.objects.all()
-        pns = ProductName.objects.all()
-        pps = ProductPackSizeUnit.objects.all()
-        if ps:
-            for p in ps:
-                sale_sum_p = object_list.filter(pack__product_id=p.pk).aggregate(sale_sum=Sum('sale_num'))
-                if sale_sum_p['sale_sum']:
-                    pie_data.append({'name': '{0} ({1})'.format(p.product_name.product_name_cn,
-                                                                p.product_pack.product_pack_size_unit_cn),
-                                    'y': sale_sum_p['sale_sum']})
-            for pn in pns:
-                column_data_category.append(pn.product_name_cn)
-            for pp in pps:
-                pack_data = list()
+        if self.request.user:
+            linked_employee = Employee.objects.filter(linked_account=self.request.user.id)
+            if linked_employee.exists():
+                object_list = object_list.filter(sale_order__employee=linked_employee.first())
+        if d:
+            if d == '1':
+                object_list = object_list.filter(fee_received=False).order_by('-pk')
+            elif d == '2':
+                object_list = object_list.filter(fee_received=True).order_by('-pk')
+        if validate_date(s):
+            object_list = object_list.filter(sale_date__gte=validate_date(s))
+        if validate_date(e):
+            object_list = object_list.filter(sale_date__lte=validate_date(e))
+        if q:
+            object_list = object_list.filter(
+                Q(sale_order__sale_order_code__icontains=q) | Q(notes__icontains=q) | Q(
+                    pack__product__product_name__product_name_cn__icontains=q) | Q(
+                    pack__product__product_name__product_name_en__icontains=q) | Q(
+                    pack__product__product_name__product_name_code__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pie_data = list()
+        column_data_category = list()
+        column_data_series = list()
+        object_list = self.get_queryset()
+        if object_list:
+            object_list = object_list.filter(is_active=True)
+            ps = Product.objects.all()
+            pns = ProductName.objects.all()
+            pps = ProductPackSizeUnit.objects.all()
+            if ps:
+                for p in ps:
+                    sale_sum_p = object_list.filter(pack__product_id=p.pk).aggregate(sale_sum=Sum('sale_num'))
+                    if sale_sum_p['sale_sum']:
+                        pie_data.append({'name': '{0} ({1})'.format(p.product_name.product_name_cn,
+                                                                    p.product_pack.product_pack_size_unit_cn),
+                                         'y': sale_sum_p['sale_sum']})
                 for pn in pns:
-                    sale_sum_pp = object_list.filter(
-                        pack__product__product_name_id=pn.pk).filter(
-                        pack__product__product_pack_id=pp.pk).aggregate(sale_sum=Sum('sale_num'))
-                    if sale_sum_pp:
-                        if sale_sum_pp['sale_sum']:
-                            pack_data.append(sale_sum_pp['sale_sum'])
-                        else:
-                            pack_data.append(0)
-                column_data_series.append({'name': pp.product_pack_size_unit_cn,
-                                           'data': pack_data})
-        context['error_msg'] = error_msg
-        context['pie_data'] = json.dumps(pie_data)
-        context['column_data_c'] = json.dumps(column_data_category)
-        context['column_data_s'] = json.dumps(column_data_series)
-    return render(request, template_name=template_name, context=context)
+                    column_data_category.append(pn.product_name_cn)
+                for pp in pps:
+                    pack_data = list()
+                    for pn in pns:
+                        sale_sum_pp = object_list.filter(
+                            pack__product__product_name_id=pn.pk).filter(
+                            pack__product__product_pack_id=pp.pk).aggregate(sale_sum=Sum('sale_num'))
+                        if sale_sum_pp:
+                            if sale_sum_pp['sale_sum']:
+                                pack_data.append(sale_sum_pp['sale_sum'])
+                            else:
+                                pack_data.append(0)
+                    column_data_series.append({'name': pp.product_pack_size_unit_cn,
+                                               'data': pack_data})
+
+            context['pie_data'] = json.dumps(pie_data)
+            context['column_data_c'] = json.dumps(column_data_category)
+            context['column_data_s'] = json.dumps(column_data_series)
+        return context
+
+    @method_decorator([login_required, permission_required('{0}.view_sale'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(SaleListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_moneyinout'.format(app_name))
-def moneyinout_list(request):
-    template_name = '{0}/moneyinout/moneyinout_list.html'.format(app_name)
-    context = dict()
-    s = request.GET.get('s')
-    e = request.GET.get('e')
-    c = request.GET.get('c')
-    d = request.GET.get('d')
-    q = request.GET.get('q')
-    object_list = MoneyInOut.objects.all()
-    sale_incomes = Sale.objects.exclude(sale_price_link__isnull=True).filter(is_active=True).filter(fee_received=True)
-    if c:
-        object_list = object_list.filter(money_in_out_type_id=c)
-    if d:
-        if d == '1':
-            object_list = object_list.filter(is_confirmed=False).order_by('-pk')
-        elif d == '2':
-            object_list = object_list.filter(is_confirmed=True).order_by('-pk')
-    if validate_date(s):
-        object_list = object_list.filter(money_in_out_date__gte=validate_date(s))
-        sale_incomes = sale_incomes.filter(sale_price_link__money_in_out_date__gte=validate_date(s))
-    if validate_date(e):
-        object_list = object_list.filter(money_in_out_date__lte=validate_date(e))
-        sale_incomes = sale_incomes.filter(sale_price_link__money_in_out_date__lte=validate_date(e))
-    if q:
-        object_list = object_list.filter(Q(notes__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list, per_page_count=10)
-    context['data'] = object_p_data['data']
-    context['page_obj'] = object_p_data['page_obj']
-    context['money_io_t'] = MoneyInOutType.objects.all()
-    context['in_out_month'] = json.dumps(io_per_month_column()[0])
-    context['income_info'] = json.dumps(io_per_month_column()[1])
-    context['outcome_info'] = json.dumps(io_per_month_column()[2])
-    context['io_come_info'] = json.dumps(io_per_month_column()[3])
-    context['income_by_products'] = json.dumps(income_by_products_pie(sale_incomes))
-    context['outcome_by_types'] = json.dumps(outcome_by_types_pie(
-        object_list.filter(is_confirmed=True).filter(is_active=True)))
-    return render(request, template_name=template_name, context=context)
+class MoneyInOutListView(ListView):
+    model = MoneyInOut
+    context_object_name = 'data'
+    template_name_suffix = '/moneyinout_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        c = self.request.GET.get('c')
+        d = self.request.GET.get('d')
+        q = self.request.GET.get('q')
+        object_list = MoneyInOut.objects.all()
+        if c:
+            object_list = object_list.filter(money_in_out_type_id=c)
+        if d:
+            if d == '1':
+                object_list = object_list.filter(is_confirmed=False).order_by('-pk')
+            elif d == '2':
+                object_list = object_list.filter(is_confirmed=True).order_by('-pk')
+        if validate_date(s):
+            object_list = object_list.filter(money_in_out_date__gte=validate_date(s))
+        if validate_date(e):
+            object_list = object_list.filter(money_in_out_date__lte=validate_date(e))
+        if q:
+            object_list = object_list.filter(Q(notes__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        sale_incomes = Sale.objects.exclude(sale_price_link__isnull=True).filter(is_active=True).filter(
+            fee_received=True)
+        if validate_date(s):
+            sale_incomes = sale_incomes.filter(sale_price_link__money_in_out_date__gte=validate_date(s))
+        if validate_date(e):
+            sale_incomes = sale_incomes.filter(sale_price_link__money_in_out_date__lte=validate_date(e))
+        object_list = self.get_queryset()
+        context['money_io_t'] = MoneyInOutType.objects.all()
+        context['in_out_month'] = json.dumps(io_per_month_column()[0])
+        context['income_info'] = json.dumps(io_per_month_column()[1])
+        context['outcome_info'] = json.dumps(io_per_month_column()[2])
+        context['io_come_info'] = json.dumps(io_per_month_column()[3])
+        context['income_by_products'] = json.dumps(income_by_products_pie(sale_incomes))
+        context['outcome_by_types'] = json.dumps(outcome_by_types_pie(
+            object_list.filter(is_confirmed=True).filter(is_active=True)))
+        return context
+
+    @method_decorator([login_required, permission_required('{0}.view_moneyinout'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(MoneyInOutListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_material'.format(app_name))
-def material_list(request):
-    template_name = '{0}/material/material_list.html'.format(app_name)
-    context = dict()
-    c = request.GET.get('c')
-    q = request.GET.get('q')
-    object_list = Material.objects.all()
-    if c:
-        object_list = object_list.filter(material_category_id=c)
-    if q:
-        object_list = object_list.filter(Q(notes__icontains=q) | Q(material_en__icontains=q) | Q(
-            material_cn__icontains=q) | Q(material_code__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list)
-    context['data'] = object_p_data['data']
-    context['page_obj'] = object_p_data['page_obj']
-    context['material_category'] = MaterialCategory.objects.all()
-    return render(request, template_name=template_name, context=context)
+class MaterialListView(ListView):
+    model = Material
+    context_object_name = 'data'
+    template_name_suffix = '/material_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        c = self.request.GET.get('c')
+        q = self.request.GET.get('q')
+        object_list = Material.objects.all()
+        if c:
+            object_list = object_list.filter(material_category_id=c)
+        if q:
+            object_list = object_list.filter(Q(notes__icontains=q) | Q(material_en__icontains=q) | Q(
+                material_cn__icontains=q) | Q(material_code__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['material_category'] = MaterialCategory.objects.all()
+        return context
+
+    @method_decorator([login_required, permission_required('{0}.view_material'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(MaterialListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_materialbatch'.format(app_name))
-def material_batch_list(request):
-    template_name = '{0}/materialbatch/material_batch_list.html'.format(app_name)
-    context = dict()
-    s = request.GET.get('s')
-    e = request.GET.get('e')
-    c = request.GET.get('c')
-    q = request.GET.get('q')
-    object_list = MaterialBatch.objects.all()
-    if c:
-        object_list = object_list.filter(material__material_category_id=c)
-    if validate_date(s):
-        object_list = object_list.filter(expire_date__gte=validate_date(s))
-    if validate_date(e):
-        object_list = object_list.filter(expire_date__lte=validate_date(e))
-    if q:
-        object_list = object_list.filter(Q(notes__icontains=q) | Q(material__material_en__icontains=q) | Q(
-            material__material_cn__icontains=q) | Q(material__material_code__icontains=q) | Q(
-            material_batch_code__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list)
-    context['data'] = object_p_data['data']
-    context['page_obj'] = object_p_data['page_obj']
-    context['material_category'] = MaterialCategory.objects.all()
-    return render(request, template_name=template_name, context=context)
+class MaterialBatchListView(ListView):
+    model = MaterialBatch
+    context_object_name = 'data'
+    template_name_suffix = '/material_batch_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        c = self.request.GET.get('c')
+        q = self.request.GET.get('q')
+        object_list = MaterialBatch.objects.all()
+        if c:
+            object_list = object_list.filter(material__material_category_id=c)
+        if validate_date(s):
+            object_list = object_list.filter(expire_date__gte=validate_date(s))
+        if validate_date(e):
+            object_list = object_list.filter(expire_date__lte=validate_date(e))
+        if q:
+            object_list = object_list.filter(Q(notes__icontains=q) | Q(material__material_en__icontains=q) | Q(
+                material__material_cn__icontains=q) | Q(material__material_code__icontains=q) | Q(
+                material_batch_code__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['material_category'] = MaterialCategory.objects.all()
+        return context
+
+    @method_decorator([login_required, permission_required('{0}.view_materialbatch'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(MaterialBatchListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_materialin'.format(app_name))
-def material_in_list(request):
-    template_name = '{0}/materialin/material_in_list.html'.format(app_name)
-    context = dict()
-    s = request.GET.get('s')
-    e = request.GET.get('e')
-    c = request.GET.get('c')
-    d = request.GET.get('d')
-    q = request.GET.get('q')
-    object_list = MaterialIn.objects.all()
-    if c:
-        object_list = object_list.filter(material_batch__material__material_category_id=c)
-    if d:
-        if d == '1':
-            object_list = object_list.filter(is_confirmed=True)
-        elif d == '2':
-            object_list = object_list.filter(is_confirmed=False)
-    if validate_date(s):
-        object_list = object_list.filter(material_in_date__gte=validate_date(s))
-    if validate_date(e):
-        object_list = object_list.filter(material_in_date__lte=validate_date(e))
-    if q:
-        object_list = object_list.filter(Q(notes__icontains=q) | Q(
-            material_batch__material_batch_code__icontains=q) | Q(
-            material_batch__material__material_en__icontains=q) | Q(
-            material_batch__material__material_cn__icontains=q) | Q(
-            material_batch__material__material_code__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list)
-    context['data'] = object_p_data['data']
-    context['page_obj'] = object_p_data['page_obj']
-    context['material_category'] = MaterialCategory.objects.all()
-    return render(request, template_name=template_name, context=context)
+class MaterialInListView(ListView):
+    model = MaterialIn
+    context_object_name = 'data'
+    template_name_suffix = '/material_in_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        c = self.request.GET.get('c')
+        d = self.request.GET.get('d')
+        q = self.request.GET.get('q')
+        object_list = MaterialIn.objects.all()
+        if c:
+            object_list = object_list.filter(material_batch__material__material_category_id=c)
+        if d:
+            if d == '1':
+                object_list = object_list.filter(is_confirmed=True)
+            elif d == '2':
+                object_list = object_list.filter(is_confirmed=False)
+        if validate_date(s):
+            object_list = object_list.filter(material_in_date__gte=validate_date(s))
+        if validate_date(e):
+            object_list = object_list.filter(material_in_date__lte=validate_date(e))
+        if q:
+            object_list = object_list.filter(Q(notes__icontains=q) | Q(
+                material_batch__material_batch_code__icontains=q) | Q(
+                material_batch__material__material_en__icontains=q) | Q(
+                material_batch__material__material_cn__icontains=q) | Q(
+                material_batch__material__material_code__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['material_category'] = MaterialCategory.objects.all()
+        return context
+
+    @method_decorator([login_required, permission_required('{0}.view_materialin'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(MaterialInListView, self).dispatch(request, *args, **kwargs)
 
 
-@login_required
-@permission_required('{0}.view_materialout'.format(app_name))
-def material_out_list(request):
-    template_name = '{0}/materialout/material_out_list.html'.format(app_name)
-    context = dict()
-    s = request.GET.get('s')
-    e = request.GET.get('e')
-    c = request.GET.get('c')
-    q = request.GET.get('q')
-    object_list = MaterialOut.objects.all()
-    if c:
-        object_list = object_list.filter(material_batch__material__material_category_id=c)
-    if validate_date(s):
-        object_list = object_list.filter(material_out_date__gte=validate_date(s))
-    if validate_date(e):
-        object_list = object_list.filter(material_out_date__lte=validate_date(e))
-    if q:
-        object_list = object_list.filter(Q(notes__icontains=q) | Q(
-            material_batch__material_batch_code__icontains=q) | Q(
-            material_batch__material__material_en__icontains=q) | Q(
-            material_batch__material__material_cn__icontains=q) | Q(
-            material_batch__material__material_code__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list)
-    context['data'] = object_p_data['data']
-    context['page_obj'] = object_p_data['page_obj']
-    context['material_category'] = MaterialCategory.objects.all()
-    return render(request, template_name=template_name, context=context)
+class MaterialOutListView(ListView):
+    model = MaterialOut
+    context_object_name = 'data'
+    template_name_suffix = '/material_out_list'
+    paginate_by = 20
+
+    def get_queryset(self):
+        s = self.request.GET.get('s')
+        e = self.request.GET.get('e')
+        c = self.request.GET.get('c')
+        q = self.request.GET.get('q')
+        object_list = MaterialOut.objects.all()
+        if c:
+            object_list = object_list.filter(material_batch__material__material_category_id=c)
+        if validate_date(s):
+            object_list = object_list.filter(material_out_date__gte=validate_date(s))
+        if validate_date(e):
+            object_list = object_list.filter(material_out_date__lte=validate_date(e))
+        if q:
+            object_list = object_list.filter(Q(notes__icontains=q) | Q(
+                material_batch__material_batch_code__icontains=q) | Q(
+                material_batch__material__material_en__icontains=q) | Q(
+                material_batch__material__material_cn__icontains=q) | Q(
+                material_batch__material__material_code__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['material_category'] = MaterialCategory.objects.all()
+        return context
+
+    @method_decorator([login_required, permission_required('{0}.view_materialout'.format(app_name))])
+    def dispatch(self, request, *args, **kwargs):
+        return super(MaterialOutListView, self).dispatch(request, *args, **kwargs)
 
 
 # def update_temp(t_d=0.2):
@@ -792,6 +839,6 @@ def user_action_list(request):
             Q(object_repr__icontains=q) | Q(action_flag__icontains=q) | Q(
                 change_message__icontains=q)).distinct()
     object_p_data = object_paginator(request, object_list)
-    context['data'] = object_p_data['data']
-    context['page_obj'] = object_p_data['page_obj']
+    context['data'] = object_p_data.get('data')
+    context['page_obj'] = object_p_data.get('page_obj')
     return render(request, template_name=template_name, context=context)

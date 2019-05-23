@@ -81,7 +81,7 @@ urlpatterns = [
     re_path(r'^pack_update/(?P<pk>\d+)/$', views_edit.PackUpdate.as_view(), name='pack_update'),
     # 产品出库单号管理
     re_path(r'^sale_order_list/$', views.SaleOrderListView.as_view(), name='sale_order_list'),
-    re_path(r'^sale_order_list_wx/$', views.sale_order_list_wx, name='sale_order_list_wx'),
+    re_path(r'^sale_order_list_wx/$', views.SaleOrderWxListView.as_view(), name='sale_order_list_wx'),
     re_path(r'^add_sale_order/$', views_add.SaleOrderCreate.as_view(), name='add_saleorder'),
     re_path(r'^sale_order_update/(?P<pk>\d+)/$', views_edit.SaleOrderUpdate.as_view(), name='sale_order_update'),
     re_path(r'^order_state_update/(?P<pk>\d+)/$', views_edit.SaleOrderStateUpdate.as_view(), name='order_state_update'),
@@ -91,29 +91,29 @@ urlpatterns = [
     re_path(r'^sale_order_fee_receive/$', views_edit.sale_order_fee_receive, name='sale_order_fee_receive'),
     re_path(r'^sale_order_detail/(?P<pk>\d+)/$', views_detail.sale_order_detail, name='sale_order_detail'),
     # 产品出库管理
-    re_path(r'^sale_list/$', views.sale_list, name='sale_list'),
+    re_path(r'^sale_list/$', views.SaleListView.as_view(), name='sale_list'),
     re_path(r'^add_sale/$', views_add.SaleCreate.as_view(), name='add_sale'),
     re_path(r'^sale_update/(?P<pk>\d+)/$', views_edit.SaleUpdate.as_view(), name='sale_update'),
     re_path(r'^sale_confirm/$', views_edit.sale_confirm, name='sale_confirm'),
     re_path(r'^sale_delete/(?P<pk>\d+)/$', views_edit.sale_delete, name='sale_delete'),
     re_path(r'^sale_pay/$', views_edit.sale_pay, name='sale_pay'),
     # 原料管理
-    re_path(r'^material_list/$', views.material_list, name='material_list'),
+    re_path(r'^material_list/$', views.MaterialListView.as_view(), name='material_list'),
     re_path(r'^add_material/$', views_add.MaterialCreate.as_view(), name='add_material'),
     re_path(r'^material_update/(?P<pk>\d+)/$', views_edit.MaterialUpdate.as_view(), name='material_update'),
     # 原料批次管理
-    re_path(r'^material_batch_list/$', views.material_batch_list, name='material_batch_list'),
+    re_path(r'^material_batch_list/$', views.MaterialBatchListView.as_view(), name='material_batch_list'),
     re_path(r'^material_batch/(?P<pk>\d+)/$', views_detail.material_batch_detail, name='material_batch_detail'),
     re_path(r'^add_material_batch/$', views_add.MaterialBatchCreate.as_view(), name='add_material_batch'),
     re_path(r'^material_batch_update/(?P<pk>\d+)/$', views_edit.MaterialBatchUpdate.as_view(),
             name='material_batch_update'),
     # 原料入库管理
-    re_path(r'^material_in_list/$', views.material_in_list, name='material_in_list'),
+    re_path(r'^material_in_list/$', views.MaterialInListView.as_view(), name='material_in_list'),
     re_path(r'^add_materials_in/$', views_add.MaterialInCreate.as_view(), name='add_material_in'),
     re_path(r'^material_in_update/(?P<pk>\d+)/$',  views_edit.MaterialInUpdate.as_view(), name='material_in_update'),
     re_path(r'^material_in_delete/(?P<pk>\d+)/$',  views_edit.MaterialInDelete.as_view(), name='material_in_delete'),
     # 原料出库管理
-    re_path(r'^material_out_list/$', views.material_out_list, name='material_out_list'),
+    re_path(r'^material_out_list/$', views.MaterialOutListView.as_view(), name='material_out_list'),
     re_path(r'^add_materials_out/$', views_add.MaterialOutCreate.as_view(), name='add_material_out'),
     re_path(r'^material_out_update/(?P<pk>\d+)/$', views_edit.MaterialOutUpdate.as_view(), name='material_out_update'),
     re_path(r'^material_out_delete/(?P<pk>\d+)/$', views_edit.MaterialOutDelete.as_view(), name='material_out_delete'),
@@ -130,7 +130,7 @@ urlpatterns = [
     # 资金流水
     re_path(r'^money_io_types/$', views_add.MoneyInOutTypeCreate.as_view(), name='money_inout_types'),
     re_path(r'^money_iot_update/(?P<pk>\d+)/$', views_edit.MoneyInOutTypeUpdate.as_view(), name='money_iot_update'),
-    re_path(r'^money_io_list/$', views.moneyinout_list, name='moneyinout_list'),
+    re_path(r'^money_io_list/$', views.MoneyInOutListView.as_view(), name='moneyinout_list'),
     re_path(r'^money_io_update/(?P<pk>\d+)/$', views_edit.MoneyInOutUpdate.as_view(), name='moneyinout_update'),
     re_path(r'^money_ios_update/(?P<pk>\d+)/$', views_edit.MoneyInOutStateUpdate.as_view(), name='money_ios_update'),
     re_path(r'^add_money_io/$', views_add.MoneyInOutCreate.as_view(), name='add_moneyinout'),

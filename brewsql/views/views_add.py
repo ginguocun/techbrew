@@ -75,10 +75,10 @@ class EmployeeCreate(TechBrewCreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        employees = object_paginator(self.request, Employee.objects.all(), per_page_count=5)
+        employees = object_paginator(self.request, Employee.objects.all(), 5)
         context['app_users'] = User.objects.all()
-        context['data'] = employees['data']
-        context['page_obj'] = employees['page_obj']
+        context['data'] = employees.get('data')
+        context['page_obj'] = employees.get('page_obj')
         return context
 
     @method_decorator([login_required, permission_required('{0}.add_employee'.format(app_name))])
@@ -123,9 +123,9 @@ class ProductPackSizeUnitCreate(TechBrewCreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product_packs = object_paginator(self.request, ProductPackSizeUnit.objects.all(), per_page_count=10)
-        context['data'] = product_packs['data']
-        context['page_obj'] = product_packs['page_obj']
+        product_packs = object_paginator(self.request, ProductPackSizeUnit.objects.all(), 10)
+        context['data'] = product_packs.get('data')
+        context['page_obj'] = product_packs.get('page_obj')
         return context
 
     @method_decorator([login_required, permission_required('{0}.add_productpacksizeunit'.format(app_name))])

@@ -23,10 +23,10 @@ def client_detail(request, pk):
     order_data = None
     order_pr = None
     if order_list:
-        order_d = object_paginator(request, order_list, per_page_count=10)
+        order_d = object_paginator(request, order_list, 10)
         if order_d:
-            order_data = order_d['data']
-            order_pr = order_d['page_obj']
+            order_data = order_d.get('data')
+            order_pr = order_d.get('page_obj')
     total_income = order_list.aggregate(total_income=Sum('sale_price_link__money_in_out'))
     total_income_cn = ''
     if total_income['total_income']:
@@ -51,10 +51,10 @@ def supplier_detail(request, pk):
     order_data = None
     order_pr = None
     if order_list:
-        order_d = object_paginator(request, order_list, per_page_count=10)
+        order_d = object_paginator(request, order_list, 10)
         if order_d:
-            order_data = order_d['data']
-            order_pr = order_d['page_obj']
+            order_data = order_d.get('data')
+            order_pr = order_d.get('page_obj')
     total_cost = order_list.aggregate(total_cost=Sum('material_cost_link__money_in_out'))
     total_cost_cn = ''
     if total_cost['total_cost']:
@@ -105,7 +105,7 @@ def brew_ferment_m(ferment_ms=None):
 def brew_data(request, pk=1):
     brew = get_object_or_404(Brew, pk=pk)
     ferment_ms = FermentMonitor.objects.filter(brew_id=brew.pk).order_by('recorded')
-    ob_data = object_paginator(request, ferment_ms, per_page_count=10)
+    ob_data = object_paginator(request, ferment_ms, 10)
     [plato_data, ph_data, t_real, t_set] = brew_ferment_m(ferment_ms)
     context = dict()
     context['brew'] = brew
@@ -113,8 +113,8 @@ def brew_data(request, pk=1):
     context['ph_data'] = ph_data
     context['t_real'] = t_real
     context['t_set'] = t_set
-    context['data'] = ob_data['data']
-    context['page_obj'] = ob_data['page_obj']
+    context['data'] = ob_data.get('data')
+    context['page_obj'] = ob_data.get('page_obj')
     context['brew_monitors'] = BrewMonitor.objects.filter(brew=brew)
     context['packs'] = Pack.objects.filter(brew=brew)
     context['sales'] = Sale.objects.filter(pack__brew=brew)
