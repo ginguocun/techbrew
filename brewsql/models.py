@@ -1143,7 +1143,7 @@ class FermentMonitor(models.Model):
     bar = models.DecimalField(_('压力(Bar)'), max_digits=3, decimal_places=2, null=True,
                               blank=True, validators=[MaxValueValidator(3), MinValueValidator(0)])
     diacetyl = models.DecimalField(
-        _('双乙酰(ml/L)'), max_digits=4, decimal_places=3, null=True,
+        _('双乙酰(mg/L)'), max_digits=4, decimal_places=3, null=True,
         blank=True, validators=[MaxValueValidator(2), MinValueValidator(0)])
     qc_report = models.FileField(_('质检报告'), upload_to='process/qc', null=True, blank=True)
     dry_hop = models.DecimalField(_('酒花干投量'), max_digits=5, decimal_places=2, null=True, blank=True)
