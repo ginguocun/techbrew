@@ -151,7 +151,7 @@ class ProductNameForm(ModelForm):
             product_name_code = ''
         model = ProductName
         fields = ['product_name_code', 'product_name_cn', 'product_name_en', 'brewer', 'client',
-                  'product_type', 'notes', 'created_by']
+                  'product_type', 'notes', 'is_show', 'created_by']
         widgets = {
             'product_name_code': TextInput(attrs={'class': 'form-control', 'value': product_name_code,
                                                   'placeholder': _('建议3位数字形式')}),

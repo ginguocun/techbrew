@@ -56,6 +56,17 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.is_show.label_tag }}</div>
+                        <div class="col-lg-10">
+                               <div class="switch switch-square"
+                                data-on-label="<i class=' fa fa-check'></i>"
+                                data-off-label="<i class='fa fa-times'></i>">
+                                {{ form.is_show }}
+                            </div>
+                            <p class="help-block">{{ form.is_show.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.notes.label_tag }}</div>
                         <div class="col-lg-10">
                             {{ form.notes }}
@@ -75,4 +86,5 @@
 {% endblock %}
 {% block this_js %}
 <script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'flatlab/js/bootstrap-switch.js' %}"></script>
 {% endblock %}

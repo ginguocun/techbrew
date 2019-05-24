@@ -31,7 +31,7 @@
                             <td>{{ d.product_type.product_type_name_cn }}</td>
                             <td>{{ d.brewer.last_name }} {{ d.brewer.first_name }}</td>
                             <td>{{ d.notes }}</td>
-                            <td>{{ d.show|yesno:"是,否" }}</td>
+                            <td>{{ d.is_show|yesno:"是,否" }}</td>
                             <td>{{ d.datetime_created }}</td>{% if perms.brewsql.change_productname %}
                             <td align="right">
                                 <a href="{% url 'brewsql:product_name_update' d.pk %}?next={% url 'brewsql:product_name_list' %}">
