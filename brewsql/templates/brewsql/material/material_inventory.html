@@ -41,7 +41,6 @@
                     <th>{% trans '原料类型' %}</th>{% endif %}
                     <th>{% trans '库存' %}</th>
                     <th>{% trans '备注' %}</th>
-                    <th>{% trans '最后更新' %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,7 +51,6 @@
                     <td>{{ d.material_category.material_category_cn }}</td>{% endif %}
                     <td>{{ d.current_inventory }}</td>
                     <td>{{ d.notes|linebreaks|default_if_none:"" }}</td>
-                    <td>{{ d.datetime_updated|date:"Y-m-d H:i:m" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
