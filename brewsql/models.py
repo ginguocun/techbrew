@@ -645,7 +645,7 @@ class Material(models.Model):
     def current_inventory(self):
         batches = self.material_batch.all()
         if batches:
-            res = [str(b.material_batch_total_left) for b in batches]
+            res = [str(b.material_batch_total_left) for b in batches if float(b.material_batch_total_left) > 0]
             return '<br>'.join(res)
         return None
 

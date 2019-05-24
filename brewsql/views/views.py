@@ -696,6 +696,7 @@ def material_inventory(request):
         object_list = object_list.filter(Q(notes__icontains=q) | Q(material_en__icontains=q) | Q(
             material_cn__icontains=q) | Q(material_code__icontains=q)).distinct()
     context['data'] = [o for o in object_list if o.current_inventory]
+    context['material_category'] = MaterialCategory.objects.all()
     return render(request, template_name=template_name, context=context)
 
 
