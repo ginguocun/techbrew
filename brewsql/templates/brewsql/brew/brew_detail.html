@@ -110,7 +110,7 @@
                             <td>{{ f.bar|default_if_none:'' }}</td>
                             <td>{{ f.cell_mml|default_if_none:'' }}</td>
                             <td>{{ f.diacetyl|default_if_none:"" }}</td>
-                            <td>{{ f.notes }}{% if f.qc_report %}<br><a href="{{ MEDIA_URL }}{{ f.qc_report }}"><span class="btn btn-info btn-xs">{{ f.qc_report_name }}</span></a>{% endif %}</td>{% if perms.brewsql.delete_fermentmonitor %}
+                            <td>{{ f.notes }}{% if f.qc_report %} <a href="{{ MEDIA_URL }}{{ f.qc_report }}"><span class="btn btn-info btn-xs">{{ f.qc_report_name }}</span></a>{% endif %}</td>{% if perms.brewsql.delete_fermentmonitor %}
                             <td>
                                 <a href="{% url 'brewsql:ferment_monitor_delete' f.pk %}?next={% url 'brewsql:brew_detail' brew.pk %}"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></a>
                             </td>{% endif %}

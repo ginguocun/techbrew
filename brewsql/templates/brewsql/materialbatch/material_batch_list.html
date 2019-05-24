@@ -82,7 +82,7 @@
                     <td><span class="label label-warning">{{ d.material_batch_total_out|floatformat:"-3" }}</span></td>
                     <td><span class="label label-danger">{{ d.material_batch_total_left|floatformat:"-3" }}</span></td>
                     <td>{{ d.para|default_if_none:'' }}</td>
-                    <td>{{ d.notes }}</td>
+                    <td>{{ d.notes }}{% if d.qc_report %} <a href="{{ MEDIA_URL }}{{ d.qc_report }}"><span class="btn btn-info btn-xs">{{ d.qc_report_name }}</span></a>{% endif %}</td>
                     <td align="right">
                         <a href="{% url 'brewsql:material_batch_detail' d.pk %}"><button class="btn btn-info btn-xs"><i class="fa fa-info-circle"></i></button></a>
                         {% if perms.brewsql.change_materialbatch %}<a href="{% url 'brewsql:material_batch_update' d.pk %}?next={% url 'brewsql:material_batch_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}

@@ -681,6 +681,7 @@ class MaterialBatch(models.Model):
     expire_date = models.DateField(_('保质期'), null=True)
     para = models.CharField(_('参数'), max_length=100, null=True, blank=True)
     notes = models.TextField(_('备注'), max_length=1000, null=True, blank=True)
+    qc_report = models.FileField(_('质检报告'), upload_to='material/qc', null=True, blank=True)
     state = models.BooleanField(_('状态'), default=True)
     created_by = models.ForeignKey(
         User,
@@ -702,6 +703,12 @@ class MaterialBatch(models.Model):
     datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
+
+    @property
+    def qc_report_name(self):
+        if self.qc_report:
+            return str(self.qc_report).replace('material/qc/', '')
+        return None
 
     @property
     def material_batch_total_in(self):

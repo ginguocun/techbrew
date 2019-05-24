@@ -184,7 +184,8 @@ class ProductPackForm(ModelForm):
         widgets = {
             'product_pack_code': TextInput(attrs={'class': 'form-control', 'placeholder': 'A'}),
             'product_pack_size': NumberInput(attrs={'class': 'form-control', 'placeholder': '330'}),
-            'product_pack_unit': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
+            'product_pack_unit': Select(
+                attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'product_pack_type_en': TextInput(attrs={'class': 'form-control', 'placeholder': 'Bottle'}),
             'product_pack_type_cn': TextInput(attrs={'class': 'form-control', 'placeholder': '瓶装'}),
         }
@@ -635,7 +636,7 @@ class MaterialForm(ModelForm):
 class MaterialBatchForm(ModelForm):
     class Meta:
         model = MaterialBatch
-        fields = ['material_batch_code', 'material', 'material_pack_size_unit', 'expire_date',
+        fields = ['material_batch_code', 'material', 'material_pack_size_unit', 'expire_date', 'qc_report',
                   'para', 'notes', 'created_by']
         widgets = {
             'material_batch_code': TextInput(attrs={'class': 'form-control', 'placeholder': _('必填且不得重复')}),
@@ -647,14 +648,15 @@ class MaterialBatchForm(ModelForm):
             'expire_date': DateInput(attrs={'class': 'form-control',
                                             'value': str(timezone.localdate()), 'type': 'date'}),
             'created_by': HiddenInput(),
+            'qc_report': FileInput(attrs={'class': 'form-control'}),
         }
 
 
 class MaterialBatchUpdateForm(ModelForm):
     class Meta:
         model = MaterialBatch
-        fields = ['material_batch_code', 'material', 'material_pack_size_unit', 'expire_date', 'state',
-                  'para', 'notes', 'created_by']
+        fields = ['material_batch_code', 'material', 'material_pack_size_unit', 'expire_date', 'state', 'qc_report',
+                  'para', 'notes', 'modified_by']
         labels = {
             'state': _('显示'),
         }
@@ -666,7 +668,8 @@ class MaterialBatchUpdateForm(ModelForm):
             'para': TextInput(attrs={'class': 'form-control', 'placeholder': _('参数')}),
             'notes': Textarea(attrs={'class': 'form-control'}),
             'expire_date': DateInput(attrs={'class': 'form-control'}),
-            'created_by': HiddenInput(),
+            'modified_by': HiddenInput(),
+            'qc_report': FileInput(attrs={'class': 'form-control'}),
         }
 
 

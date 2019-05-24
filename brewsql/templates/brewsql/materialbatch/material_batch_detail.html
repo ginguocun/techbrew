@@ -44,6 +44,9 @@
                         <p><span>{% trans '参数' %} </span>: {{ data.para|default_if_none:'N/A' }}</p>
                     </div>
                     <div class="col-md-12">
+                        <p><span>{% trans '质检报告' %} </span>: {% if data.qc_report %}<a href="{{ MEDIA_URL }}{{ data.qc_report }}"><span class="btn btn-info btn-xs">{{ data.qc_report_name }}</span></a>{% endif %}</p>
+                    </div>
+                    <div class="col-md-12">
                         <p><span>{% trans '备注' %} </span>: {{ data.notes|default_if_none:'N/A' }}</p>
                     </div>
                 </div>
