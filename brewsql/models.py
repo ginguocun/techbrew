@@ -643,7 +643,7 @@ class Material(models.Model):
 
     @property
     def current_inventory(self):
-        batches = self.material_batch.all()
+        batches = getattr(self, 'material_batch').all()
         if batches:
             res = ['{0}*{1} [{2}]'.format(b.material_batch_total_left, b.material_pack_size_unit, b.material_batch_code)
                    for b in batches if float(b.material_batch_total_left) > 0]
@@ -1198,7 +1198,7 @@ class FermentMonitor(models.Model):
     def delta_days(self):
         delta_days = None
         if self.recorded:
-            delta_days = (self.recorded.date() - getattr(self.brew, 'date_start')).days
+            delta_days = (getattr(self, 'recorded').date() - getattr(self.brew, 'date_start')).days
         return delta_days
 
     def get_absolute_url(self):
