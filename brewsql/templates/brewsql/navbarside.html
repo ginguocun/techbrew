@@ -64,6 +64,7 @@
                 <span>{% trans '原料管理' %}</span><span class="dcjq-icon"></span>
                 </a>
                 <ul class="sub">{% if perms.brewsql.view_material %}
+                    <li><a href="{% url 'brewsql:material_inventory' %}">{% trans '原料库存' %}</a></li>
                     <li><a href="{% url 'brewsql:material_list' %}">{% trans '原料列表' %}</a></li>{% endif %}{% if perms.brewsql.view_materialbatch %}
                     <li><a href="{% url 'brewsql:material_batch_list' %}">{% trans '原料批次' %}</a></li>{% endif %}{% if perms.brewsql.view_materialin %}
                     <li><a href="{% url 'brewsql:material_in_list'%}">{% trans '原料入库' %}</a></li>{% endif %}{% if perms.brewsql.view_materialout %}

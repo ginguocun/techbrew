@@ -1,0 +1,65 @@
+{% extends "brewsql/base.html" %}
+{% load static i18n %}
+{% block title %}{% trans '原料库存' %}{% endblock %}
+{% block this_css %}
+<link href="{% static 'flatlab/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="panel-body">
+        <div class="col-md-9">
+            <form class="form-inline" role="form" method="get">
+                <div class="form-group">
+                    <select name="c" class="selectpicker show-tick form-control" data-live-search='true'>
+                        <option value="">{% trans '所有类型' %}</option>
+                        {% for ss in material_category %}
+                            {% if ss.pk|floatformat:'0' == request.GET.c|floatformat:'0' %}
+                            <option value="{{ ss.pk }}" selected>{{ ss.material_category_cn }}</option>
+                            {% else %}
+                            <option value="{{ ss.pk }}" >{{ ss.material_category_cn }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="q" placeholder="" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                        <span class="input-group-btn"><button class="btn btn-primary" type="submit">搜索</button></span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<section class="panel">
+    <div class="panel-body table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>{% trans '原料编号' %}</th>
+                    <th>{% trans '原料名称' %}</th>{% if not request.GET.c %}
+                    <th>{% trans '原料类型' %}</th>{% endif %}
+                    <th>{% trans '库存' %}</th>
+                    <th>{% trans '备注' %}</th>
+                    <th>{% trans '最后更新' %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in data %}
+                <tr class="{% cycle '' 'active' %}">
+                    <th>{{ d.material_code }}</th>
+                    <td>{{ d.material_cn }}</td>{% if not request.GET.c %}
+                    <td>{{ d.material_category.material_category_cn }}</td>{% endif %}
+                    <td>{{ d.current_inventory }}</td>
+                    <td>{{ d.notes|linebreaks|default_if_none:"" }}</td>
+                    <td>{{ d.datetime_updated|date:"Y-m-d H:i:m" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
+{% block this_js %}
+<script src="{% static 'flatlab/js/bootstrap-select.min.js' %}"></script>
+{% endblock %}

@@ -99,6 +99,7 @@ urlpatterns = [
     re_path(r'^sale_pay/$', views_edit.sale_pay, name='sale_pay'),
     # 原料管理
     re_path(r'^material_list/$', views.MaterialListView.as_view(), name='material_list'),
+    re_path(r'^material_inventory/$', views.material_inventory, name='material_inventory'),
     re_path(r'^add_material/$', views_add.MaterialCreate.as_view(), name='add_material'),
     re_path(r'^material_update/(?P<pk>\d+)/$', views_edit.MaterialUpdate.as_view(), name='material_update'),
     # 原料批次管理

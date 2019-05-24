@@ -682,6 +682,23 @@ class MaterialListView(ListView):
         return super(MaterialListView, self).dispatch(request, *args, **kwargs)
 
 
+@login_required
+@permission_required('{0}.view_material'.format(app_name))
+def material_inventory(request):
+    template_name = '{0}/material/material_inventory.html'.format(app_name)
+    context = dict()
+    c = request.GET.get('c')
+    q = request.GET.get('q')
+    object_list = Material.objects.all()
+    if c:
+        object_list = object_list.filter(material_category_id=c)
+    if q:
+        object_list = object_list.filter(Q(notes__icontains=q) | Q(material_en__icontains=q) | Q(
+            material_cn__icontains=q) | Q(material_code__icontains=q)).distinct()
+    context['data'] = [o for o in object_list if o.current_inventory]
+    return render(request, template_name=template_name, context=context)
+
+
 class MaterialBatchListView(ListView):
     model = MaterialBatch
     context_object_name = 'data'

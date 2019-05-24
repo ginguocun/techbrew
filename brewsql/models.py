@@ -641,6 +641,14 @@ class Material(models.Model):
 
     objects = models.Manager()
 
+    @property
+    def current_inventory(self):
+        batches = self.material_batch.all()
+        if batches:
+            res = [str(b.material_batch_total_left) for b in batches]
+            return '<br>'.join(res)
+        return None
+
     def get_absolute_url(self):
         if self.pk:
             pass
@@ -660,6 +668,7 @@ class MaterialBatch(models.Model):
     material = models.ForeignKey(
         Material,
         on_delete=models.CASCADE,
+        related_name='material_batch',
         verbose_name=_('原料')
     )
     material_pack_size_unit = models.ForeignKey(
@@ -717,8 +726,8 @@ class MaterialBatch(models.Model):
     def material_batch_total_left(self):
         if self.material_batch_total_in or self.material_batch_total_out:
             if self.material_batch_total_out:
-                return self.material_batch_total_in - self.material_batch_total_out
-            return self.material_batch_total_in
+                return float(self.material_batch_total_in) - float(self.material_batch_total_out)
+            return float(self.material_batch_total_in)
         return 0
 
     @property
