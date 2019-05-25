@@ -45,6 +45,7 @@ urlpatterns = [
     re_path(r'^api/brewsql/', include('brewsql.urls_api', namespace='brewsql-api')),
     re_path(r'^brix-plato$', brix_plato, name='brix_plato'),
     re_path(r'', include('brewsql.urls', namespace='brewsql')),
+    re_path(r'^admincjzh/login/$', tb_login, name='admin_login'),
     re_path(r'^admincjzh/', admin.site.urls, name='admin'),
     re_path(r'^accounts/login/$', tb_login, name='login'),
     re_path(r'^accounts/logout/$', tb_logout, name='logout'),
