@@ -1,5 +1,3 @@
-from django.core.paginator import InvalidPage, Paginator
-from django.http import Http404
 import math
 import datetime
 import re
@@ -61,32 +59,6 @@ def convert_num_to_chinese(t_price):
     if len(str_part_b) != 0:
         s = a + u'圆' + b
     return s
-
-
-def object_paginator(request, object_list, page_size=20):
-    paginator = Paginator(object_list, page_size)
-    page = request.GET.get('page', 1)
-    try:
-        page_number = int(page)
-    except ValueError:
-        if page == 'last':
-            page_number = paginator.num_pages
-        else:
-            raise Http404(_("Page is not 'last', nor can it be converted to an int."))
-    try:
-        page = paginator.page(page_number)
-    except InvalidPage as e:
-        raise Http404(_('Invalid page (%(page_number)s): %(message)s') % {
-            'page_number': page_number,
-            'message': str(e)
-        })
-    context = {
-        'paginator': paginator,
-        'page_obj': page,
-        'is_paginated': True,
-        'data': page.object_list
-    }
-    return context
 
 
 def plato2sg(plato=12):

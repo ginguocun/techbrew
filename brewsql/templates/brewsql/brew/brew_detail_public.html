@@ -38,7 +38,7 @@
                             <th>{% trans '备注' %}</th>
                         </tr>
                     </thead>
-                    <tbody>{% for f in data %}
+                    <tbody>{% for f in page_obj %}
                         <tr class="{% cycle '' 'active' %}">
                             <td>{{ f.recorded|date:"Y-m-d H:i:s" }}</td>
                             <td>{% if f.delta_days %}{{ f.delta_days }}{% else %}0{% endif %}</td>

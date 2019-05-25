@@ -18,7 +18,7 @@
                             <th>{% trans '包装形式' %}</th>
                         </tr>
                     </thead>
-                    <tbody>{% for d in data %}
+                    <tbody>{% for d in page_obj %}
                         <tr class="{% cycle '' 'active' %}">
                             <td>{{ d.id }}</td>
                             <td>{{ d.product_pack_code }}</td>

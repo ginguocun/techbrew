@@ -90,7 +90,7 @@
                 </div>
             </div>
         </section>
-        {% if data %}
+        {% if page_obj %}
         <section class="panel">
             <header class="panel-heading">
                 <div class="row">
@@ -112,7 +112,7 @@
                                     <th>{% trans '金额' %}</th>
                                 </tr>
                             </thead>
-                            <tbody>{% for item in data %}
+                            <tbody>{% for item in page_obj %}
                                 <tr class="{% cycle '' 'active' %}">
                                     <th>{{ item.sale_date|date:"Y-m-d"  }}</th>
                                     <td>{% if perms.brewsql.view_saleorder %}

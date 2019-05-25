@@ -10,9 +10,10 @@ from django.views.generic.edit import CreateView
 from django.utils.decorators import method_decorator
 # from client.models import TechBrewClient
 from django.db.models import F
-from django.conf import settings
+from django.core.paginator import Paginator
+# from django.conf import settings
 import datetime
-from ..utils import plato2sg, sg2plato, object_paginator
+from ..utils import plato2sg, sg2plato
 from ..forms import *
 
 
@@ -74,11 +75,12 @@ class EmployeeCreate(TechBrewCreateView):
     template_name_suffix = '/add_employee'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        employees = object_paginator(self.request, Employee.objects.all(), 5)
+        context = super(EmployeeCreate, self).get_context_data(**kwargs)
+        employees = Employee.objects.all()
+        paginator = Paginator(employees, 20)
+        page = self.request.GET.get('page', 1)
+        context['page_obj'] = paginator.get_page(page)
         context['app_users'] = User.objects.all()
-        context['data'] = employees.get('data')
-        context['page_obj'] = employees.get('page_obj')
         return context
 
     @method_decorator([login_required, permission_required('{0}.add_employee'.format(app_name))])
@@ -123,9 +125,9 @@ class ProductPackSizeUnitCreate(TechBrewCreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product_packs = object_paginator(self.request, ProductPackSizeUnit.objects.all(), 10)
-        context['data'] = product_packs.get('data')
-        context['page_obj'] = product_packs.get('page_obj')
+        paginator = Paginator(ProductPackSizeUnit.objects.all(), 10)
+        page = self.request.GET.get('page', 1)
+        context['page_obj'] = paginator.get_page(page)
         return context
 
     @method_decorator([login_required, permission_required('{0}.add_productpacksizeunit'.format(app_name))])

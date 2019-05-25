@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponseRedirect, Http404
-from ..utils import object_paginator, convert_num_to_chinese
+from django.http import Http404
+from django.core.paginator import Paginator
+from ..utils import convert_num_to_chinese
 from ..forms import *
 
 
@@ -20,13 +21,11 @@ def client_detail(request, pk):
             else:
                 return render(request, '{0}/client/client_detail.html'.format(app_name))
     order_list = Sale.objects.filter(sale_order__client_id=client.pk)
-    order_data = None
     order_pr = None
     if order_list:
-        order_d = object_paginator(request, order_list, 10)
-        if order_d:
-            order_data = order_d.get('data')
-            order_pr = order_d.get('page_obj')
+        paginator = Paginator(order_list, 10)
+        page = request.GET.get('page', 1)
+        order_pr = paginator.get_page(page)
     total_income = order_list.aggregate(total_income=Sum('sale_price_link__money_in_out'))
     total_income_cn = ''
     if total_income['total_income']:
@@ -36,7 +35,6 @@ def client_detail(request, pk):
         total_income = 0
     context = dict()
     context['client_data'] = client
-    context['data'] = order_data
     context['page_obj'] = order_pr
     context['total_income'] = total_income
     context['total_income_cn'] = total_income_cn
@@ -48,13 +46,11 @@ def client_detail(request, pk):
 def supplier_detail(request, pk):
     supplier = get_object_or_404(Supplier, pk=pk)
     order_list = MaterialIn.objects.filter(supplier_id=supplier.pk)
-    order_data = None
     order_pr = None
     if order_list:
-        order_d = object_paginator(request, order_list, 10)
-        if order_d:
-            order_data = order_d.get('data')
-            order_pr = order_d.get('page_obj')
+        paginator = Paginator(order_list, 10)
+        page = request.GET.get('page', 1)
+        order_pr = paginator.get_page(page)
     total_cost = order_list.aggregate(total_cost=Sum('material_cost_link__money_in_out'))
     total_cost_cn = ''
     if total_cost['total_cost']:
@@ -67,7 +63,6 @@ def supplier_detail(request, pk):
         total_cost = 0
     context = dict()
     context['supplier_data'] = supplier
-    context['data'] = order_data
     context['page_obj'] = order_pr
     context['total_cost'] = total_cost
     context['total_cost_cn'] = total_cost_cn
@@ -105,7 +100,8 @@ def brew_ferment_m(ferment_ms=None):
 def brew_data(request, pk=1):
     brew = get_object_or_404(Brew, pk=pk)
     ferment_ms = FermentMonitor.objects.filter(brew_id=brew.pk).order_by('recorded')
-    ob_data = object_paginator(request, ferment_ms, 10)
+    paginator = Paginator(ferment_ms, 20)
+    page = request.GET.get('page', 1)
     [plato_data, ph_data, t_real, t_set] = brew_ferment_m(ferment_ms)
     context = dict()
     context['brew'] = brew
@@ -113,8 +109,7 @@ def brew_data(request, pk=1):
     context['ph_data'] = ph_data
     context['t_real'] = t_real
     context['t_set'] = t_set
-    context['data'] = ob_data.get('data')
-    context['page_obj'] = ob_data.get('page_obj')
+    context['page_obj'] = paginator.get_page(page)
     context['brew_monitors'] = BrewMonitor.objects.filter(brew=brew)
     context['packs'] = Pack.objects.filter(brew=brew)
     context['sales'] = Sale.objects.filter(pack__brew=brew)

@@ -782,7 +782,6 @@ def sale_order_next(request):
 
 
 @login_required
-@permission_required('{0}.view_product'.format(app_name))
 def password_change_own(request):
     template_name = '{0}/user/password_change.html'.format(app_name)
     if request.user.is_authenticated:

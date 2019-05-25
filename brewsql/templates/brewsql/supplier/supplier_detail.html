@@ -83,7 +83,7 @@
                 </div>
             </div>
         </section>
-        {% if data %}
+        {% if page_obj %}
         <section class="panel">
              <header class="panel-heading">
                 <div class="row">
@@ -104,7 +104,7 @@
                                     <th>{% trans '金额' %}</th>
                                 </tr>
                             </thead>
-                            <tbody>{% for item in data %}
+                            <tbody>{% for item in page_obj %}
                                 <tr class="{% cycle '' 'active' %}">
                                     <td>{{ item.material_in_date|date:"Y-m-d"  }}</td>
                                     <td>{{ item.material_batch }}</td>

@@ -7,7 +7,7 @@ from django.views.generic import ListView
 from django.utils.decorators import method_decorator
 import json
 from ..forms import *
-from ..utils import object_paginator
+from django.core.paginator import Paginator
 
 
 app_name = GeneralConfig.name
@@ -856,7 +856,7 @@ def user_action_list(request):
         object_list = object_list.filter(
             Q(object_repr__icontains=q) | Q(action_flag__icontains=q) | Q(
                 change_message__icontains=q)).distinct()
-    object_p_data = object_paginator(request, object_list)
-    context['data'] = object_p_data.get('data')
-    context['page_obj'] = object_p_data.get('page_obj')
+    paginator = Paginator(object_list, 20)
+    page = request.GET.get('page', 1)
+    context['page_obj'] = paginator.get_page(page)
     return render(request, template_name=template_name, context=context)

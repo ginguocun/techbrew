@@ -39,7 +39,7 @@
                     <th>{% trans '描述' %}</th>
                 </tr>
             </thead>
-            <tbody>{% for d in data %}
+            <tbody>{% for d in page_obj %}
                 <tr class="{% cycle '' 'active' %}">
                     <th>{{ d.action_time }}</th>
                     <td>{{ d.content_type }}</td>
