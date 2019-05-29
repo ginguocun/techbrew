@@ -40,7 +40,7 @@ class EmployeeForm(ModelForm):
             'is_salesman': CheckboxInput(),
             'working': CheckboxInput(attrs={'type': 'checkbox'}),
             'joined': DateInput(attrs={'class': 'form-control', 'type': 'date',
-                                       'value': str(timezone.localdate()), }),
+                                       'value': str(timezone.localdate())}),
             'created_by': HiddenInput(),
         }
 
@@ -246,7 +246,7 @@ class ProductUpdateForm(ModelForm):
 class BrewForm(ModelForm):
     class Meta:
         model = Brew
-        fields = ['brew_batch_code', 'product_name', 'recipe', 'tank',
+        fields = ['brew_batch_code', 'product_name', 'recipe', 'tank', 'theory_days',
                   'date_start', 'operator', 'notes', 'created_by']
         labels = {
             'tank': _('发酵罐号'),
@@ -269,6 +269,7 @@ class BrewForm(ModelForm):
             'tank': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'operator': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'notes': Textarea(attrs={'class': 'form-control'}),
+            'theory_days': NumberInput(attrs={'class': 'form-control'}),
             'created_by': HiddenInput(),
         }
 
@@ -276,7 +277,7 @@ class BrewForm(ModelForm):
 class BrewUpdateForm(ModelForm):
     class Meta:
         model = Brew
-        fields = ['brew_batch_code', 'product_name', 'tank',
+        fields = ['brew_batch_code', 'product_name', 'tank', 'theory_days',
                   'date_start', 'operator', 'notes', 'created_by']
         labels = {
             'tank': _('发酵罐号'),
@@ -291,6 +292,7 @@ class BrewUpdateForm(ModelForm):
             'tank': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'operator': Select(attrs={'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'}),
             'notes': Textarea(attrs={'class': 'form-control'}),
+            'theory_days': NumberInput(attrs={'class': 'form-control'}),
             'created_by': HiddenInput(),
         }
 

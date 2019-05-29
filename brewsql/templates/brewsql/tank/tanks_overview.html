@@ -4,9 +4,9 @@
 {% get_current_language as LANGUAGE_CODE %}
 {% block content %}
 <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_brew %}
-    <a href="{% url 'brewsql:add_brew' %}?next={% url 'brewsql:tanks_overview' %}"><button type="button" class="btn btn-primary">{% trans "新建批次" %}</button></a>{% endif %}{% if perms.brewsql.change_tank %}
-    <a href="{% url 'brewsql:tank_update' %}?next={% url 'brewsql:tanks_overview' %}"><button type="button" class="btn btn-danger">{% trans "状态更新" %}</button></a>{% endif %}{% if perms.brewsql.add_fermentmonitor %}
-    <a href="{% url 'brewsql:new_ferment_record' %}?next={% url 'brewsql:tanks_overview' %}"><button type="button" class="btn btn-success">{% trans "记录数据" %}</button></a>{% endif %}
+    <a href="{% url 'brewsql:add_brew' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "新建批次" %}</button></a>{% endif %}{% if perms.brewsql.change_tank %}
+    <a href="{% url 'brewsql:tank_update' %}?next={{ request.path }}"><button type="button" class="btn btn-danger">{% trans "状态更新" %}</button></a>{% endif %}{% if perms.brewsql.add_fermentmonitor %}
+    <a href="{% url 'brewsql:new_ferment_record' %}?next={{ request.path }}"><button type="button" class="btn btn-success">{% trans "记录数据" %}</button></a>{% endif %}
 </div>
 <div class="clearfix"> </div>
 {% for tank_state, tanks in data.items %}
@@ -21,6 +21,7 @@
                         <th>{% trans '名称/批次' %}</th>
                         <th>{% trans '测量/设置温度' %}</th>
                         <th>{% trans '入罐天数' %}</th>
+                        <th>{% trans '理论天数' %}</th>
                     </tr>
                 </thead>
                 <tbody>{% for tank in tanks %}
@@ -30,6 +31,7 @@
                         <td>{{ tank.current_brew.product_name.product_name_cn }}<br><a href="{% if perms.brewsql.view_brew %}{% url 'brewsql:brew_detail' tank.current_brew.pk %}{% endif %}" target="_blank">{{ tank.current_brew.brew_batch_code|default_if_none:"" }}</a></td>{% endif %}
                         <td>{{ tank.jkm_t_real|default_if_none:'N/A' }}/{{ tank.jkm_t_set|default_if_none:'N/A'  }}</td>
                         <td>{{ tank.current_brew.delta_days }} {% trans '天' %}</td>
+                        <td>{{ tank.current_brew.theory_days }} {% trans '天' %}</td>
                     </tr>{% endfor %}
                 </tbody>
             </table>

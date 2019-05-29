@@ -968,6 +968,7 @@ class Brew(models.Model):
         on_delete=models.SET_NULL,
         verbose_name=_('操作人员')
     )
+    theory_days = models.IntegerField(_('理论天数'), default=25, null=True, blank=True)
     notes = models.TextField(_('备注'), max_length=1000, null=True, blank=True)
     is_share = models.BooleanField(_('可访问'), default=True)
     created_by = models.ForeignKey(

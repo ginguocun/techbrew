@@ -19,9 +19,14 @@
                     {% endif %}
                     <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.product_name.label_tag }}</div>
-                        <div class="col-lg-10">
+                        <div class="col-lg-4">
                             {{ form.product_name }}
                             <p class="help-block">{{ form.product_name.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.theory_days.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.theory_days }}
+                            <p class="help-block">{{ form.theory_days.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">
@@ -66,8 +71,8 @@
     </div>
     <div class="col-lg-2">
         <section class="panel">{% if perms.brewsql.add_productname %}
-            <button class="btn btn-warning btn-block" type="button"><a href="{% url 'brewsql:add_productname' %}?next={% url 'brewsql:add_brew' %}" target="_blank"><i class="fa fa-plus"></i> {% trans '添加产品名称' %}</a></button>{% endif %}{% if perms.brewsql.add_employee %}
-            <button class="btn btn-success btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}?next={% url 'brewsql:add_brew' %}" target="_blank"><i class="fa fa-plus"></i> {% trans '添加操作人员' %}</a></button>{% endif %}
+            <button class="btn btn-warning btn-block" type="button"><a href="{% url 'brewsql:add_productname' %}?next={{ request.path }}" target="_blank"><i class="fa fa-plus"></i> {% trans '添加产品名称' %}</a></button>{% endif %}{% if perms.brewsql.add_employee %}
+            <button class="btn btn-success btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}?next={{ request.path }}" target="_blank"><i class="fa fa-plus"></i> {% trans '添加操作人员' %}</a></button>{% endif %}
         </section>
     </div>
 </div>

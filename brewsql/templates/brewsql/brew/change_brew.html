@@ -21,9 +21,14 @@
                     {% endif %}
                     <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.product_name.label_tag }}</div>
-                        <div class="col-lg-10">
+                        <div class="col-lg-4">
                             {{ form.product_name }}
                             <p class="help-block">{{ form.product_name.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.theory_days.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.theory_days }}
+                            <p class="help-block">{{ form.theory_days.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">
