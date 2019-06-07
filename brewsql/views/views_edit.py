@@ -113,17 +113,17 @@ class ClientLevelUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_clientlevel'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(ClientLevelUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class ClientUpdate(TechBrewUpdateView):
     model = Client
-    form_class = ClientForm
+    form_class = ClientUpdateForm
     template_name_suffix = '/change_client'
 
     @method_decorator([login_required, permission_required('{0}.change_client'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(ClientUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class EmployeeStateUpdate(TechBrewUpdateView):
@@ -133,7 +133,7 @@ class EmployeeStateUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_employeestate'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(EmployeeStateUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class EmployeeUpdate(TechBrewUpdateView):
@@ -141,24 +141,19 @@ class EmployeeUpdate(TechBrewUpdateView):
     form_class = EmployeeUpdateForm
     template_name_suffix = '/change_employee'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['app_users'] = User.objects.all()
-        return context
-
     @method_decorator([login_required, permission_required('{0}.change_employee'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(EmployeeUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class SupplierUpdate(TechBrewUpdateView):
     model = Supplier
-    form_class = SupplierForm
+    form_class = SupplierUpdateForm
     template_name_suffix = '/change_supplier'
 
     @method_decorator([login_required, permission_required('{0}.change_supplier'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(SupplierUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class CompanyTypeUpdate(TechBrewUpdateView):
@@ -168,17 +163,17 @@ class CompanyTypeUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_companytype'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(CompanyTypeUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class CompanyUpdate(TechBrewUpdateView):
     model = Company
-    form_class = CompanyForm
+    form_class = CompanyUpdateForm
     template_name_suffix = '/change_company'
 
     @method_decorator([login_required, permission_required('{0}.change_company'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(CompanyUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialPackUpdate(TechBrewUpdateView):
@@ -189,7 +184,7 @@ class MaterialPackUpdate(TechBrewUpdateView):
 
     @method_decorator(decorators)
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MaterialPackUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialUpdate(TechBrewUpdateView):
@@ -200,7 +195,7 @@ class MaterialUpdate(TechBrewUpdateView):
 
     @method_decorator(decorators)
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MaterialUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialBatchUpdate(TechBrewUpdateView):
@@ -211,7 +206,7 @@ class MaterialBatchUpdate(TechBrewUpdateView):
 
     @method_decorator(decorators)
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MaterialBatchUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class WarehouseUpdate(TechBrewUpdateView):
@@ -222,7 +217,7 @@ class WarehouseUpdate(TechBrewUpdateView):
 
     @method_decorator(decorators)
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(WarehouseUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialInUpdate(UpdateView):
@@ -259,7 +254,7 @@ class MaterialInUpdate(UpdateView):
 
     @method_decorator(decorators)
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MaterialInUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialOutUpdate(TechBrewUpdateView):
@@ -270,7 +265,7 @@ class MaterialOutUpdate(TechBrewUpdateView):
 
     @method_decorator(decorators)
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MaterialOutUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class FermentMonitorDelete(TechBrewDeleteView):
@@ -280,7 +275,7 @@ class FermentMonitorDelete(TechBrewDeleteView):
 
     @method_decorator([login_required, permission_required('{0}.delete_fermentmonitor'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(FermentMonitorDelete, self).dispatch(request, *args, **kwargs)
 
 
 class MoneyInOutTypeUpdate(TechBrewUpdateView):
@@ -291,7 +286,7 @@ class MoneyInOutTypeUpdate(TechBrewUpdateView):
 
     @method_decorator(decorators)
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MoneyInOutTypeUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MoneyInOutUpdate(UpdateView):
@@ -332,7 +327,7 @@ class MoneyInOutUpdate(UpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_moneyinout'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MoneyInOutUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MoneyInOutDelete(DeleteView):
@@ -364,7 +359,7 @@ class MoneyInOutDelete(DeleteView):
 
     @method_decorator([login_required, permission_required('{0}.delete_moneyinout'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MoneyInOutDelete, self).dispatch(request, *args, **kwargs)
 
 
 class MoneyInOutStateUpdate(UpdateView):
@@ -375,7 +370,6 @@ class MoneyInOutStateUpdate(UpdateView):
     def get_success_url(self):
         if self.request.GET:
             if self.request.GET.get('next'):
-                print(self.request.GET.get('next'))
                 return self.request.GET.get('next')
         return super().get_success_url()
 
@@ -401,7 +395,7 @@ class MoneyInOutStateUpdate(UpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_moneyinout'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MoneyInOutStateUpdate, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -431,7 +425,7 @@ class ProductUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_product'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(ProductUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class ProductNameUpdate(TechBrewUpdateView):
@@ -441,7 +435,7 @@ class ProductNameUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_productname'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(ProductNameUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class ProductStyleUpdateView(UpdateView):
@@ -451,7 +445,7 @@ class ProductStyleUpdateView(UpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_productstyle'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(ProductStyleUpdateView, self).dispatch(request, *args, **kwargs)
 
 
 class ProductCategoryUpdate(TechBrewUpdateView):
@@ -461,7 +455,7 @@ class ProductCategoryUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_productcategory'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(ProductCategoryUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class ProductPackUpdate(TechBrewUpdateView):
@@ -471,7 +465,7 @@ class ProductPackUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_productpacksizeunit'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(ProductPackUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class BrewUpdate(UpdateView):
@@ -505,7 +499,7 @@ class BrewUpdate(UpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_brew'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(BrewUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class PackUpdate(TechBrewUpdateView):
@@ -515,7 +509,7 @@ class PackUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_pack'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(PackUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class ReportUpdate(TechBrewUpdateView):
@@ -525,7 +519,7 @@ class ReportUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_report'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(ReportUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class SaleOrderUpdate(TechBrewUpdateView):
@@ -535,20 +529,19 @@ class SaleOrderUpdate(TechBrewUpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user:
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.id)
-            linked_client = Client.objects.filter(created_by=self.request.user.id).filter(is_active=True)
+        context['employee'] = Employee.objects.filter(is_salesman=True)
+        context['client'] = Client.objects.filter(is_active=True)
+        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
+            linked_client = Client.objects.filter(created_by=self.request.user.pk).filter(is_active=True)
             if linked_employee.exists():
                 context['employee'] = linked_employee
                 context['client'] = linked_client
-            else:
-                context['employee'] = Employee.objects.filter(is_salesman=True)
-                context['client'] = Client.objects.filter(is_active=True)
         return context
 
     @method_decorator([login_required, permission_required('{0}.change_saleorder'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(SaleOrderUpdate, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -600,7 +593,7 @@ class SaleOrderStateUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.confirm_sale'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(SaleOrderStateUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class SaleUpdate(UpdateView):
@@ -645,7 +638,7 @@ class SaleUpdate(UpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_sale'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(SaleUpdate, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -804,7 +797,7 @@ class HandBookUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_handbook'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(HandBookUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialInDelete(DeleteView):
@@ -839,7 +832,7 @@ class MaterialInDelete(DeleteView):
 
     @method_decorator([login_required, permission_required('{0}.delete_materialin'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MaterialInDelete, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialOutDelete(TechBrewDeleteView):
@@ -849,7 +842,7 @@ class MaterialOutDelete(TechBrewDeleteView):
 
     @method_decorator([login_required, permission_required('{0}.delete_materialout'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(MaterialOutDelete, self).dispatch(request, *args, **kwargs)
 
 
 class BrewMonitorUpdate(TechBrewUpdateView):
@@ -859,7 +852,7 @@ class BrewMonitorUpdate(TechBrewUpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_brewmonitor'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(BrewMonitorUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class UserUpdate(UpdateView):
@@ -896,7 +889,7 @@ class UserUpdate(UpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_employee'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(UserUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class GroupUpdate(UpdateView):
@@ -933,4 +926,4 @@ class GroupUpdate(UpdateView):
 
     @method_decorator([login_required, permission_required('{0}.change_employee'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super(GroupUpdate, self).dispatch(request, *args, **kwargs)

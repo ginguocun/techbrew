@@ -41,6 +41,8 @@
     <div class="panel-body">
         <form method="post" action="{% url 'brewsql:product_style_create' %}">{% csrf_token %}
             {{ form.non_field_errors }}
+            <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+            <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
             <div class="form-group col-md-12">
                 <div class="col-sm-3">{{ form.product_style_cn }}{{ form.product_style_cn.errors }}<br>{{ form.product_style_en }}{{ form.product_style_en.errors }}</div>
                 <div class="col-sm-4">{{ form.product_style_desc_cn }}{{ form.product_style_desc_cn.errors }}</div>

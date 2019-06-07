@@ -13,6 +13,7 @@
             </header>
             <div class="panel-body">
                 <form class="form-horizontal" method="post">{% csrf_token %}
+                    <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.product_category_cn.label_tag }}</div>
                         <div class="col-lg-4">

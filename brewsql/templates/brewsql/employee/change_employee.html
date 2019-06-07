@@ -17,9 +17,7 @@
             </header>
             <div class="panel-body">
                 <form class="form-horizontal" method="post">{% csrf_token %}
-                    {% if request.user.is_authenticated %}
-                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
-                    {% endif %}
+                    <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.last_name.label_tag }}</div>
                         <div class="col-lg-4">
@@ -86,15 +84,9 @@
                             {{ form.joined }}
                             <p class="help-block">{{ form.joined.errors }}</p>
                         </div>
-                        <div class="col-lg-2 control-label">{{ form.linked_account.label_tag }}</div>
+                         <div class="col-lg-2 control-label">{{ form.linked_account.label_tag }}</div>
                         <div class="col-lg-4">
-                            <select name="linked_account" class="selectpicker show-tick form-control" data-live-search="true" id="id_linked_account">
-                                <option value="">---------</option>
-                                {% for u in app_users %}{% if u.pk == object.linked_account %}
-                                <option value="{{ u.pk }}" selected>{{ u }}</option>{% else %}
-                                <option value="{{ u.pk }}">{{ u }}</option>{% endif %}
-                                {% endfor %}
-                            </select>
+                            {{ form.linked_account }}
                             <p class="help-block">{{ form.linked_account.errors }}</p>
                         </div>
                     </div>

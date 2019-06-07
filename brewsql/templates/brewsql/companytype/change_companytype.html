@@ -14,6 +14,8 @@
             </header>
             <div class="panel-body">
                 <form method="post">{% csrf_token %}
+                    <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group col-md-12">
                         <div class="col-sm-12">{{ form.company_type_cn }}{{ form.company_type_cn.errors }}</div>
                     </div>

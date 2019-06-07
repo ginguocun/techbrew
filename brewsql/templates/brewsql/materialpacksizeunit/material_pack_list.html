@@ -39,6 +39,8 @@
             <div class="panel-body">
                 <form method="post" action="{% url 'brewsql:material_pack_list' %}?next={{ request.GET.next }}">{% csrf_token %}
                     {{ form.non_field_errors }}
+                    <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group col-md-12">
                         <div class="col-sm-5">{{ form.material_pack_size }}{{ form.material_pack_size.errors }}</div>
                         <div class="col-sm-5">{{ form.material_pack_unit }}{{ form.material_pack_unit.errors }}</div>

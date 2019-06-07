@@ -6,36 +6,7 @@
 {% block title %}{% trans '添加员工' %}{% endblock %}
 {% block content %}
 <div class="row">
-    <div class="col-lg-4">
-        <section class="panel table-responsive">
-            <div class="panel-body">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>{% trans '姓名' %}</th>
-                            <th>{% trans '头衔' %}</th>
-                            <th>{% trans '部门' %}</th>{% if perms.brewsql.change_employee %}
-                            <th></th>{% endif %}
-                        </tr>
-                    </thead>
-                    <tbody>{% for d in page_obj %}
-                        <tr>
-                            <td>{{ d.id|default_if_none:"" }}</td>
-                            <td>{{ d.last_name }}{{ d.first_name }}</td>
-                            <td>{{ d.title|default_if_none:"" }}</td>
-                            <td>{{ d.department|default_if_none:"" }}</td>{% if perms.brewsql.change_employee %}
-                            <td align="right"><a href="{% url 'brewsql:employee_update' d.pk %}?next={% url 'brewsql:add_employee' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
-                        </tr>{% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
-        <div align="right">
-            {% include 'brewsql/tablenav.html' %}
-        </div>
-    </div>
-    <div class="col-lg-6">
+    <div class="col-lg-offset-2 col-lg-8">
         <section class="panel">
             <header class="panel-heading">
                 {% trans "添加员工" %}
@@ -46,9 +17,8 @@
             </header>
             <div class="panel-body">
                 <form class="form-horizontal" method="post" action="{% url 'brewsql:add_employee' %}?next={{ request.GET.next }}">{% csrf_token %}
-                    {% if request.user.is_authenticated %}
-                        <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
-                    {% endif %}
+                    <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.last_name.label_tag }}</div>
                         <div class="col-lg-4">
@@ -117,12 +87,7 @@
                         </div>
                         <div class="col-lg-2 control-label">{{ form.linked_account.label_tag }}</div>
                         <div class="col-lg-4">
-                            <select name="linked_account" class="selectpicker show-tick form-control" data-live-search="true" id="id_linked_account">
-                                <option value="">---------</option>
-                                {% for u in app_users %}
-                                <option value="{{ u.pk }}" selected>{{ u }}</option>
-                                {% endfor %}
-                            </select>
+                            {{ form.linked_account }}
                             <p class="help-block">{{ form.linked_account.errors }}</p>
                         </div>
                     </div>
@@ -171,12 +136,6 @@
                     </div>
                 </form>
             </div>
-        </section>
-    </div>
-    <div class="col-lg-2">
-        <section class="panel">
-            {% if perms.brewsql.add_employeestate %}
-            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:employee_state_list' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加员工状态' %}</a></button>{% endif %}
         </section>
     </div>
 </div>

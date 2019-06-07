@@ -18,6 +18,24 @@ class BankAccount(models.Model):
     bank_address = models.CharField(_('银行地址'), max_length=400, null=True, blank=True)
     desc = models.TextField(_('备注'), max_length=1000, null=True, blank=True)
     is_active = models.BooleanField(_('可用'), default=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='bank_account_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='bank_account_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -33,6 +51,24 @@ class BankAccount(models.Model):
 class EmployeeState(models.Model):
     employee_state_cn = models.CharField(_('员工状态-中文'), max_length=100, null=True, unique=True)
     employee_state_en = models.CharField(_('员工状态-英文'), max_length=100, null=True, unique=True, blank=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='employee_state_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='employee_state_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -89,7 +125,14 @@ class Employee(models.Model):
         verbose_name=_('更新者'),
         related_name='employee_modified_by'
     )
-    linked_account = models.IntegerField(_('关联账号'), null=True, blank=True, unique=True)
+    linked_account = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('关联账号'),
+        related_name='employee_account'
+    )
     datetime_created = models.DateTimeField(_('添加时间'), auto_now_add=True)
     datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
@@ -105,16 +148,6 @@ class Employee(models.Model):
             return '{0}{1}'.format(self.last_name, self.first_name)
         return 'N/A'
 
-    def linked_account_info(self):
-        linked_account_info = None
-        if self.linked_account:
-            linked_account_info = User.objects.filter(pk=self.linked_account)
-            if linked_account_info.exists():
-                linked_account_info = linked_account_info.first()
-            else:
-                linked_account_info = None
-        return linked_account_info
-
     class Meta:
         ordering = ['id']
         verbose_name = _('员工')
@@ -127,6 +160,24 @@ class Employee(models.Model):
 class CompanyType(models.Model):
     company_type_en = models.CharField(_('公司类型英文'), max_length=100, null=True, unique=True, blank=True)
     company_type_cn = models.CharField(_('公司类型中文'), max_length=100, null=True, unique=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='company_type_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='company_type_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -204,7 +255,23 @@ class ClientLevel(models.Model):
     level_en = models.CharField(_('英文级别'), max_length=100, null=True, blank=True)
     level_desc_cn = models.TextField(_('中文级别描述'), max_length=1000, null=True, blank=True)
     level_desc_en = models.TextField(_('英文级别描述'), max_length=1000, null=True, blank=True)
-    datetime_created = models.DateTimeField(_('记录时间'), auto_now_add=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='client_level_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='client_level_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
     datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
@@ -283,6 +350,9 @@ class Client(models.Model):
         ordering = ['id']
         verbose_name = _('客户')
         verbose_name_plural = _('客户')
+        permissions = (
+            ("view_all_clients", _("可以查看所有客户")),
+        )
 
     def __str__(self):
         return '{0} {1}'.format(self.name, self.client_company)
@@ -342,6 +412,24 @@ class TankState(models.Model):
     tank_state_cn = models.CharField(_('发酵罐状态中文'), max_length=200, null=True)
     with_product = models.BooleanField(_('是否生产'), default=True)
     can_start = models.BooleanField(_('可以入罐'), default=False)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='tank_state_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='tank_state_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -379,7 +467,24 @@ class Tank(models.Model):
     current_brew_code = models.CharField(_('当前批次'), max_length=30, null=True, blank=True)
     # current_product_info = models.CharField(_('当前产品信息'), max_length=100, null=True)
     notes = models.TextField(_('备注'), max_length=1000, null=True, blank=True)
-    datetime_created = models.DateTimeField(_('添加时间'), auto_now_add=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='tank_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='tank_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -427,7 +532,7 @@ class TankSateUpdate(models.Model):
         null=True,
         blank=True,
         verbose_name=_('创建者'),
-        related_name='tank_state_created_by'
+        related_name='tank_state_update_created_by'
     )
     modified_by = models.ForeignKey(
         User,
@@ -435,9 +540,11 @@ class TankSateUpdate(models.Model):
         null=True,
         blank=True,
         verbose_name=_('更新者'),
-        related_name='tank_state_modified_by'
+        related_name='tank_state_update_modified_by'
     )
     tank_state_updated = models.DateTimeField(_('更改时间'), auto_now_add=True)
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -458,6 +565,24 @@ class TankSateUpdate(models.Model):
 class Warehouse(models.Model):
     place_code = models.CharField(_('位置编号'), max_length=10, null=True, unique=True)
     place_desc = models.CharField(_('位置描述'), max_length=200, null=True, unique=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='warehouse_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='warehouse_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -479,6 +604,24 @@ class MoneyInOutType(models.Model):
     money_in_out_type_en = models.CharField(_('收支类型英文'), max_length=200, null=True, blank=True)
     is_negative = models.BooleanField(_('是否为支出'), default=True)
     is_auto = models.BooleanField(_('自动记录'), default=False)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='money_in_out_type_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='money_in_out_type_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -520,13 +663,21 @@ class MoneyInOut(models.Model):
         verbose_name=_('创建者'),
         related_name='money_io_created_by'
     )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='money_io_modified_by'
+    )
     confirmed_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         verbose_name=_('确认人员'),
-        related_name='money_io_modified_by'
+        related_name='money_io_confirmed_by'
     )
     is_confirmed = models.BooleanField(_('确认到账'), default=False)
     is_active = models.BooleanField(_('记录有效'), default=True)
@@ -571,6 +722,24 @@ class MaterialCategory(models.Model):
     material_category_code = models.CharField(_('原料分类编号'), max_length=10, null=True, unique=True)
     material_category_en = models.CharField(_('原料分类英文名'), max_length=100, null=True, unique=True, blank=True)
     material_category_cn = models.CharField(_('原料分类中文名'), max_length=100, null=True, unique=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='material_category_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='material_category_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -590,6 +759,24 @@ class MaterialPackSizeUnit(models.Model):
     material_pack_size = models.DecimalField(_('包装规格'), max_digits=9, decimal_places=3, null=True)
     material_pack_unit = models.CharField(_('包装单位'), max_length=100, null=True,
                                           choices=(('g', 'g'), ('kg', 'kg'), ('mL', 'mL'), ('L', 'L')))
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='material_psu_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='material_psu_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -772,6 +959,24 @@ class ProductType(models.Model):
     product_type_name_cn = models.CharField(_('类型中文名'), max_length=100, unique=True)
     product_type_name_en = models.CharField(_('类型英文名'), max_length=100, unique=True)
     is_show = models.BooleanField(_('类型显示'), default=False)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='product_type_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='product_type_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
+    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
 
@@ -790,7 +995,23 @@ class ProductCategory(models.Model):
     product_category_desc_cn = models.TextField(_('中文介绍'), max_length=2000, null=True, blank=True)
     product_category_desc_en = models.TextField(_('英文介绍'), max_length=2000, null=True, blank=True)
     is_show = models.BooleanField(_('是否显示'), default=True)
-    datetime_created = models.DateTimeField(_('记录时间'), auto_now_add=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='product_category_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='product_category_modified_by'
+    )
+    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
     datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
     objects = models.Manager()
@@ -1363,9 +1584,9 @@ class Product(models.Model):
     is_banner = models.BooleanField(_('是Banner'), default=False)
     desc_en = models.TextField(_('英文介绍'), max_length=4000, null=True, blank=True)
     desc_cn = models.TextField(_('中文介绍'), max_length=4000, null=True, blank=True)
-    supplier_price = models.DecimalField(_('经销商价'), max_digits=10, decimal_places=2, null=True)
-    bar_price = models.DecimalField(_('酒吧报价'), max_digits=10, decimal_places=2, null=True)
-    public_price = models.DecimalField(_('终端价格'), max_digits=10, decimal_places=2, null=True)
+    supplier_price = models.DecimalField(_('经销商价'), max_digits=10, decimal_places=2, null=True, blank=True)
+    bar_price = models.DecimalField(_('酒吧报价'), max_digits=10, decimal_places=2, null=True, blank=True)
+    public_price = models.DecimalField(_('终端价格'), max_digits=10, decimal_places=2, null=True, blank=True)
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -1609,8 +1830,7 @@ class MaterialOut(models.Model):
         cost = 0
         if self.material_batch and self.amount:
             if getattr(self.material_batch, 'material_cost_each'):
-                # todo
-                cost = float(self.amount) * float(getattr(self.material_batch, 'material_cost_each'))
+                cost = float(getattr(self, 'amount')) * float(getattr(self.material_batch, 'material_cost_each'))
         return round(cost, 2)
 
     def get_absolute_url(self):
@@ -1711,8 +1931,7 @@ class Pack(models.Model):
     def pack_num_left(self):
         _('库存')
         if self.pack_sale_num and self.pack_num:
-            # todo
-            return self.pack_num - int(self.pack_sale_num)
+            return getattr(self, 'pack_num') - int(self.pack_sale_num)
         return self.pack_num
 
     @property
@@ -1867,6 +2086,22 @@ class OrderState(models.Model):
     order_state_en = models.CharField(_('订单状态英文'), max_length=40, null=True, blank=True)
     order_state_desc_cn = models.TextField(_('订单状态中文介绍'), max_length=1000, null=True, blank=True)
     order_state_desc_en = models.TextField(_('订单状态英文介绍'), max_length=1000, null=True, blank=True)
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('创建者'),
+        related_name='order_state_created_by'
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('更新者'),
+        related_name='order_state_modified_by'
+    )
     datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
     datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
@@ -1969,6 +2204,9 @@ class SaleOrder(models.Model):
         ordering = ['-id']
         verbose_name = _('销售订单')
         verbose_name_plural = _('销售订单')
+        permissions = (
+            ("view_all_sale_orders", _("可以查看所有订单")),
+        )
 
     def __str__(self):
         return "{0}".format(self.sale_order_code)
@@ -1980,7 +2218,8 @@ class Sale(models.Model):
         null=True,
         blank=True,
         on_delete=models.CASCADE,
-        verbose_name=_('销售订单')
+        verbose_name=_('销售订单'),
+        related_name='sale_order_sales'
     )
     sale_date = models.DateField(_('出库日期'), null=True, blank=True)
     pack = models.ForeignKey(

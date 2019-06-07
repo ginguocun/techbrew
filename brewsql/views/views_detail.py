@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import Http404
+from django.http import HttpResponseNotFound
 from django.core.paginator import Paginator
 from ..utils import convert_num_to_chinese
 from ..forms import *
@@ -13,13 +13,11 @@ app_name = GeneralConfig.name
 @permission_required('{0}.view_client'.format(app_name))
 def client_detail(request, pk):
     client = get_object_or_404(Client, pk=pk)
-    if request.user:
-        linked_employee = Employee.objects.filter(linked_account=request.user.id)
+    if not request.user.has_perm('{0}.view_all_clients'.format(app_name)):
+        linked_employee = Employee.objects.filter(linked_account=request.user.pk)
         if linked_employee.exists() and client:
-            if client.created_by == request.user.id:
-                pass
-            else:
-                return render(request, '{0}/client/client_detail.html'.format(app_name))
+            if not client.created_by == request.user:
+                return HttpResponseNotFound()
     order_list = Sale.objects.filter(sale_order__client_id=client.pk)
     order_pr = None
     if order_list:
@@ -132,7 +130,7 @@ def brew_detail_public(request, pk, brew_key):
         if brew.brew_key == brew_key:
             context = brew_data(request, pk=pk)
             return render(request, template_name=template_name, context=context)
-    return Http404
+    return HttpResponseNotFound()
 
 
 @login_required
@@ -168,14 +166,14 @@ def material_batch_detail(request, pk):
 @permission_required('{0}.view_saleorder'.format(app_name))
 def sale_order_detail(request, pk):
     sale_order_s = SaleOrder.objects.filter(pk=pk)
-    if request.user:
-        linked_employee = Employee.objects.filter(linked_account=request.user.id)
+    if not request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+        linked_employee = Employee.objects.filter(linked_account=request.user.pk)
         if linked_employee.exists():
             sale_order_s = sale_order_s.filter(employee=linked_employee.first())
     if sale_order_s.exists():
         selected_sale_order = sale_order_s.first()
     else:
-        selected_sale_order = SaleOrder.objects.none()
+        return HttpResponseNotFound()
     context = dict()
     context['d'] = selected_sale_order
     return render(request, '{0}/saleorder/sale_order_detail.html'.format(app_name), context=context)

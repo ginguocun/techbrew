@@ -43,6 +43,8 @@
             </header>
             <div class="panel-body">
                 <form class="form-horizontal" method="post" action="{% url 'brewsql:client_level_list' %}">{% csrf_token %}
+                    <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
+                    <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
                         <div class="col-md-3 control-label">{{ form.level_code.label_tag }}</div>
                         <div class="col-md-9">{{ form.level_code }}{{ form.level_code.errors }}</div>

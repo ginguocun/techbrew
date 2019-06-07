@@ -166,7 +166,6 @@ def tanks_overview(request):
 
 
 @login_required
-@permission_required('{0}.view_product'.format(app_name))
 def home_overview(request):
     template_name = '{0}/home/overview.html'.format(app_name)
     hpd = home_page_data()
@@ -242,10 +241,10 @@ class ClientListView(ListView):
 
     def get_queryset(self):
         object_list = Client.objects.all()
-        if self.request.user:
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.id)
+        if not self.request.user.has_perm('{0}.view_all_clients'.format(app_name)):
+            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
             if linked_employee.exists():
-                object_list = object_list.filter(created_by=self.request.user.id)
+                object_list = object_list.filter(created_by=self.request.user.pk)
         return object_list
 
     @method_decorator([login_required, permission_required('{0}.view_client'.format(app_name))])
@@ -431,8 +430,8 @@ class SaleOrderListView(ListView):
         e = self.request.GET.get('e')
         q = self.request.GET.get('q')
         object_list = SaleOrder.objects.all()
-        if self.request.user:
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.id)
+        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
             if linked_employee.exists():
                 object_list = object_list.filter(employee=linked_employee.first())
         if c:
@@ -536,8 +535,8 @@ class SaleListView(ListView):
                 object_list = Sale.objects.all()
         else:
             object_list = Sale.objects.all()
-        if self.request.user:
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.id)
+        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
             if linked_employee.exists():
                 object_list = object_list.filter(sale_order__employee=linked_employee.first())
         if d:

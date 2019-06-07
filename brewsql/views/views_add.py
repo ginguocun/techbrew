@@ -74,18 +74,9 @@ class EmployeeCreate(TechBrewCreateView):
     form_class = EmployeeForm
     template_name_suffix = '/add_employee'
 
-    def get_context_data(self, **kwargs):
-        context = super(EmployeeCreate, self).get_context_data(**kwargs)
-        employees = Employee.objects.all()
-        paginator = Paginator(employees, 20)
-        page = self.request.GET.get('page', 1)
-        context['page_obj'] = paginator.get_page(page)
-        context['app_users'] = User.objects.all()
-        return context
-
     @method_decorator([login_required, permission_required('{0}.add_employee'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ClientCreate(TechBrewCreateView):
@@ -95,7 +86,7 @@ class ClientCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_client'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class SupplierCreate(TechBrewCreateView):
@@ -105,7 +96,7 @@ class SupplierCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_supplier'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class CompanyCreate(TechBrewCreateView):
@@ -115,7 +106,7 @@ class CompanyCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_company'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ProductPackSizeUnitCreate(TechBrewCreateView):
@@ -132,7 +123,7 @@ class ProductPackSizeUnitCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_productpacksizeunit'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ProductNameCreate(TechBrewCreateView):
@@ -142,7 +133,7 @@ class ProductNameCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_productname'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ProductCategoryCreate(TechBrewCreateView):
@@ -152,7 +143,7 @@ class ProductCategoryCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_productcategory'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ProductStyleCreateView(CreateView):
@@ -167,7 +158,7 @@ class ProductStyleCreateView(CreateView):
 
     @method_decorator([login_required, permission_required('{0}.view_productstyle'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class BrewCreate(CreateView):
@@ -216,7 +207,7 @@ class BrewCreate(CreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_brew'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class BrewMonitorCreate(TechBrewCreateView):
@@ -226,7 +217,7 @@ class BrewMonitorCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_brewmonitor'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -361,7 +352,7 @@ class ReportCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_report'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class SaleOrderCreate(TechBrewCreateView):
@@ -371,11 +362,11 @@ class SaleOrderCreate(TechBrewCreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user:
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.id)
+        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
             if linked_employee.exists():
                 context['employee'] = linked_employee
-                context['client'] = Client.objects.filter(created_by=self.request.user.id).filter(is_active=True)
+                context['client'] = Client.objects.filter(created_by=self.request.user.pk).filter(is_active=True)
             else:
                 context['employee'] = Employee.objects.filter(is_salesman=True)
                 context['client'] = Client.objects.filter(is_active=True)
@@ -383,7 +374,7 @@ class SaleOrderCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_saleorder'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class SaleCreate(CreateView):
@@ -401,8 +392,8 @@ class SaleCreate(CreateView):
         context = super().get_context_data(**kwargs)
         context['packs'] = Pack.objects.filter(state=True)
         sale_orders = SaleOrder.objects.filter(is_delivered=False)
-        if self.request.user:
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.id)
+        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
             if linked_employee.exists():
                 sale_orders = sale_orders.filter(employee=linked_employee.first())
         context['sale_orders'] = sale_orders
@@ -454,7 +445,7 @@ class SaleCreate(CreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_sale'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MaterialCreate(CreateView):
@@ -496,7 +487,7 @@ class MaterialCreate(CreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_material'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MaterialBatchCreate(TechBrewCreateView):
@@ -506,7 +497,7 @@ class MaterialBatchCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_materialbatch'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MaterialInCreate(CreateView):
@@ -561,7 +552,7 @@ class MaterialInCreate(CreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_materialin'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MaterialOutCreate(TechBrewCreateView):
@@ -579,7 +570,7 @@ class MaterialOutCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_materialout'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MoneyInOutTypeCreate(TechBrewCreateView):
@@ -594,7 +585,7 @@ class MoneyInOutTypeCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_moneyinouttype'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MoneyInOutCreate(CreateView):
@@ -635,7 +626,7 @@ class MoneyInOutCreate(CreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_moneyinout'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MaterialPackSizeUnitCreate(TechBrewCreateView):
@@ -650,7 +641,7 @@ class MaterialPackSizeUnitCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_materialpacksizeunit'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class WarehouseCreate(TechBrewCreateView):
@@ -665,7 +656,7 @@ class WarehouseCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_warehouse'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class CompanyTypeCreate(TechBrewCreateView):
@@ -680,7 +671,7 @@ class CompanyTypeCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_companytype'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ClientLevelCreate(TechBrewCreateView):
@@ -695,7 +686,7 @@ class ClientLevelCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_clientlevel'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class HandBookCreate(TechBrewCreateView):
@@ -705,7 +696,7 @@ class HandBookCreate(TechBrewCreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_handbook'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -787,4 +778,4 @@ class GroupCreate(CreateView):
 
     @method_decorator([login_required, permission_required('{0}.add_employee'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super(self.__class__, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)

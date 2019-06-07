@@ -40,7 +40,7 @@
                             <td>{% if d.is_brewer %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
                             <td>{% if d.is_salesman %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
                             <td>{{ d.desc|default_if_none:"" }}</td>{% if perms.brewsql.change_employee %}
-                            <td>{{ d.linked_account_info|default_if_none:"" }}</td>
+                            <td>{{ d.linked_account|default_if_none:"" }}</td>
                             <td align="right"><a href="{% url 'brewsql:employee_update' d.pk %}?next={% url 'brewsql:employee_list' %}"><label class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></label></a></td>{% endif %}
                         </tr>{% endfor %}
                     </tbody>
