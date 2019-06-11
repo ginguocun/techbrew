@@ -167,9 +167,7 @@ def material_batch_detail(request, pk):
 def sale_order_detail(request, pk):
     sale_order_s = SaleOrder.objects.filter(pk=pk)
     if not request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
-        linked_employee = Employee.objects.filter(linked_account=request.user.pk)
-        if linked_employee.exists():
-            sale_order_s = sale_order_s.filter(employee=linked_employee.first())
+        sale_order_s = sale_order_s.filter(created_by=request.user)
     if sale_order_s.exists():
         selected_sale_order = sale_order_s.first()
     else:

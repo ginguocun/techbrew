@@ -315,6 +315,11 @@ class SaleOrderAdmin(AutoUpdateUserModelAdmin):
     list_filter = ('order_state', 'employee', 'client', 'is_active')
     search_fields = ['notes', ]
 
+    def get_queryset(self, request):
+        if not request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            return self.model.objects.filter(created_by=request.user)
+        return self.model.objects.all()
+
 
 @admin.register(Sale)
 class SaleAdmin(AutoUpdateUserModelAdmin):

@@ -242,9 +242,7 @@ class ClientListView(ListView):
     def get_queryset(self):
         object_list = Client.objects.all()
         if not self.request.user.has_perm('{0}.view_all_clients'.format(app_name)):
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
-            if linked_employee.exists():
-                object_list = object_list.filter(created_by=self.request.user.pk)
+            object_list = object_list.filter(created_by=self.request.user.pk)
         return object_list
 
     @method_decorator([login_required, permission_required('{0}.view_client'.format(app_name))])
@@ -431,9 +429,7 @@ class SaleOrderListView(ListView):
         q = self.request.GET.get('q')
         object_list = SaleOrder.objects.all()
         if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
-            if linked_employee.exists():
-                object_list = object_list.filter(employee=linked_employee.first())
+            object_list = object_list.filter(created_by=self.request.user)
         if c:
             if c == '1':
                 object_list = object_list.filter(is_delivered=False).order_by('pk')
@@ -476,7 +472,7 @@ class SaleOrderWxListView(ListView):
         s = self.request.GET.get('s')
         e = self.request.GET.get('e')
         q = self.request.GET.get('q')
-        object_list = SaleOrder.objects.filter(is_from_wx=True)
+        object_list = SaleOrder.objects.filter(is_from_wx=True, created_by=self.request.user)
         if c:
             object_list = object_list.filter(order_state_id=c).order_by('pk')
         if d:
@@ -536,9 +532,7 @@ class SaleListView(ListView):
         else:
             object_list = Sale.objects.all()
         if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
-            if linked_employee.exists():
-                object_list = object_list.filter(sale_order__employee=linked_employee.first())
+            object_list = object_list.filter(sale_order__created_by=self.request.user)
         if d:
             if d == '1':
                 object_list = object_list.filter(fee_received=False).order_by('-pk')

@@ -362,14 +362,15 @@ class SaleOrderCreate(TechBrewCreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
-            if linked_employee.exists():
-                context['employee'] = linked_employee
-                context['client'] = Client.objects.filter(created_by=self.request.user.pk).filter(is_active=True)
-            else:
-                context['employee'] = Employee.objects.filter(is_salesman=True)
-                context['client'] = Client.objects.filter(is_active=True)
+        clients = Client.objects.filter(is_active=True)
+        if not self.request.user.has_perm('{0}.view_all_clients'.format(app_name)):
+            clients = clients.filter(created_by=self.request.user.pk)
+        linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
+        if linked_employee.exists():
+            context['employee'] = linked_employee
+        else:
+            context['employee'] = Employee.objects.filter(is_salesman=True)
+        context['client'] = clients
         return context
 
     @method_decorator([login_required, permission_required('{0}.add_saleorder'.format(app_name))])
@@ -393,9 +394,7 @@ class SaleCreate(CreateView):
         context['packs'] = Pack.objects.filter(state=True)
         sale_orders = SaleOrder.objects.filter(is_delivered=False)
         if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
-            if linked_employee.exists():
-                sale_orders = sale_orders.filter(employee=linked_employee.first())
+            sale_orders = sale_orders.filter(created_by=self.request.user)
         context['sale_orders'] = sale_orders
         return context
 

@@ -529,15 +529,22 @@ class SaleOrderUpdate(TechBrewUpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['employee'] = Employee.objects.filter(is_salesman=True)
-        context['client'] = Client.objects.filter(is_active=True)
-        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
-            linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
-            linked_client = Client.objects.filter(created_by=self.request.user.pk).filter(is_active=True)
-            if linked_employee.exists():
-                context['employee'] = linked_employee
-                context['client'] = linked_client
+        clients = Client.objects.filter(is_active=True)
+        if not self.request.user.has_perm('{0}.view_all_clients'.format(app_name)):
+            clients = clients.filter(created_by=self.request.user.pk)
+        linked_employee = Employee.objects.filter(linked_account=self.request.user.pk)
+        if linked_employee.exists():
+            context['employee'] = linked_employee
+        else:
+            context['employee'] = Employee.objects.filter(is_salesman=True)
+        context['client'] = clients
         return context
+
+    def get_queryset(self):
+        q = self.model.objects.all()
+        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            q = q.filter(created_by=self.request.user)
+        return q
 
     @method_decorator([login_required, permission_required('{0}.change_saleorder'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
@@ -549,6 +556,8 @@ class SaleOrderUpdate(TechBrewUpdateView):
 def delete_sale_order(request, pk):
     if request:
         ojs = SaleOrder.objects.filter(pk=pk)
+        if not request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            ojs = ojs.filter(created_by=request.user)
         if ojs.exists():
             oj = ojs.first()
             linked_sales = Sale.objects.filter(sale_order=oj)
@@ -591,6 +600,12 @@ class SaleOrderStateUpdate(TechBrewUpdateView):
     form_class = SaleOrderStateUpdateForm
     template_name_suffix = '/update_order_state'
 
+    def get_queryset(self):
+        q = self.model.objects.all()
+        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            q = q.filter(created_by=self.request.user)
+        return q
+
     @method_decorator([login_required, permission_required('{0}.confirm_sale'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(SaleOrderStateUpdate, self).dispatch(request, *args, **kwargs)
@@ -606,6 +621,12 @@ class SaleUpdate(UpdateView):
             if self.request.GET.get('next'):
                 return self.request.GET.get('next')
         return super().get_success_url()
+
+    def get_queryset(self):
+        q = self.model.objects.all()
+        if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+            q = q.filter(created_by=self.request.user)
+        return q
 
     def form_valid(self, form):
         if form.is_valid:
@@ -684,6 +705,8 @@ def sale_confirm(request):
         sale_id = request.POST.get('sale_id')
         if sale_id:
             linked_sale = Sale.objects.filter(pk=sale_id)
+            if not request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+                linked_sale = linked_sale.filter(created_by=request.user)
             if linked_sale.exists():
                 linked_sale.update(is_confirmed=True)
             linked_sale_order = SaleOrder.objects.filter(pk=linked_sale.first().sale_order_id)
@@ -705,6 +728,8 @@ def sale_pay(request):
         sale_id = request.POST.get('sale_id')
         if sale_id:
             linked_sale = Sale.objects.filter(pk=sale_id)
+            if not request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+                linked_sale = linked_sale.filter(created_by=request.user)
             if linked_sale.exists():
                 linked_sale.update(fee_received=True)
                 linked_money_io = linked_sale.first().sale_price_link
@@ -731,8 +756,15 @@ def sale_order_good_deliver(request):
             else:
                 redirect = reverse('{0}:sale_order_list'.format(app_name))
         if sale_order_id:
-            SaleOrder.objects.filter(pk=sale_order_id).update(is_delivered=True)
-            Sale.objects.filter(sale_order_id=sale_order_id).update(is_confirmed=True)
+            sale_orders = SaleOrder.objects.filter(pk=sale_order_id)
+            sales = Sale.objects.filter(sale_order_id=sale_order_id)
+            if not request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+                sale_orders = sale_orders.filter(created_by=request.user)
+                sales = sales.filter(created_by=request.user)
+            if sale_orders.exists():
+                sale_orders.update(is_delivered=True)
+            if sales.exists():
+                sales.update(is_confirmed=True)
         return HttpResponseRedirect(redirect)
 
 
@@ -748,12 +780,16 @@ def sale_order_fee_receive(request):
             else:
                 redirect = reverse('{0}:sale_order_list'.format(app_name))
         if sale_order_id:
-            SaleOrder.objects.filter(pk=sale_order_id).update(fee_received=True)
-            Sale.objects.filter(sale_order_id=sale_order_id).update(fee_received=True)
-            linked_sales = Sale.objects.filter(sale_order_id=sale_order_id)
-            for s in linked_sales:
-                if s.sale_price_link:
-                    MoneyInOut.objects.filter(pk=s.sale_price_link.pk).update(is_confirmed=True)
+            sale_orders = SaleOrder.objects.filter(pk=sale_order_id)
+            if not request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
+                sale_orders = sale_orders.filter(created_by=request.user)
+            if sale_orders.exists():
+                sale_orders.update(fee_received=True)
+                Sale.objects.filter(sale_order_id=sale_order_id).update(fee_received=True)
+                linked_sales = Sale.objects.filter(sale_order_id=sale_order_id)
+                for s in linked_sales:
+                    if s.sale_price_link:
+                        MoneyInOut.objects.filter(pk=s.sale_price_link.pk).update(is_confirmed=True)
         return HttpResponseRedirect(redirect)
 
 
