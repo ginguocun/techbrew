@@ -563,7 +563,7 @@ class MaterialOutCreate(TechBrewCreateView):
         context = super().get_context_data(**kwargs)
         context['material_batches'] = MaterialBatch.objects.all()
         context['brews'] = Brew.objects.filter(Q(
-            date_start__gte=(timezone.now() - datetime.timedelta(days=60))) | Q(
+            date_start__gte=(timezone.now() - datetime.timedelta(days=300))) | Q(
             tank__current_brew_code=F('brew_batch_code'))).distinct().order_by('-id')
         return context
 

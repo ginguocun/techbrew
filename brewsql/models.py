@@ -921,8 +921,8 @@ class MaterialBatch(models.Model):
     def material_batch_total_left(self):
         if self.material_batch_total_in or self.material_batch_total_out:
             if self.material_batch_total_out:
-                return float(self.material_batch_total_in) - float(self.material_batch_total_out)
-            return float(self.material_batch_total_in)
+                return round(float(self.material_batch_total_in) - float(self.material_batch_total_out), 2)
+            return round(float(self.material_batch_total_in), 2)
         return 0
 
     @property

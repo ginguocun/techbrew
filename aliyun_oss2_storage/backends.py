@@ -9,7 +9,6 @@ from urllib.parse import urljoin
 from django.core.files import File
 from django.utils.encoding import force_text, filepath_to_uri, force_bytes
 from oss2 import Auth, Service, BucketIterator, Bucket, ObjectIterator
-from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
 from django.core.files.storage import Storage
 from django.conf import settings
