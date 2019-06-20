@@ -733,17 +733,11 @@ def create_s_user(request):
                   context={'form': form, 'user_created': user_created, 'users_have': users_have})
 
 
-class GroupCreate(CreateView):
+class GroupCreate(TechBrewCreateView):
     model = Group
     form_class = GroupForm
     template_name_suffix = '/group_list'
     success_url = '/groups/'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def get_template_names(self):
         names = list()
@@ -754,26 +748,6 @@ class GroupCreate(CreateView):
         context = super().get_context_data(**kwargs)
         context['groups'] = Group.objects.all()
         return context
-
-    def form_valid(self, form):
-        if form.is_valid:
-            model = form.save(commit=False)
-            if app_name not in model.name:
-                model.name = '{0}-{1}'.format(app_name, model.name)
-                while Group.objects.filter(name=model.name):
-                    k = 1
-                    model.name = '{0}({1})'.format(model.name, k)
-                    k += 1
-            model.save()
-            if model:
-                LogEntry.objects.log_action(
-                    user_id=self.request.user.pk,
-                    content_type_id=get_content_type_for_model(model).pk,
-                    object_id=model.pk,
-                    object_repr=str(model),
-                    action_flag=ADDITION,
-                )
-        return super().form_valid(form)
 
     @method_decorator([login_required, permission_required('{0}.add_employee'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):

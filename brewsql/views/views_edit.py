@@ -891,74 +891,34 @@ class BrewMonitorUpdate(TechBrewUpdateView):
         return super(BrewMonitorUpdate, self).dispatch(request, *args, **kwargs)
 
 
-class UserUpdate(UpdateView):
+class UserUpdate(TechBrewUpdateView):
     model = User
     form_class = UserUpdateForm
     template_name_suffix = '/update_user'
     success_url = '/users/'
     queryset = User.objects.filter(is_superuser=False)
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return self.success_url
     
     def get_template_names(self):
         names = list()
         names.append("{0}/{1}{2}.html".format(app_name, 'user', self.template_name_suffix))
         return names
 
-    def form_valid(self, form):
-        if form.is_valid:
-            model = form.save(commit=False)
-            model.save()
-            if model:
-                LogEntry.objects.log_action(
-                    user_id=self.request.user.pk,
-                    content_type_id=get_content_type_for_model(model).pk,
-                    object_id=model.pk,
-                    object_repr=str(model),
-                    action_flag=CHANGE,
-                )
-        return super().form_valid(form)
-
     @method_decorator([login_required, permission_required('{0}.change_employee'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(UserUpdate, self).dispatch(request, *args, **kwargs)
 
 
-class GroupUpdate(UpdateView):
+class GroupUpdate(TechBrewUpdateView):
     model = Group
     form_class = GroupForm
     template_name_suffix = '/update_group'
     success_url = '/groups/'
     queryset = Group.objects.all()
 
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return self.success_url
-
     def get_template_names(self):
         names = list()
         names.append("{0}/{1}{2}.html".format(app_name, 'user', self.template_name_suffix))
         return names
-
-    def form_valid(self, form):
-        if form.is_valid:
-            model = form.save(commit=False)
-            model.save()
-            if model:
-                LogEntry.objects.log_action(
-                    user_id=self.request.user.pk,
-                    content_type_id=get_content_type_for_model(model).pk,
-                    object_id=model.pk,
-                    object_repr=str(model),
-                    action_flag=CHANGE,
-                )
-        return super().form_valid(form)
 
     @method_decorator([login_required, permission_required('{0}.change_employee'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
