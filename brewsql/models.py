@@ -2224,6 +2224,7 @@ class Sale(models.Model):
     sale_date = models.DateField(_('出库日期'), null=True, blank=True)
     pack = models.ForeignKey(
         Pack,
+        null=True,
         on_delete=models.CASCADE,
         verbose_name=_('灌装批次'),
         related_name='sales'

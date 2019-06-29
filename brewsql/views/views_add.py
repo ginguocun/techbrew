@@ -387,10 +387,10 @@ class SaleCreate(CreateView):
         if self.request.GET:
             if self.request.GET.get('next'):
                 return self.request.GET.get('next')
-        return super().get_success_url()
+        return super(SaleCreate, self).get_success_url()
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super(SaleCreate, self).get_context_data(**kwargs)
         context['packs'] = Pack.objects.filter(state=True)
         sale_orders = SaleOrder.objects.filter(is_delivered=False)
         if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
@@ -402,21 +402,17 @@ class SaleCreate(CreateView):
         if form.is_valid:
             model = form.save(commit=False)
             selected_pack = model.pack
-            if model.sale_order:
-                employee_id = model.sale_order.employee_id
-            else:
-                employee_id = None
             if model.sale_price is not None:
                 mio = MoneyInOut(
                     money_in_out=model.sale_price,
                     money_in_out_date=model.sale_date,
-                    money_in_out_type_id='2',  # TODO add id=2 to MoneyInOutType
+                    money_in_out_type_id=2,  # TODO add id=2 to MoneyInOutType
                     notes=u'订单:{0} 产品:{1} 数量: {2}'.format(
                         model.sale_order,
-                        selected_pack.pack_batch_code,
+                        getattr(selected_pack, 'pack_batch_code'),
                         model.sale_num
                     ),
-                    recorded_by_id=employee_id,
+                    recorded_by_id=self.request.user.pk,
                     is_confirmed=False,
                     created_by=model.created_by)
                 mio.save()
@@ -438,13 +434,13 @@ class SaleCreate(CreateView):
                     object_repr=str(model),
                     action_flag=ADDITION,
                 )
-            if Pack.objects.get(pk=selected_pack.pk).pack_num_left <= 0:
+            if selected_pack.pack_num_left <= 0:
                 Pack.objects.filter(pk=selected_pack.pk).update(state=False)
-        return super().form_valid(form)
+        return super(SaleCreate, self).form_valid(form)
 
     @method_decorator([login_required, permission_required('{0}.add_sale'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
+        return super(SaleCreate, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialCreate(CreateView):
