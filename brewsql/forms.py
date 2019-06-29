@@ -149,6 +149,14 @@ class ProductStyleForm(TbModelForm):
 
 
 class ProductForm(TbModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+        self.fields['product_category'] = ModelMultipleChoiceField(
+            queryset=ProductCategory.objects.all(),
+            label=_('产品归类'),
+        )
+
     class Meta:
         model = Product
         fields = ['product_code', 'product_name', 'product_pack', 'product_category', 'created_by']
@@ -158,6 +166,14 @@ class ProductForm(TbModelForm):
 
 
 class ProductUpdateForm(TbModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+        self.fields['product_category'] = ModelMultipleChoiceField(
+            queryset=ProductCategory.objects.all(),
+            label=_('产品归类'),
+        )
+
     class Meta:
         model = Product
         fields = ['product_code', 'image', 'image_banner', 'files', 'is_show', 'desc_en', 'desc_cn', 'supplier_price',
