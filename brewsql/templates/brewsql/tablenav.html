@@ -1,23 +1,38 @@
-<nav>
+<nav>{% load i18n static staticfiles %}
     <ul class="pagination">
-       <li><a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page=1">«</a></li>
+        <li><a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page=1">«</a></li>
         {% if page_obj.has_previous %}
         <li>
             <a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page={{ page_obj.previous_page_number }}">上一页</a>
         </li>
         {% else %}
-        <li class="previous disabled"><a>上一页</a></li>
+        <li class="previous disabled"><a>{% trans "上一页" %}</a></li>
         {% endif %}
         {% for i in page_obj.paginator.page_range %}
-        <li  class="{% if page_obj.number == i %}active{% endif %}">
-            <a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page={{ i }}">{{ i }}</a>
-        </li>
+            {% if page_obj.number == i %}
+                <li  class="active">
+                    <span>{{ i }}</span>
+                </li>
+            {% else %}
+                <li class="page_range">
+                    <a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page={{ i }}">{{ i }}</a>
+                </li>
+            {% endif %}
         {% endfor %}
         {% if page_obj.has_next %}
         <li><a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page={{ page_obj.next_page_number }}">下一页</a></li>
         {% else %}
-        <li class="previous disabled"><a>下一页</a></li>
+        <li class="previous disabled"><a>{% trans "下一页" %}</a></li>
         {% endif %}
         <li><a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page={{ page_obj.paginator.num_pages }}">»</a></li>
     </ul>
 </nav>
+
+<script type="text/javascript" src="{% static 'flatlab/js/jquery.js' %}"></script>
+<script>
+    $(document).ready(function(){
+        $(".pagination").children().filter('.page_range').filter(function( index ) {
+        return index - {{ page_obj.number }} > 3 || index - {{ page_obj.number }} < -5;
+      }).remove();
+    });
+</script>
