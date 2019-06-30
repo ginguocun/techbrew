@@ -1950,7 +1950,7 @@ class Pack(models.Model):
         return reverse('{0}:pack_list'.format(app_name))
 
     class Meta:
-        ordering = ['pk']
+        ordering = ['-pk']
         verbose_name = _('产品入库')
         verbose_name_plural = _('产品入库')
         permissions = (

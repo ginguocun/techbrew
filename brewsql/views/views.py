@@ -678,7 +678,6 @@ class MaterialListView(ListView):
 @login_required
 @permission_required('{0}.view_material'.format(app_name))
 def material_inventory(request):
-    r = request
     template_name = '{0}/material/material_inventory.html'.format(app_name)
     context = dict()
     c = request.GET.get('c')
