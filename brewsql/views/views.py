@@ -13,6 +13,11 @@ from ..forms import *
 app_name = GeneralConfig.name
 
 
+class TechBewListView(ListView):
+    context_object_name = 'data'
+    paginate_by = 20
+
+
 def income_by_products_pie(sale_incomes=None):
     if not sale_incomes:
         sale_incomes = Sale.objects.exclude(sale_price_link__isnull=True).filter(
@@ -130,22 +135,18 @@ def home_page_data():
     return {'categories': categories, 'gb_production': gb_production, 'gb_sales': gb_sales, 'gb_left': gb_left}
 
 
-class FermentMonitorListView(ListView):
+class FermentMonitorListView(TechBewListView):
     model = FermentMonitor
-    context_object_name = 'data'
     template_name_suffix = '/ferment_monitor_list'
-    paginate_by = 20
 
     @method_decorator([login_required, permission_required('{0}.view_fermentmonitor'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(FermentMonitorListView, self).dispatch(request, *args, **kwargs)
 
 
-class TankListView(ListView):
+class TankListView(TechBewListView):
     model = Tank
-    context_object_name = 'data'
     template_name_suffix = '/tank_list'
-    paginate_by = 20
 
     @method_decorator([login_required, permission_required('{0}.view_tank'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
@@ -211,33 +212,27 @@ def home_overview(request):
     return render(request, template_name=template_name, context=context)
 
 
-class EmployeeListView(ListView):
+class EmployeeListView(TechBewListView):
     model = Employee
-    context_object_name = 'data'
     template_name_suffix = '/employee_list'
-    paginate_by = 20
 
     @method_decorator([login_required, permission_required('{0}.view_employee'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(EmployeeListView, self).dispatch(request, *args, **kwargs)
 
 
-class SupplierListView(ListView):
+class SupplierListView(TechBewListView):
     model = Supplier
-    context_object_name = 'data'
     template_name_suffix = '/supplier_list'
-    paginate_by = 20
 
     @method_decorator([login_required, permission_required('{0}.view_supplier'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(SupplierListView, self).dispatch(request, *args, **kwargs)
 
 
-class ClientListView(ListView):
+class ClientListView(TechBewListView):
     model = Client
-    context_object_name = 'data'
     template_name_suffix = '/client_list'
-    paginate_by = 20
 
     def get_queryset(self):
         object_list = Client.objects.all()
@@ -250,55 +245,45 @@ class ClientListView(ListView):
         return super(ClientListView, self).dispatch(request, *args, **kwargs)
 
 
-class CompanyListView(ListView):
+class CompanyListView(TechBewListView):
     model = Company
-    context_object_name = 'data'
     template_name_suffix = '/company_list'
-    paginate_by = 20
 
     @method_decorator([login_required, permission_required('{0}.view_company'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(CompanyListView, self).dispatch(request, *args, **kwargs)
 
 
-class ProductNameListView(ListView):
+class ProductNameListView(TechBewListView):
     model = ProductName
-    context_object_name = 'data'
     template_name_suffix = '/productname_list'
-    paginate_by = 20
 
     @method_decorator([login_required, permission_required('{0}.view_productname'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(ProductNameListView, self).dispatch(request, *args, **kwargs)
 
 
-class ProductCategoryListView(ListView):
+class ProductCategoryListView(TechBewListView):
     model = ProductCategory
-    context_object_name = 'data'
     template_name_suffix = '/productcategory_list'
-    paginate_by = 20
 
     @method_decorator([login_required, permission_required('{0}.view_productcategory'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(ProductCategoryListView, self).dispatch(request, *args, **kwargs)
 
 
-class ProductPackSizeUnitListView(ListView):
+class ProductPackSizeUnitListView(TechBewListView):
     model = ProductPackSizeUnit
-    context_object_name = 'data'
     template_name_suffix = '/productpacksizeunit_list'
-    paginate_by = 20
 
     @method_decorator([login_required, permission_required('{0}.view_productpacksizeunit'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
         return super(ProductPackSizeUnitListView, self).dispatch(request, *args, **kwargs)
 
 
-class ProductListView(ListView):
+class ProductListView(TechBewListView):
     model = Product
-    context_object_name = 'data'
     template_name_suffix = '/product_list'
-    paginate_by = 20
 
     @method_decorator([login_required, permission_required('{0}.view_product'.format(app_name))])
     def dispatch(self, request, *args, **kwargs):
@@ -320,11 +305,9 @@ def product_inventory(request):
     return render(request, template_name=template_name, context=content)
 
 
-class BrewListView(ListView):
+class BrewListView(TechBewListView):
     model = Brew
-    context_object_name = 'data'
     template_name_suffix = '/brew_list'
-    paginate_by = 20
 
     def get_queryset(self):
         s = self.request.GET.get('s')
@@ -348,11 +331,9 @@ class BrewListView(ListView):
         return super(BrewListView, self).dispatch(request, *args, **kwargs)
 
 
-class PackListView(ListView):
+class PackListView(TechBewListView):
     model = Pack
-    context_object_name = 'data'
     template_name_suffix = '/pack_list'
-    paginate_by = 20
 
     def get_queryset(self):
         s = self.request.GET.get('s')
@@ -415,11 +396,9 @@ class PackListView(ListView):
         return super(PackListView, self).dispatch(request, *args, **kwargs)
 
 
-class SaleOrderListView(ListView):
+class SaleOrderListView(TechBewListView):
     model = SaleOrder
-    context_object_name = 'data'
     template_name_suffix = '/sale_order_list'
-    paginate_by = 20
 
     def get_queryset(self):
         c = self.request.GET.get('c')
@@ -460,11 +439,9 @@ class SaleOrderListView(ListView):
         return super(SaleOrderListView, self).dispatch(request, *args, **kwargs)
 
 
-class SaleOrderWxListView(ListView):
+class SaleOrderWxListView(TechBewListView):
     model = SaleOrder
-    context_object_name = 'data'
     template_name_suffix = '/sale_order_list'
-    paginate_by = 20
 
     def get_queryset(self):
         c = self.request.GET.get('c')
@@ -510,11 +487,9 @@ class SaleOrderWxListView(ListView):
         return super(SaleOrderWxListView, self).dispatch(request, *args, **kwargs)
 
 
-class SaleListView(ListView):
+class SaleListView(TechBewListView):
     model = Sale
-    context_object_name = 'data'
     template_name_suffix = '/sale_list'
-    paginate_by = 20
 
     def get_queryset(self):
         c = self.request.GET.get('c')
@@ -594,11 +569,9 @@ class SaleListView(ListView):
         return super(SaleListView, self).dispatch(request, *args, **kwargs)
 
 
-class MoneyInOutListView(ListView):
+class MoneyInOutListView(TechBewListView):
     model = MoneyInOut
-    context_object_name = 'data'
     template_name_suffix = '/moneyinout_list'
-    paginate_by = 20
 
     def get_queryset(self):
         s = self.request.GET.get('s')
@@ -648,11 +621,9 @@ class MoneyInOutListView(ListView):
         return super(MoneyInOutListView, self).dispatch(request, *args, **kwargs)
 
 
-class MaterialListView(ListView):
+class MaterialListView(TechBewListView):
     model = Material
-    context_object_name = 'data'
     template_name_suffix = '/material_list'
-    paginate_by = 20
 
     def get_queryset(self):
         c = self.request.GET.get('c')
@@ -693,11 +664,9 @@ def material_inventory(request):
     return render(request, template_name=template_name, context=context)
 
 
-class MaterialBatchListView(ListView):
+class MaterialBatchListView(TechBewListView):
     model = MaterialBatch
-    context_object_name = 'data'
     template_name_suffix = '/material_batch_list'
-    paginate_by = 20
 
     def get_queryset(self):
         s = self.request.GET.get('s')
@@ -727,11 +696,9 @@ class MaterialBatchListView(ListView):
         return super(MaterialBatchListView, self).dispatch(request, *args, **kwargs)
 
 
-class MaterialInListView(ListView):
+class MaterialInListView(TechBewListView):
     model = MaterialIn
-    context_object_name = 'data'
     template_name_suffix = '/material_in_list'
-    paginate_by = 20
 
     def get_queryset(self):
         s = self.request.GET.get('s')
@@ -769,11 +736,9 @@ class MaterialInListView(ListView):
         return super(MaterialInListView, self).dispatch(request, *args, **kwargs)
 
 
-class MaterialOutListView(ListView):
+class MaterialOutListView(TechBewListView):
     model = MaterialOut
-    context_object_name = 'data'
     template_name_suffix = '/material_out_list'
-    paginate_by = 20
 
     def get_queryset(self):
         s = self.request.GET.get('s')
@@ -825,7 +790,7 @@ class MaterialOutListView(ListView):
 
 
 @login_required
-@permission_required('{0}.view_product'.format(app_name))
+@permission_required('{0}.view_handbook'.format(app_name))
 def handbook(request):
     template_name = '{0}/handbook/handbook.html'.format(app_name)
     object_list = HandBook.objects.all()
