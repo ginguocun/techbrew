@@ -13,7 +13,7 @@
             </header>
             <div class="panel-body">
                 <div class="col-lg-9">
-                <form class="form-inline" method="post" action="{% url 'brewsql:user_list' %}?next={{ request.GET.next }}">{% csrf_token %}
+                <form class="form-inline" method="post" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon">{% trans '用户名' %}:</span>
@@ -34,7 +34,7 @@
                 </form>
                 </div>
                 <div class="col-lg-3" align="right">
-                    <a href="{% url 'brewsql:group_list' %}"><label class="btn btn-primary">{% trans '权限分组' %}</label></a>
+                    <a href="{% url 'brewsql:group_list' %}?next={{ request.path }}"><label class="btn btn-primary">{% trans '权限分组' %}</label></a>
                 </div>
             </div>
       </section>
@@ -67,7 +67,7 @@
                             <td>{{ d.last_login|date:"Y-m-d H:i:m" }}</td>{% if d.is_active %}
                             <td><span class="label label-primary">{% trans '是' %}</span></td>{% else %}<td><span class="label label-danger">{% trans '否' %}</span></td>{% endif %}
                             {% if perms.brewsql.change_employee %}
-                            <td align="right"><a href="{% url 'brewsql:user_update' d.pk %}?next={% url 'brewsql:user_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                            <td align="right"><a href="{% url 'brewsql:user_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
                         </tr>{% endfor %}
                     </tbody>
                 </table>

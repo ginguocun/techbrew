@@ -1,13 +1,13 @@
+import json
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
 from django.db.models.functions import TruncMonth
-from ..utils import validate_date
 from django.views.generic import ListView
 from django.utils.decorators import method_decorator
-import json
+from ..utils import validate_date
 from ..forms import *
-from django.core.paginator import Paginator
 
 
 app_name = GeneralConfig.name
@@ -678,6 +678,7 @@ class MaterialListView(ListView):
 @login_required
 @permission_required('{0}.view_material'.format(app_name))
 def material_inventory(request):
+    r = request
     template_name = '{0}/material/material_inventory.html'.format(app_name)
     context = dict()
     c = request.GET.get('c')

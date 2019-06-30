@@ -5,7 +5,7 @@
 {% get_current_language as LANGUAGE_CODE %}
 <div class="row">
     <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_company %}
-        <a href="{% url 'brewsql:add_company' %}?next={% url 'brewsql:company_list' %}"><button type="button" class="btn btn-primary">{% trans "添加公司" %}</button></a>{% endif %}
+        <a href="{% url 'brewsql:add_company' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "添加公司" %}</button></a>{% endif %}
     </div>
     <div class="col-lg-12">
         <section class="panel table-responsive">
@@ -34,7 +34,7 @@
                             <td>{{ d.company_tel|default_if_none:"" }}</td>
                             <td>{{ d.email|default_if_none:"" }}</td>
                             <td>{{ d.desc|default_if_none:"" }}</td>{% if perms.brewsql.change_company %}
-                            <td align="right"><a href="{% url 'brewsql:company_update' d.pk %}?next={% url 'brewsql:company_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                            <td align="right"><a href="{% url 'brewsql:company_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
                         </tr>{% endfor %}
                     </tbody>
                 </table>

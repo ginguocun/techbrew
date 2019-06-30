@@ -16,7 +16,7 @@
                 <p>{{ error_msg }}</p>
             </header>
             <div class="panel-body">
-                <form class="form-horizontal" method="post" action="{% url 'brewsql:add_material_out' %}?next={{ request.GET.next }}">{% csrf_token %}
+                <form class="form-horizontal" method="post" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
@@ -88,7 +88,7 @@
     </div>
     <div class="col-lg-2">
         <section class="panel">{% if perms.brewsql.add_employee %}
-            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加记录人员' %}</a></button>{% endif %}
+            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}?next={{ request.path }}"><i class="fa fa-plus"></i>  {% trans '添加记录人员' %}</a></button>{% endif %}
         </section>
     </div>
 </div>

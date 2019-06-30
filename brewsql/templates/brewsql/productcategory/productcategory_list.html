@@ -4,8 +4,8 @@
 {% block content %}
 {% get_current_language as LANGUAGE_CODE %}
 <div class="row">
-    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_productname %}
-        <a href="{% url 'brewsql:add_productcategory' %}?next={% url 'brewsql:product_category_list' %}"><button type="button" class="btn btn-primary">{% trans "新建名称" %}</button></a>{% endif %}
+    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_productcategory %}
+        <a href="{% url 'brewsql:add_productcategory' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "新建产品归类" %}</button></a>{% endif %}
     </div>
     <div class="col-lg-12">
         <section class="panel table-responsive">
@@ -17,7 +17,7 @@
                             <th>{% trans '归类-中文' %}</th>
                             <th>{% trans '归类-英文' %}</th>
                             <th>{% trans '产品数量' %}</th>
-                            <th>{% trans '显示' %}</th>{% if perms.brewsql.change_productname %}
+                            <th>{% trans '显示' %}</th>{% if perms.brewsql.change_productcategory %}
                             <th></th>{% endif %}
                         </tr>
                     </thead>
@@ -28,9 +28,9 @@
                             <td>{{ d.product_category_cn }}</td>
                             <td>{{ d.product_category_en }}</td>
                             <td>{{ d.product_amount }}</td>
-                            <td>{{ d.is_show|yesno:"是,否" }}</td>{% if perms.brewsql.change_productname %}
+                            <td>{{ d.is_show|yesno:"是,否" }}</td>{% if perms.brewsql.change_productcategory %}
                             <td align="right">
-                                <a href="{% url 'brewsql:product_category_update' d.pk %}?next={% url 'brewsql:product_category_list' %}">
+                                <a href="{% url 'brewsql:product_category_update' d.pk %}?next={{ request.path }}">
                                     <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                                 </a>
                             </td>{% endif %}

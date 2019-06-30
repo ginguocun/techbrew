@@ -13,7 +13,7 @@
                 {% endif %}
             </header>
             <div class="panel-body">
-                <form class="form-horizontal" method="post" action="{% url 'brewsql:ferment_monitor_delete' object.pk %}?next={{ request.GET.next }}">{% csrf_token %}
+                <form class="form-horizontal" method="post" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     <div class="form-group">
                         <div class="col-lg-2 control-label">{% trans '生产批次' %}</div>
                         <div class="col-lg-4">

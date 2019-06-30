@@ -47,7 +47,7 @@
                                 ¥ {{ d.supplier_price }}
                             </td>
                             <td>{% if d.is_show %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %} {% if d.is_banner %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>{% if perms.brewsql.change_product %}
-                            <td align="right"><a href="{% url 'brewsql:product_update' d.pk %}?next={% url 'brewsql:product_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                            <td align="right"><a href="{% url 'brewsql:product_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -15,16 +15,16 @@
             <div class="col-md-2">{% trans '订单日期' %}: {{ d.sale_order_date|date:"Y-m-d" }}</div>
             <div class="col-md-3" align="right">
                 {% if perms.confirm_sale and d.pk %}
-                <a href="{% url 'brewsql:order_state_update' d.pk %}"><label class="btn btn-primary">{% trans '更新状态' %}</label></a>{% endif %}
+                <a href="{% url 'brewsql:order_state_update' d.pk %}?next={{ request.path }}"><label class="btn btn-primary">{% trans '更新状态' %}</label></a>{% endif %}
                 {% if not d.is_delivered and perms.brewsql.change_saleorder and d.pk %}
-                <a href="{% url 'brewsql:sale_order_update' d.pk %}"><label class="btn btn-info">{% trans '编辑' %}</label></a>
+                <a href="{% url 'brewsql:sale_order_update' d.pk %}?next={{ request.path }}"><label class="btn btn-info">{% trans '编辑' %}</label></a>
                 {% endif %}
                 {% if not d.is_delivered and perms.brewsql.confirm_sale %}
                 <a data-toggle="modal" href="#saleOrderDeliver_{{ d.pk }}"><label class="btn btn-primary">{% trans '发货' %}</label></a>
                 <div class="modal fade " id="saleOrderDeliver_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" align="left">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form method="post" action="{% url 'brewsql:sale_order_good_deliver' %}">{% csrf_token %}
+                            <form method="post" action="{% url 'brewsql:sale_order_good_deliver' %}?next={{ request.path }}">{% csrf_token %}
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                     <h4 class="modal-title">{% trans '请确认发货' %}</h4>
@@ -55,7 +55,7 @@
                 <div class="modal fade " id="saleOrderPay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" align="left">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form method="post" action="{% url 'brewsql:sale_order_fee_receive' %}">{% csrf_token %}
+                            <form method="post" action="{% url 'brewsql:sale_order_fee_receive' %}?next={{ request.path }}">{% csrf_token %}
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                     <h4 class="modal-title">{% trans '请确认收款' %}</h4>
@@ -139,7 +139,7 @@
                                 <div align="left" class="modal fade " id="myModal_{{ i.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <form method="post" action="{% url 'brewsql:sale_confirm' %}">{% csrf_token %}
+                                            <form method="post" action="{% url 'brewsql:sale_confirm' %}?next={{ request.path }}">{% csrf_token %}
                                                 <div class="modal-header">
                                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                                     <h4 class="modal-title">{% trans '产品出库' %}</h4>
@@ -165,7 +165,7 @@
                                 <div align="left" class="modal fade " id="salePay_{{ i.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <form method="post" action="{% url 'brewsql:sale_pay' %}">{% csrf_token %}
+                                            <form method="post" action="{% url 'brewsql:sale_pay' %}?next={{ request.path }}">{% csrf_token %}
                                                 <div class="modal-header">
                                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                                     <h4 class="modal-title">{% trans '请确认收款' %}</h4>

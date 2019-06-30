@@ -23,7 +23,7 @@
                             <td>{{ d.pk }}</td>
                             <td>{{ d.company_type_cn }}</td>
                             <td>{{ d.company_type_en }}</td>{% if perms.brewsql.change_companytype %}
-                            <td align="right"><a href="{% url 'brewsql:company_type_update' d.pk %}?next={% url 'brewsql:company_type_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                            <td align="right"><a href="{% url 'brewsql:company_type_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
                         </tr>{% endfor %}
                     </tbody>
                 </table>
@@ -40,7 +40,7 @@
                 <p>{{ form.non_field_errors }}</p>
             </header>
             <div class="panel-body">
-                <form method="post" action="{% url 'brewsql:company_type_list' %}?next={{ request.GET.next }}">{% csrf_token %}
+                <form method="post" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group col-md-12">

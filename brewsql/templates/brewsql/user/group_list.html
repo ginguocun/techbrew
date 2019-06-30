@@ -13,7 +13,7 @@
                 {% if form.errors %}<p>{% trans "提交的数据有误,请认真检查!" %}</p>{% endif %}
             </header>
             <div class="panel-body">
-                <form class="form-horizontal" method="post" action="{% url 'brewsql:group_list' %}?next={{ request.GET.next }}">{% csrf_token %}
+                <form class="form-horizontal" method="post" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     {{ form.non_field_errors }}
                     <div class="form-group col-md-12">
                         <div class="col-sm-1 control-label">{{ form.name.label_tag }}</div>
@@ -57,7 +57,7 @@
                             <td>{{ forloop.counter }}</td>
                             <td>{{ d.name }}</td>
                             {% if perms.brewsql.change_employee %}
-                            <td align="right"><a href="{% url 'brewsql:group_update' d.pk %}?next={% url 'brewsql:group_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                            <td align="right"><a href="{% url 'brewsql:group_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
                         </tr>{% endfor %}
                     </tbody>
                 </table>

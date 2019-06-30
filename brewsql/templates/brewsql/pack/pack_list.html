@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-3" align="right">{% if perms.brewsql.view_product %}
             <a href="{% url 'brewsql:product_inventory' %}"><button type="button" class="btn btn-primary">{% trans "产品库存" %}</button></a>{% endif %}{% if perms.brewsql.add_pack %}
-            <a href="{% url 'brewsql:add_pack' %}?next={% url 'brewsql:pack_list' %}"><button type="button" class="btn btn-success">{% trans "产品入库" %}</button></a>{% endif %}
+            <a href="{% url 'brewsql:add_pack' %}?next={{ request.path }}"><button type="button" class="btn btn-success">{% trans "产品入库" %}</button></a>{% endif %}
         </div>
     </div>
 </section>
@@ -63,7 +63,7 @@
                     <td><span class="label label-danger">{{ d.pack_num_left }}</span></td>
                     <td>{{ d.notes }}</td>
                     <td align="right">{% if perms.brewsql.view_report %}<a href=""><button class="btn btn-primary btn-xs"><i class="fa fa-file-text"></i></button></a>{% endif %} {% if perms.brewsql.change_pack %}
-                    <a href="{% url 'brewsql:pack_update' d.pk %}?next={% url 'brewsql:pack_list' %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}</td>
+                    <a href="{% url 'brewsql:pack_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}</td>
                 </tr>{% endfor %}
             </tbody>
         </table>{% if perms.brewsql.can_export_pack_data %}

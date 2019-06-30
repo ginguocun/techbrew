@@ -2,7 +2,7 @@
 
 {% block content %}
 <section class="wrapper site-min-height">
-    <form class="form-signin" action="{% url 'login' %}" method="post">{% csrf_token %}
+    <form class="form-signin" action="{% url 'login' %}?next={{ request.GET.next }}" method="post">{% csrf_token %}
         <h2 class="form-signin-heading">欢迎光临</h2>
         <div class="login-wrap">
             {% if form.non_field_errors %}{% for error in form.non_field_errors %}

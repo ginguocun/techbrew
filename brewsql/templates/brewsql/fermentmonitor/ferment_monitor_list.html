@@ -4,7 +4,7 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_fermentmonitor %}
-        <a href="{% url 'brewsql:new_ferment_record' %}?next={% url 'brewsql:ferment_monitor_list' %}"><button type="button" class="btn btn-primary">{% trans "记录" %}</button></a>{% endif %}
+        <a href="{% url 'brewsql:new_ferment_record' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "记录" %}</button></a>{% endif %}
     </div>
     {% get_current_language as LANGUAGE_CODE %}
     <div class="col-lg-12">
@@ -44,7 +44,7 @@
                             <td>{{ d.diacetyl|default_if_none:"" }}</td>
                             <td>{{ d.recorder }}</td>
                             <td>{{ d.notes }}{% if d.qc_report %} <a href="{{ MEDIA_URL }}{{ d.qc_report }}"><span class="btn btn-info btn-xs">{{ d.qc_report_name }}</span></a>{% endif %}</td>{% if perms.brewsql.delete_fermentmonitor %}
-                            <td><a href="{% url 'brewsql:ferment_monitor_delete' d.pk %}?next={% url 'brewsql:ferment_monitor_list' %}"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></a></td>{% endif %}
+                            <td><a href="{% url 'brewsql:ferment_monitor_delete' d.pk %}?next={{ request.path }}"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></a></td>{% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

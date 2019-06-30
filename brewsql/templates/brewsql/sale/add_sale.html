@@ -16,7 +16,7 @@
                 {% endif %}
             </header>
             <div class="panel-body">
-                <form class="form-horizontal" method="post" action="{% url 'brewsql:add_sale' %}?next={{ request.GET.next }}">{% csrf_token %}
+                <form class="form-horizontal" method="post" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">

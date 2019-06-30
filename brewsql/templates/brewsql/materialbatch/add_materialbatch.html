@@ -15,7 +15,7 @@
                 {% endif %}
             </header>
             <div class="panel-body">
-                <form class="form-horizontal" method="post" enctype="multipart/form-data" action="{% url 'brewsql:add_material_batch' %}?next={{ request.GET.next }}">{% csrf_token %}
+                <form class="form-horizontal" method="post" enctype="multipart/form-data" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
@@ -72,8 +72,8 @@
     </div>
     <div class="col-lg-2">
         <section class="panel">{% if perms.brewsql.add_materialpacksizeunit %}
-            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:material_pack_list' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加包装规格' %}</a></button>{% endif %}{% if perms.brewsql.add_material %}
-            <button class="btn btn-success btn-block" type="button"><a href="{% url 'brewsql:add_material' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加原料' %}</a></button>{% endif %}
+            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:material_pack_list' %}?next={{ request.path }}"><i class="fa fa-plus"></i>  {% trans '添加包装规格' %}</a></button>{% endif %}{% if perms.brewsql.add_material %}
+            <button class="btn btn-success btn-block" type="button"><a href="{% url 'brewsql:add_material' %}?next={{ request.path }}"><i class="fa fa-plus"></i>  {% trans '添加原料' %}</a></button>{% endif %}
         </section>
     </div>
 </div>

@@ -113,7 +113,7 @@
     </div>
     <div class="col-lg-2">
         <section class="panel">{% if perms.brewsql.add_employeestate %}
-            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加记录人员' %}</a></button>{% endif %}
+            <button class="btn btn-primary btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}?next={{ request.path }}"><i class="fa fa-plus"></i>  {% trans '添加记录人员' %}</a></button>{% endif %}
         </section>
     </div>
 </div>

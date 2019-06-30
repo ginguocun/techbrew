@@ -16,7 +16,7 @@
                 {% endif %}
             </header>
             <div class="panel-body">
-                <form class="form-horizontal" method="post" action="{% url 'brewsql:add_pack' %}?next={{ request.GET.next }}">{% csrf_token %}
+                <form class="form-horizontal" method="post" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}" />{% endif %}
@@ -102,8 +102,8 @@
     <div class="col-lg-2">
         <section class="panel">
             {% if perms.brewsql.add_productpacksizeunit %}
-            <button class="btn btn-success btn-block" type="button"><a href="{% url 'brewsql:add_productpacksizeunit' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加产品包装' %}</a></button>{% endif %}{% if perms.brewsql.add_employee %}
-            <button class="btn btn-warning btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}" target="_blank"><i class="fa fa-plus"></i>  {% trans '添加操作员' %}</a></button>{% endif %}
+            <button class="btn btn-success btn-block" type="button"><a href="{% url 'brewsql:add_productpacksizeunit' %}?next={{ request.path }}"><i class="fa fa-plus"></i>  {% trans '添加产品包装' %}</a></button>{% endif %}{% if perms.brewsql.add_employee %}
+            <button class="btn btn-warning btn-block" type="button"><a href="{% url 'brewsql:add_employee' %}?next={{ request.path }}"><i class="fa fa-plus"></i>  {% trans '添加操作员' %}</a></button>{% endif %}
         </section>
     </div>
 </div>

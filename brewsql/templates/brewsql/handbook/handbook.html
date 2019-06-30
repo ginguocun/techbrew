@@ -13,7 +13,7 @@
                               {{ d.chapter }}. {{ d.chapter_name_cn }}
                             </a>
                             {% if perms.brewsql.change_handbook %}
-                            <a href="{% url 'brewsql:change_handbook' d.pk %}">
+                            <a href="{% url 'brewsql:change_handbook' d.pk %}?next={{ request.path }}">
                                 <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                             </a>
                             {% endif %}
@@ -33,7 +33,7 @@
             {% for d in data %}
             <li><a href="#tab_{{ d.pk }}" data-toggle="tab"><span class="label label-primary">{{ d.chapter }}</span>  {{ d.chapter_name_cn }}</a></li>
             {% endfor %}{% if perms.brewsql.add_handbook %}
-            <li><a href="{% url 'brewsql:add_handbook' %}"><i class="fa fa-plus"></i>  {% trans '添加' %}</a></li>{% endif %}
+            <li><a href="{% url 'brewsql:add_handbook' %}?next={{ request.path }}"><i class="fa fa-plus"></i>  {% trans '添加' %}</a></li>{% endif %}
         </ul>
     </div>
 </div>

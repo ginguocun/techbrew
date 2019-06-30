@@ -23,7 +23,7 @@
                             <td>{{ d.money_in_out_type_en }}</td>
                             <td>{% if d.is_negative %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa fa-times"></i></label>{% endif %}</td>
                             {% if perms.brewsql.change_moneyinouttype %}
-                            <td align="right">{% if not d.is_auto %}<a href="{% url 'brewsql:money_iot_update' d.pk %}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}</td>{% endif %}
+                            <td align="right">{% if not d.is_auto %}<a href="{% url 'brewsql:money_iot_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}</td>{% endif %}
                         </tr>{% endfor %}
                     </tbody>
                 </table>
@@ -37,7 +37,7 @@
                 <p>{{ form.non_field_errors }}</p>
             </header>
             <div class="panel-body">
-                <form class="form-horizontal"  method="post" action="{% url 'brewsql:money_inout_types' %}?next={{ request.GET.next }}">{% csrf_token %}
+                <form class="form-horizontal"  method="post" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
