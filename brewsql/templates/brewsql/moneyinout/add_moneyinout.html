@@ -15,7 +15,7 @@
                 {% endif %}
             </header>
             <div class="panel-body">
-                <form class="form-horizontal" method="post" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
+                <form class="form-horizontal" method="post" enctype="multipart/form-data" action="{{ request.path }}?next={{ request.GET.next }}">{% csrf_token %}
                     <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
@@ -29,7 +29,7 @@
                             </select>
                             <p class="help-block">{{ form.money_in_out_type.errors }}</p>
                         </div>
-                        <div class="col-lg-1 col-sm-2 control-label">{{ form.money_in_out_date.label_tag }}</div>
+                        <div class="col-lg-1 control-label">{{ form.money_in_out_date.label_tag }}</div>
                         <div class="col-lg-3">
                             {{ form.money_in_out_date }}
                             <p class="help-block">{{ form.money_in_out_date.errors }}</p>
@@ -41,10 +41,17 @@
                             {{ form.recorded_by }}
                             <p class="help-block">{{ form.recorded_by.errors }}</p>
                         </div>
-                        <div class="col-lg-1 col-sm-2 control-label">{{ form.money_in_out.label_tag }}</div>
+                        <div class="col-lg-1 control-label">{{ form.money_in_out.label_tag }}</div>
                         <div class="col-lg-3">
                             {{ form.money_in_out }}
                             <p class="help-block">{{ form.money_in_out.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.appendix.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.appendix }}
+                            <p class="help-block">{{ form.appendix.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">

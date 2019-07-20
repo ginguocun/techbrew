@@ -16,7 +16,7 @@
                 {% endif %}
             </header>
             <div class="panel-body">
-                <form class="form-horizontal" method="post">{% csrf_token %}
+                <form class="form-horizontal" enctype="multipart/form-data" method="post">{% csrf_token %}
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
                         <div class="col-lg-2 control-label"><label>{% trans '收支类型' %}:</label></div>
@@ -48,6 +48,13 @@
                         <div class="col-lg-3">
                             {{ form.money_in_out }}
                             <p class="help-block">{{ form.money_in_out.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.appendix.label_tag }}</div>
+                        <div class="col-lg-10">
+                            {{ form.appendix }}
+                            <p class="help-block">{{ form.appendix.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">

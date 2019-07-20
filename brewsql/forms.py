@@ -451,21 +451,21 @@ class MoneyInOutTypeForm(TbModelForm):
 class MoneyInOutForm(TbModelForm):
     class Meta:
         model = MoneyInOut
-        fields = ['money_in_out', 'money_in_out_date', 'money_in_out_type', 'notes', 'recorded_by', 'created_by',
-                  'is_confirmed']
+        fields = ['money_in_out', 'money_in_out_date', 'money_in_out_type', 'notes',
+                  'recorded_by', 'created_by', 'appendix', 'is_confirmed']
 
 
 class MoneyInOutUpdateForm(TbModelForm):
     class Meta:
         model = MoneyInOut
-        fields = ['money_in_out', 'money_in_out_date', 'money_in_out_type', 'notes', 'recorded_by', 'created_by',
-                  'is_confirmed']
+        fields = ['money_in_out', 'money_in_out_date', 'money_in_out_type', 'notes',
+                  'recorded_by', 'modified_by', 'appendix', 'is_confirmed']
 
 
 class MoneyInOutStateUpdateForm(TbModelForm):
     class Meta:
         model = MoneyInOut
-        fields = ['money_in_out_date', 'notes', 'recorded_by', 'created_by']
+        fields = ['money_in_out_date', 'notes', 'recorded_by', 'appendix', 'modified_by']
 
 
 class MaterialPackSizeUnitForm(TbModelForm):

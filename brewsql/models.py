@@ -681,6 +681,7 @@ class MoneyInOut(models.Model):
     )
     is_confirmed = models.BooleanField(_('确认到账'), default=False)
     is_active = models.BooleanField(_('记录有效'), default=True)
+    appendix = models.FileField(_('附件'), upload_to='money_in_out', null=True, blank=True)
     datetime_created = models.DateTimeField(_('添加时间'), auto_now_add=True)
     datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
 
