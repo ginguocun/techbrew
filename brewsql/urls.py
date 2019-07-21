@@ -147,7 +147,7 @@ urlpatterns = [
     re_path(r'^user_action_list/$', views.user_action_list, name='user_action_list'),
     re_path(r'^change_password/$', views_change.password_change_own, name='change_password'),
     # 使用说明
-    re_path(r'^handbook/$', views.handbook, name='handbook'),
+    re_path(r'^handbook/$', views.HandBookListView.as_view(), name='handbook'),
     re_path(r'^add_handbook/$', views_add.HandBookCreate.as_view(), name='add_handbook'),
     re_path(r'^handbook_update/(?P<pk>\d+)/$', views_change.HandBookUpdate.as_view(), name='change_handbook'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

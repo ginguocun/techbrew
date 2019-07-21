@@ -9,7 +9,7 @@
                     <span>{% trans 'Home' %}</span>
                 </a>
             </li>
-            {% if perms.brewsql.view_tank or perms.brewsql.view_fermentmonitor or view_brew %}
+            {% if perms.brewsql.view_tank or perms.brewsql.view_fermentmonitor or perms.brewsql.view_brew %}
             <li class="sub-menu">
                 <a href="javascript:;" >
                     <i class="fa fa-tasks"></i>
@@ -31,13 +31,13 @@
                 <ul class="sub">{% if perms.brewsql.view_product %}
                     <li><a  href="{% url 'brewsql:product_inventory' %}">{% trans '产品库存' %}</a></li>{% endif %}{% if perms.brewsql.view_pack %}
                     <li><a  href="{% url 'brewsql:pack_list' %}">{% trans '入库记录' %}</a></li>{% endif %}
-                    {% if perms.brewsql.view_productname or perms.brewsql.view_productpacksizeunit %}
+                    {% if perms.brewsql.view_productname or perms.brewsql.view_productpacksizeunit or perms.brewsql.view_productcategory or perms.brewsql.add_productstyle %}
                     <li class="sub-menu">
                         <a href="javascript:;" class="dcjq-parent">{% trans '名称/包装' %}<span class="dcjq-icon"></span></a>
                         <ul class="sub" style="display: none;">{% if perms.brewsql.view_productname %}
                             <li><a  href="{% url 'brewsql:product_name_list' %}">{% trans '产品名称' %}</a></li>{% endif %}{% if perms.brewsql.view_productpacksizeunit %}
                             <li><a  href="{% url 'brewsql:product_pack_list' %}">{% trans '产品包装' %}</a></li>{% endif %}{% if perms.brewsql.view_productcategory %}
-                            <li><a  href="{% url 'brewsql:product_category_list' %}">{% trans '产品归类' %}</a></li>{% endif %} {% if perms.brewsql.view_productstyle %}
+                            <li><a  href="{% url 'brewsql:product_category_list' %}">{% trans '产品归类' %}</a></li>{% endif %} {% if perms.brewsql.add_productstyle %}
                             <li><a  href="{% url 'brewsql:product_style_create' %}">{% trans '产品风格' %}</a></li>{% endif %}
                         </ul>
                     </li>
@@ -68,14 +68,14 @@
                     <li><a href="{% url 'brewsql:material_list' %}">{% trans '原料列表' %}</a></li>{% endif %}{% if perms.brewsql.view_materialbatch %}
                     <li><a href="{% url 'brewsql:material_batch_list' %}">{% trans '原料批次' %}</a></li>{% endif %}{% if perms.brewsql.view_materialin %}
                     <li><a href="{% url 'brewsql:material_in_list'%}">{% trans '原料入库' %}</a></li>{% endif %}{% if perms.brewsql.view_materialout %}
-                    <li><a href="{% url 'brewsql:material_out_list'%}">{% trans '原料出库' %}</a></li>{% endif %}
+                    <li><a href="{% url 'brewsql:material_out_list'%}">{% trans '原料出库' %}</a></li>{% endif %}{% if perms.brewsql.add_materialpacksizeunit or perms.brewsql.add_warehouse %}
                     <li class="sub-menu">
                         <a href="javascript:;" class="dcjq-parent">{% trans '包装/位置' %}<span class="dcjq-icon"></span></a>
-                        <ul class="sub" style="display: none;">{% if perms.brewsql.view_materialpacksizeunit %}
-                            <li><a href="{% url 'brewsql:material_pack_list' %}">{% trans '包装规格' %}</a></li>{% endif %}{% if perms.brewsql.view_warehouse %}
+                        <ul class="sub" style="display: none;">{% if perms.brewsql.add_materialpacksizeunit %}
+                            <li><a href="{% url 'brewsql:material_pack_list' %}">{% trans '包装规格' %}</a></li>{% endif %}{% if perms.brewsql.add_warehouse %}
                             <li><a href="{% url 'brewsql:warehouse_list' %}">{% trans '存储位置' %}</a></li>{% endif %}
                         </ul>
-                    </li>
+                    </li>{% endif %}
                 </ul>
             </li>
             {% endif %}

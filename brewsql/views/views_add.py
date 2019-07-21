@@ -7,7 +7,7 @@ from django.contrib.admin.models import LogEntry, ADDITION
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.edit import CreateView
-from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import PermissionRequiredMixin
 # from client.models import TechBrewClient
 from django.db.models import F
 from django.core.paginator import Paginator
@@ -15,6 +15,7 @@ from django.core.paginator import Paginator
 import datetime
 from ..utils import plato2sg, sg2plato
 from ..forms import *
+from django.core.exceptions import ImproperlyConfigured
 
 
 def get_month_date(d=timezone.localdate()):
@@ -31,7 +32,25 @@ def get_content_type_for_model(obj):
     return ContentType.objects.get_for_model(obj, for_concrete_model=False)
 
 
-class TechBrewCreateView(CreateView):
+class TechBrewCreateView(PermissionRequiredMixin, CreateView):
+
+    @staticmethod
+    def get_required_object_permissions(model_cls):
+        return '{0}.add_{1}'.format(model_cls._meta.app_label, model_cls._meta.model_name)
+
+    def get_permission_required(self):
+        if self.permission_required is None:
+            if self.model is None:
+                raise ImproperlyConfigured(
+                    '{0} is missing the model attribute.'.format(self.__class__.__name__)
+                )
+            else:
+                self.permission_required = self.get_required_object_permissions(self.model)
+        if isinstance(self.permission_required, str):
+            perms = (self.permission_required,)
+        else:
+            perms = self.permission_required
+        return perms
 
     def get_success_url(self):
         if self.request.GET:
@@ -64,19 +83,11 @@ class EmployeeStateCreate(TechBrewCreateView):
         context['data'] = EmployeeState.objects.all()
         return context
 
-    @method_decorator([login_required, permission_required('{0}.add_employeestate'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class EmployeeCreate(TechBrewCreateView):
     model = Employee
     form_class = EmployeeForm
     template_name_suffix = '/add_employee'
-
-    @method_decorator([login_required, permission_required('{0}.add_employee'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
 
 class ClientCreate(TechBrewCreateView):
@@ -84,29 +95,17 @@ class ClientCreate(TechBrewCreateView):
     form_class = ClientForm
     template_name_suffix = '/add_client'
 
-    @method_decorator([login_required, permission_required('{0}.add_client'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class SupplierCreate(TechBrewCreateView):
     model = Supplier
     form_class = SupplierForm
     template_name_suffix = '/add_supplier'
 
-    @method_decorator([login_required, permission_required('{0}.add_supplier'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class CompanyCreate(TechBrewCreateView):
     model = Company
     form_class = CompanyForm
     template_name_suffix = '/add_company'
-
-    @method_decorator([login_required, permission_required('{0}.add_company'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
 
 class ProductPackSizeUnitCreate(TechBrewCreateView):
@@ -121,19 +120,11 @@ class ProductPackSizeUnitCreate(TechBrewCreateView):
         context['page_obj'] = paginator.get_page(page)
         return context
 
-    @method_decorator([login_required, permission_required('{0}.add_productpacksizeunit'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class ProductNameCreate(TechBrewCreateView):
     model = ProductName
     form_class = ProductNameForm
     template_name_suffix = '/add_productname'
-
-    @method_decorator([login_required, permission_required('{0}.add_productname'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
 
 class ProductCategoryCreate(TechBrewCreateView):
@@ -141,12 +132,8 @@ class ProductCategoryCreate(TechBrewCreateView):
     form_class = ProductCategoryForm
     template_name_suffix = '/add_productcategory'
 
-    @method_decorator([login_required, permission_required('{0}.add_productcategory'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
-
-class ProductStyleCreateView(CreateView):
+class ProductStyleCreateView(TechBrewCreateView):
     model = ProductStyle
     form_class = ProductStyleForm
     template_name_suffix = '/productstyle_create'
@@ -156,21 +143,11 @@ class ProductStyleCreateView(CreateView):
         context['product_style_list'] = ProductStyle.objects.all()
         return context
 
-    @method_decorator([login_required, permission_required('{0}.view_productstyle'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
-
-class BrewCreate(CreateView):
+class BrewCreate(TechBrewCreateView):
     model = Brew
     form_class = BrewForm
     template_name_suffix = '/add_brew'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def form_valid(self, form):
         if form.is_valid:
@@ -203,21 +180,13 @@ class BrewCreate(CreateView):
                 )
             Tank.objects.filter(pk=form.data.get('tank')).update(current_brew_code=model.brew_batch_code,
                                                                  tank_state_id=1)
-        return super().form_valid(form)
-
-    @method_decorator([login_required, permission_required('{0}.add_brew'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
+        return super(BrewCreate, self).form_valid(form)
 
 
 class BrewMonitorCreate(TechBrewCreateView):
     model = BrewMonitor
     form_class = BrewMonitorForm
     template_name_suffix = '/add_brewmonitor'
-
-    @method_decorator([login_required, permission_required('{0}.add_brewmonitor'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -350,10 +319,6 @@ class ReportCreate(TechBrewCreateView):
     form_class = ReportForm
     template_name_suffix = '/add_report'
 
-    @method_decorator([login_required, permission_required('{0}.add_report'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class SaleOrderCreate(TechBrewCreateView):
     model = SaleOrder
@@ -373,21 +338,11 @@ class SaleOrderCreate(TechBrewCreateView):
         context['client'] = clients
         return context
 
-    @method_decorator([login_required, permission_required('{0}.add_saleorder'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
-
-class SaleCreate(CreateView):
+class SaleCreate(TechBrewCreateView):
     model = Sale
     form_class = SaleForm
     template_name_suffix = '/add_sale'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super(SaleCreate, self).get_success_url()
 
     def get_context_data(self, **kwargs):
         context = super(SaleCreate, self).get_context_data(**kwargs)
@@ -438,21 +393,11 @@ class SaleCreate(CreateView):
                 Pack.objects.filter(pk=selected_pack.pk).update(state=False)
         return super(SaleCreate, self).form_valid(form)
 
-    @method_decorator([login_required, permission_required('{0}.add_sale'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(SaleCreate, self).dispatch(request, *args, **kwargs)
 
-
-class MaterialCreate(CreateView):
+class MaterialCreate(TechBrewCreateView):
     model = Material
     form_class = MaterialForm
     template_name_suffix = '/add_material'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def form_valid(self, form):
         if form.is_valid:
@@ -480,31 +425,17 @@ class MaterialCreate(CreateView):
                 )
         return super().form_valid(form)
 
-    @method_decorator([login_required, permission_required('{0}.add_material'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class MaterialBatchCreate(TechBrewCreateView):
     model = MaterialBatch
     form_class = MaterialBatchForm
     template_name_suffix = '/add_materialbatch'
 
-    @method_decorator([login_required, permission_required('{0}.add_materialbatch'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
-
-class MaterialInCreate(CreateView):
+class MaterialInCreate(TechBrewCreateView):
     model = MaterialIn
     form_class = MaterialInForm
     template_name_suffix = '/add_materialin'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -545,10 +476,6 @@ class MaterialInCreate(CreateView):
                 )
         return super().form_valid(form)
 
-    @method_decorator([login_required, permission_required('{0}.add_materialin'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class MaterialOutCreate(TechBrewCreateView):
     model = MaterialOut
@@ -563,10 +490,6 @@ class MaterialOutCreate(TechBrewCreateView):
             tank__current_brew_code=F('brew_batch_code'))).distinct().order_by('-id')
         return context
 
-    @method_decorator([login_required, permission_required('{0}.add_materialout'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class MoneyInOutTypeCreate(TechBrewCreateView):
     model = MoneyInOutType
@@ -578,21 +501,11 @@ class MoneyInOutTypeCreate(TechBrewCreateView):
         context['inout_types'] = MoneyInOutType.objects.all()
         return context
 
-    @method_decorator([login_required, permission_required('{0}.add_moneyinouttype'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
-
-class MoneyInOutCreate(CreateView):
+class MoneyInOutCreate(TechBrewCreateView):
     model = MoneyInOut
     form_class = MoneyInOutForm
     template_name_suffix = '/add_moneyinout'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -619,10 +532,6 @@ class MoneyInOutCreate(CreateView):
                 )
         return super().form_valid(form)
 
-    @method_decorator([login_required, permission_required('{0}.add_moneyinout'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class MaterialPackSizeUnitCreate(TechBrewCreateView):
     model = MaterialPackSizeUnit
@@ -633,10 +542,6 @@ class MaterialPackSizeUnitCreate(TechBrewCreateView):
         context = super().get_context_data(**kwargs)
         context['data'] = MaterialPackSizeUnit.objects.all()
         return context
-
-    @method_decorator([login_required, permission_required('{0}.add_materialpacksizeunit'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
 
 class WarehouseCreate(TechBrewCreateView):
@@ -649,10 +554,6 @@ class WarehouseCreate(TechBrewCreateView):
         context['warehouse_list'] = Warehouse.objects.all()
         return context
 
-    @method_decorator([login_required, permission_required('{0}.add_warehouse'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class CompanyTypeCreate(TechBrewCreateView):
     model = CompanyType
@@ -663,10 +564,6 @@ class CompanyTypeCreate(TechBrewCreateView):
         context = super().get_context_data(**kwargs)
         context['data'] = CompanyType.objects.all()
         return context
-
-    @method_decorator([login_required, permission_required('{0}.add_companytype'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
 
 class ClientLevelCreate(TechBrewCreateView):
@@ -679,19 +576,11 @@ class ClientLevelCreate(TechBrewCreateView):
         context['data'] = ClientLevel.objects.all()
         return context
 
-    @method_decorator([login_required, permission_required('{0}.add_clientlevel'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
 
 class HandBookCreate(TechBrewCreateView):
     model = HandBook
     form_class = HandBookForm
     template_name_suffix = '/add_handbook'
-
-    @method_decorator([login_required, permission_required('{0}.add_handbook'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -744,7 +633,3 @@ class GroupCreate(TechBrewCreateView):
         context = super().get_context_data(**kwargs)
         context['groups'] = Group.objects.all()
         return context
-
-    @method_decorator([login_required, permission_required('{0}.add_employee'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)

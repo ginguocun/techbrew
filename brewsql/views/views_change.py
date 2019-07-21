@@ -1,10 +1,11 @@
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic.edit import UpdateView, DeleteView
-from django.utils.decorators import method_decorator
 from django.shortcuts import render
 from django.contrib.admin.models import LogEntry, CHANGE, DELETION
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import ImproperlyConfigured
 # from django.core.exceptions import ObjectDoesNotExist
 from ..forms import *
 # from tb2 import sms_aliyun
@@ -18,7 +19,25 @@ def get_content_type_for_model(obj):
     return ContentType.objects.get_for_model(obj, for_concrete_model=False)
 
 
-class TechBrewDeleteView(DeleteView):
+class TechBrewDeleteView(PermissionRequiredMixin, DeleteView):
+
+    @staticmethod
+    def get_required_object_permissions(model_cls):
+        return '{0}.delete_{1}'.format(model_cls._meta.app_label, model_cls._meta.model_name)
+
+    def get_permission_required(self):
+        if self.permission_required is None:
+            if self.model is None:
+                raise ImproperlyConfigured(
+                    '{0} is missing the model attribute.'.format(self.__class__.__name__)
+                )
+            else:
+                self.permission_required = self.get_required_object_permissions(self.model)
+        if isinstance(self.permission_required, str):
+            perms = (self.permission_required,)
+        else:
+            perms = self.permission_required
+        return perms
 
     def delete(self, request, *args, **kwargs):
         oj = self.get_object()
@@ -38,7 +57,25 @@ class TechBrewDeleteView(DeleteView):
         return HttpResponseRedirect(success_url)
 
 
-class TechBrewUpdateView(UpdateView):
+class TechBrewUpdateView(PermissionRequiredMixin, UpdateView):
+
+    @staticmethod
+    def get_required_object_permissions(model_cls):
+        return '{0}.change_{1}'.format(model_cls._meta.app_label, model_cls._meta.model_name)
+
+    def get_permission_required(self):
+        if self.permission_required is None:
+            if self.model is None:
+                raise ImproperlyConfigured(
+                    '{0} is missing the model attribute.'.format(self.__class__.__name__)
+                )
+            else:
+                self.permission_required = self.get_required_object_permissions(self.model)
+        if isinstance(self.permission_required, str):
+            perms = (self.permission_required,)
+        else:
+            perms = self.permission_required
+        return perms
 
     def get_success_url(self):
         if self.request.GET:
@@ -111,19 +148,11 @@ class ClientLevelUpdate(TechBrewUpdateView):
     form_class = ClientLevelForm
     template_name_suffix = '/change_clientlevel'
 
-    @method_decorator([login_required, permission_required('{0}.change_clientlevel'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ClientLevelUpdate, self).dispatch(request, *args, **kwargs)
-
 
 class ClientUpdate(TechBrewUpdateView):
     model = Client
     form_class = ClientUpdateForm
     template_name_suffix = '/change_client'
-
-    @method_decorator([login_required, permission_required('{0}.change_client'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ClientUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class EmployeeStateUpdate(TechBrewUpdateView):
@@ -131,19 +160,11 @@ class EmployeeStateUpdate(TechBrewUpdateView):
     form_class = EmployeeStateForm
     template_name_suffix = '/change_employee_state'
 
-    @method_decorator([login_required, permission_required('{0}.change_employeestate'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(EmployeeStateUpdate, self).dispatch(request, *args, **kwargs)
-
 
 class EmployeeUpdate(TechBrewUpdateView):
     model = Employee
     form_class = EmployeeUpdateForm
     template_name_suffix = '/change_employee'
-
-    @method_decorator([login_required, permission_required('{0}.change_employee'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(EmployeeUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class SupplierUpdate(TechBrewUpdateView):
@@ -151,19 +172,11 @@ class SupplierUpdate(TechBrewUpdateView):
     form_class = SupplierUpdateForm
     template_name_suffix = '/change_supplier'
 
-    @method_decorator([login_required, permission_required('{0}.change_supplier'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(SupplierUpdate, self).dispatch(request, *args, **kwargs)
-
 
 class CompanyTypeUpdate(TechBrewUpdateView):
     model = CompanyType
     form_class = CompanyTypeForm
     template_name_suffix = '/change_companytype'
-
-    @method_decorator([login_required, permission_required('{0}.change_companytype'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(CompanyTypeUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class CompanyUpdate(TechBrewUpdateView):
@@ -171,66 +184,35 @@ class CompanyUpdate(TechBrewUpdateView):
     form_class = CompanyUpdateForm
     template_name_suffix = '/change_company'
 
-    @method_decorator([login_required, permission_required('{0}.change_company'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(CompanyUpdate, self).dispatch(request, *args, **kwargs)
-
 
 class MaterialPackUpdate(TechBrewUpdateView):
     model = MaterialPackSizeUnit
     form_class = MaterialPackSizeUnitForm
     template_name_suffix = '/change_materialpacksizeunit'
-    decorators = [login_required, permission_required('{0}.change_materialpacksizeunit'.format(app_name))]
-
-    @method_decorator(decorators)
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialPackUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialUpdate(TechBrewUpdateView):
     model = Material
     form_class = MaterialForm
     template_name_suffix = '/change_material'
-    decorators = [login_required, permission_required('{0}.change_material'.format(app_name))]
-
-    @method_decorator(decorators)
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class MaterialBatchUpdate(TechBrewUpdateView):
     model = MaterialBatch
     form_class = MaterialBatchUpdateForm
     template_name_suffix = '/change_materialbatch'
-    decorators = [login_required, permission_required('{0}.change_materialbatch'.format(app_name))]
-
-    @method_decorator(decorators)
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialBatchUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class WarehouseUpdate(TechBrewUpdateView):
     model = Warehouse
     form_class = WarehouseForm
     template_name_suffix = '/change_warehouse'
-    decorators = [login_required, permission_required('{0}.change_warehouse'.format(app_name))]
-
-    @method_decorator(decorators)
-    def dispatch(self, request, *args, **kwargs):
-        return super(WarehouseUpdate, self).dispatch(request, *args, **kwargs)
 
 
-class MaterialInUpdate(UpdateView):
+class MaterialInUpdate(TechBrewUpdateView):
     model = MaterialIn
     form_class = MaterialInUpdateForm
     template_name_suffix = '/change_materialin'
-    decorators = [login_required, permission_required('{0}.change_materialin'.format(app_name))]
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def form_valid(self, form):
         if form.is_valid:
@@ -252,20 +234,11 @@ class MaterialInUpdate(UpdateView):
                 )
         return super().form_valid(form)
 
-    @method_decorator(decorators)
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialInUpdate, self).dispatch(request, *args, **kwargs)
-
 
 class MaterialOutUpdate(TechBrewUpdateView):
     model = MaterialOut
     form_class = MaterialOutUpdateForm
     template_name_suffix = '/change_materialout'
-    decorators = [login_required, permission_required('{0}.change_materialout'.format(app_name))]
-
-    @method_decorator(decorators)
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialOutUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class FermentMonitorDelete(TechBrewDeleteView):
@@ -273,32 +246,17 @@ class FermentMonitorDelete(TechBrewDeleteView):
     template_name_suffix = '/fermentmonitor_confirm_delete'
     success_url = '/ferment_monitor_list/'
 
-    @method_decorator([login_required, permission_required('{0}.delete_fermentmonitor'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(FermentMonitorDelete, self).dispatch(request, *args, **kwargs)
-
 
 class MoneyInOutTypeUpdate(TechBrewUpdateView):
     model = MoneyInOutType
     form_class = MoneyInOutTypeForm
     template_name_suffix = '/change_money_inout_type'
-    decorators = [login_required, permission_required('{0}.change_moneyinouttype'.format(app_name))]
-
-    @method_decorator(decorators)
-    def dispatch(self, request, *args, **kwargs):
-        return super(MoneyInOutTypeUpdate, self).dispatch(request, *args, **kwargs)
 
 
-class MoneyInOutUpdate(UpdateView):
+class MoneyInOutUpdate(TechBrewUpdateView):
     model = MoneyInOut
     form_class = MoneyInOutUpdateForm
     template_name_suffix = '/change_moneyinout'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -325,21 +283,11 @@ class MoneyInOutUpdate(UpdateView):
                 )
         return super().form_valid(form)
 
-    @method_decorator([login_required, permission_required('{0}.change_moneyinout'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MoneyInOutUpdate, self).dispatch(request, *args, **kwargs)
 
-
-class MoneyInOutDelete(DeleteView):
+class MoneyInOutDelete(TechBrewDeleteView):
     model = MoneyInOut
     success_url = '/money_io_list/'
     template_name_suffix = '/delete_moneyinout'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return self.success_url
 
     def delete(self, request, *args, **kwargs):
         oj = self.get_object()
@@ -357,21 +305,11 @@ class MoneyInOutDelete(DeleteView):
         success_url = self.get_success_url()
         return HttpResponseRedirect(success_url)
 
-    @method_decorator([login_required, permission_required('{0}.delete_moneyinout'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MoneyInOutDelete, self).dispatch(request, *args, **kwargs)
 
-
-class MoneyInOutStateUpdate(UpdateView):
+class MoneyInOutStateUpdate(TechBrewUpdateView):
     model = MoneyInOut
     form_class = MoneyInOutStateUpdateForm
     template_name_suffix = '/change_moneyinout_state'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def form_valid(self, form):
         if form.is_valid:
@@ -392,10 +330,6 @@ class MoneyInOutStateUpdate(UpdateView):
                     action_flag=CHANGE,
                 )
         return super().form_valid(form)
-
-    @method_decorator([login_required, permission_required('{0}.change_moneyinout'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MoneyInOutStateUpdate, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -423,19 +357,11 @@ class ProductUpdate(TechBrewUpdateView):
         context['data'] = Product.objects.get(pk=self.object.pk)
         return context
 
-    @method_decorator([login_required, permission_required('{0}.change_product'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProductUpdate, self).dispatch(request, *args, **kwargs)
-
 
 class ProductNameUpdate(TechBrewUpdateView):
     model = ProductName
     form_class = ProductNameForm
     template_name_suffix = '/change_productname'
-
-    @method_decorator([login_required, permission_required('{0}.change_productname'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProductNameUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class ProductStyleUpdateView(UpdateView):
@@ -443,19 +369,11 @@ class ProductStyleUpdateView(UpdateView):
     form_class = ProductStyleForm
     template_name_suffix = '/productstyle_update'
 
-    @method_decorator([login_required, permission_required('{0}.change_productstyle'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProductStyleUpdateView, self).dispatch(request, *args, **kwargs)
-
 
 class ProductCategoryUpdate(TechBrewUpdateView):
     model = ProductCategory
     form_class = ProductCategoryForm
     template_name_suffix = '/change_productcategory'
-
-    @method_decorator([login_required, permission_required('{0}.change_productcategory'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProductCategoryUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class ProductPackUpdate(TechBrewUpdateView):
@@ -463,21 +381,11 @@ class ProductPackUpdate(TechBrewUpdateView):
     form_class = ProductPackForm
     template_name_suffix = '/change_productpacksizeunit'
 
-    @method_decorator([login_required, permission_required('{0}.change_productpacksizeunit'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProductPackUpdate, self).dispatch(request, *args, **kwargs)
 
-
-class BrewUpdate(UpdateView):
+class BrewUpdate(TechBrewUpdateView):
     model = Brew
     form_class = BrewUpdateForm
     template_name_suffix = '/change_brew'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def form_valid(self, form):
         if form.is_valid:
@@ -497,29 +405,17 @@ class BrewUpdate(UpdateView):
                                                                tank_state_id=1)
         return super().form_valid(form)
 
-    @method_decorator([login_required, permission_required('{0}.change_brew'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(BrewUpdate, self).dispatch(request, *args, **kwargs)
-
 
 class PackUpdate(TechBrewUpdateView):
     model = Pack
     form_class = PackUpdateForm
     template_name_suffix = '/change_pack'
 
-    @method_decorator([login_required, permission_required('{0}.change_pack'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(PackUpdate, self).dispatch(request, *args, **kwargs)
-
 
 class ReportUpdate(TechBrewUpdateView):
     model = Report
     form_class = ReportForm
     template_name_suffix = '/change_report'
-
-    @method_decorator([login_required, permission_required('{0}.change_report'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ReportUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class SaleOrderUpdate(TechBrewUpdateView):
@@ -545,10 +441,6 @@ class SaleOrderUpdate(TechBrewUpdateView):
         if not self.request.user.has_perm('{0}.view_all_sale_orders'.format(app_name)):
             q = q.filter(created_by=self.request.user)
         return q
-
-    @method_decorator([login_required, permission_required('{0}.change_saleorder'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(SaleOrderUpdate, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -599,6 +491,7 @@ class SaleOrderStateUpdate(TechBrewUpdateView):
     model = SaleOrder
     form_class = SaleOrderStateUpdateForm
     template_name_suffix = '/update_order_state'
+    permission_required = '{0}.confirm_sale'.format(app_name)
 
     def get_queryset(self):
         q = self.model.objects.all()
@@ -606,21 +499,11 @@ class SaleOrderStateUpdate(TechBrewUpdateView):
             q = q.filter(created_by=self.request.user)
         return q
 
-    @method_decorator([login_required, permission_required('{0}.confirm_sale'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(SaleOrderStateUpdate, self).dispatch(request, *args, **kwargs)
 
-
-class SaleUpdate(UpdateView):
+class SaleUpdate(TechBrewUpdateView):
     model = Sale
     form_class = SaleUpdateForm
     template_name_suffix = '/change_sale'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return super().get_success_url()
 
     def get_queryset(self):
         q = self.model.objects.all()
@@ -656,10 +539,6 @@ class SaleUpdate(UpdateView):
             elif pn_left <= 0:
                 Pack.objects.filter(pk=selected_pack.pk).update(state=False)
         return super().form_valid(form)
-
-    @method_decorator([login_required, permission_required('{0}.change_sale'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(SaleUpdate, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -831,21 +710,11 @@ class HandBookUpdate(TechBrewUpdateView):
     form_class = HandBookForm
     template_name_suffix = '/change_handbook'
 
-    @method_decorator([login_required, permission_required('{0}.change_handbook'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(HandBookUpdate, self).dispatch(request, *args, **kwargs)
 
-
-class MaterialInDelete(DeleteView):
+class MaterialInDelete(TechBrewDeleteView):
     model = MaterialIn
     success_url = '/material_in_list/'
     template_name_suffix = '/delete_materialin'
-
-    def get_success_url(self):
-        if self.request.GET:
-            if self.request.GET.get('next'):
-                return self.request.GET.get('next')
-        return self.success_url
 
     def delete(self, request, *args, **kwargs):
         linked_money_io = None
@@ -866,29 +735,17 @@ class MaterialInDelete(DeleteView):
         success_url = self.get_success_url()
         return HttpResponseRedirect(success_url)
 
-    @method_decorator([login_required, permission_required('{0}.delete_materialin'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialInDelete, self).dispatch(request, *args, **kwargs)
-
 
 class MaterialOutDelete(TechBrewDeleteView):
     model = MaterialOut
     success_url = '/material_out_list/'
     template_name_suffix = '/delete_materialout'
 
-    @method_decorator([login_required, permission_required('{0}.delete_materialout'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialOutDelete, self).dispatch(request, *args, **kwargs)
-
 
 class BrewMonitorUpdate(TechBrewUpdateView):
     model = BrewMonitor
     form_class = BrewMonitorUpdateForm
     template_name_suffix = '/change_brewmonitor'
-
-    @method_decorator([login_required, permission_required('{0}.change_brewmonitor'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(BrewMonitorUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class UserUpdate(TechBrewUpdateView):
@@ -897,15 +754,12 @@ class UserUpdate(TechBrewUpdateView):
     template_name_suffix = '/update_user'
     success_url = '/users/'
     queryset = User.objects.filter(is_superuser=False)
+    permission_required = '{0}.change_employee'.format(app_name)
     
     def get_template_names(self):
         names = list()
         names.append("{0}/{1}{2}.html".format(app_name, 'user', self.template_name_suffix))
         return names
-
-    @method_decorator([login_required, permission_required('{0}.change_employee'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(UserUpdate, self).dispatch(request, *args, **kwargs)
 
 
 class GroupUpdate(TechBrewUpdateView):
@@ -914,12 +768,9 @@ class GroupUpdate(TechBrewUpdateView):
     template_name_suffix = '/update_group'
     success_url = '/groups/'
     queryset = Group.objects.all()
+    permission_required = '{0}.change_employee'.format(app_name)
 
     def get_template_names(self):
         names = list()
         names.append("{0}/{1}{2}.html".format(app_name, 'user', self.template_name_suffix))
         return names
-
-    @method_decorator([login_required, permission_required('{0}.change_employee'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(GroupUpdate, self).dispatch(request, *args, **kwargs)

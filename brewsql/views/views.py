@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
 from django.db.models.functions import TruncMonth
 from django.views.generic import ListView
-from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.exceptions import ImproperlyConfigured
 from ..utils import validate_date
 from ..forms import *
 
@@ -13,9 +14,27 @@ from ..forms import *
 app_name = GeneralConfig.name
 
 
-class TechBewListView(ListView):
+class TechBewListView(PermissionRequiredMixin, ListView):
     context_object_name = 'data'
     paginate_by = 20
+
+    @staticmethod
+    def get_required_object_permissions(model_cls):
+        return '{0}.view_{1}'.format(model_cls._meta.app_label, model_cls._meta.model_name)
+
+    def get_permission_required(self):
+        if self.permission_required is None:
+            if self.model is None:
+                raise ImproperlyConfigured(
+                    '{0} is missing the model attribute.'.format(self.__class__.__name__)
+                )
+            else:
+                self.permission_required = self.get_required_object_permissions(self.model)
+        if isinstance(self.permission_required, str):
+            perms = (self.permission_required,)
+        else:
+            perms = self.permission_required
+        return perms
 
 
 def income_by_products_pie(sale_incomes=None):
@@ -139,18 +158,10 @@ class FermentMonitorListView(TechBewListView):
     model = FermentMonitor
     template_name_suffix = '/ferment_monitor_list'
 
-    @method_decorator([login_required, permission_required('{0}.view_fermentmonitor'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(FermentMonitorListView, self).dispatch(request, *args, **kwargs)
-
 
 class TankListView(TechBewListView):
     model = Tank
     template_name_suffix = '/tank_list'
-
-    @method_decorator([login_required, permission_required('{0}.view_tank'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(TankListView, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -216,18 +227,10 @@ class EmployeeListView(TechBewListView):
     model = Employee
     template_name_suffix = '/employee_list'
 
-    @method_decorator([login_required, permission_required('{0}.view_employee'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(EmployeeListView, self).dispatch(request, *args, **kwargs)
-
 
 class SupplierListView(TechBewListView):
     model = Supplier
     template_name_suffix = '/supplier_list'
-
-    @method_decorator([login_required, permission_required('{0}.view_supplier'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(SupplierListView, self).dispatch(request, *args, **kwargs)
 
 
 class ClientListView(TechBewListView):
@@ -240,54 +243,30 @@ class ClientListView(TechBewListView):
             object_list = object_list.filter(created_by=self.request.user.pk)
         return object_list
 
-    @method_decorator([login_required, permission_required('{0}.view_client'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ClientListView, self).dispatch(request, *args, **kwargs)
-
 
 class CompanyListView(TechBewListView):
     model = Company
     template_name_suffix = '/company_list'
-
-    @method_decorator([login_required, permission_required('{0}.view_company'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(CompanyListView, self).dispatch(request, *args, **kwargs)
 
 
 class ProductNameListView(TechBewListView):
     model = ProductName
     template_name_suffix = '/productname_list'
 
-    @method_decorator([login_required, permission_required('{0}.view_productname'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProductNameListView, self).dispatch(request, *args, **kwargs)
-
 
 class ProductCategoryListView(TechBewListView):
     model = ProductCategory
     template_name_suffix = '/productcategory_list'
-
-    @method_decorator([login_required, permission_required('{0}.view_productcategory'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProductCategoryListView, self).dispatch(request, *args, **kwargs)
 
 
 class ProductPackSizeUnitListView(TechBewListView):
     model = ProductPackSizeUnit
     template_name_suffix = '/productpacksizeunit_list'
 
-    @method_decorator([login_required, permission_required('{0}.view_productpacksizeunit'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProductPackSizeUnitListView, self).dispatch(request, *args, **kwargs)
-
 
 class ProductListView(TechBewListView):
     model = Product
     template_name_suffix = '/product_list'
-
-    @method_decorator([login_required, permission_required('{0}.view_product'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(ProductListView, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -325,10 +304,6 @@ class BrewListView(TechBewListView):
                     product_name__product_name_en__icontains=q) | Q(
                     product_name__product_name_code__icontains=q)).distinct()
         return object_list
-
-    @method_decorator([login_required, permission_required('{0}.view_brew'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(BrewListView, self).dispatch(request, *args, **kwargs)
 
 
 class PackListView(TechBewListView):
@@ -391,10 +366,6 @@ class PackListView(TechBewListView):
         context['column_data_s'] = json.dumps(column_data_series)
         return context
 
-    @method_decorator([login_required, permission_required('{0}.view_pack'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(PackListView, self).dispatch(request, *args, **kwargs)
-
 
 class SaleOrderListView(TechBewListView):
     model = SaleOrder
@@ -433,10 +404,6 @@ class SaleOrderListView(TechBewListView):
                 client__client_company__company_address__icontains=q) | Q(
                 notes__icontains=q)).distinct()
         return object_list
-
-    @method_decorator([login_required, permission_required('{0}.view_brew'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(SaleOrderListView, self).dispatch(request, *args, **kwargs)
 
 
 class SaleOrderWxListView(TechBewListView):
@@ -481,10 +448,6 @@ class SaleOrderWxListView(TechBewListView):
             context['order_states'].append({'state': o_s,
                                             'state_count': object_list.filter(order_state_id=o_s.pk).count()}, )
         return context
-
-    @method_decorator([login_required, permission_required('{0}.view_brew'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(SaleOrderWxListView, self).dispatch(request, *args, **kwargs)
 
 
 class SaleListView(TechBewListView):
@@ -564,10 +527,6 @@ class SaleListView(TechBewListView):
             context['column_data_s'] = json.dumps(column_data_series)
         return context
 
-    @method_decorator([login_required, permission_required('{0}.view_sale'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(SaleListView, self).dispatch(request, *args, **kwargs)
-
 
 class MoneyInOutListView(TechBewListView):
     model = MoneyInOut
@@ -616,10 +575,6 @@ class MoneyInOutListView(TechBewListView):
             object_list.filter(is_confirmed=True).filter(is_active=True)))
         return context
 
-    @method_decorator([login_required, permission_required('{0}.view_moneyinout'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MoneyInOutListView, self).dispatch(request, *args, **kwargs)
-
 
 class MaterialListView(TechBewListView):
     model = Material
@@ -640,10 +595,6 @@ class MaterialListView(TechBewListView):
         context = super().get_context_data(**kwargs)
         context['material_category'] = MaterialCategory.objects.all()
         return context
-
-    @method_decorator([login_required, permission_required('{0}.view_material'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialListView, self).dispatch(request, *args, **kwargs)
 
 
 @login_required
@@ -691,10 +642,6 @@ class MaterialBatchListView(TechBewListView):
         context['material_category'] = MaterialCategory.objects.all()
         return context
 
-    @method_decorator([login_required, permission_required('{0}.view_materialbatch'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialBatchListView, self).dispatch(request, *args, **kwargs)
-
 
 class MaterialInListView(TechBewListView):
     model = MaterialIn
@@ -731,10 +678,6 @@ class MaterialInListView(TechBewListView):
         context['material_category'] = MaterialCategory.objects.all()
         return context
 
-    @method_decorator([login_required, permission_required('{0}.view_materialin'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialInListView, self).dispatch(request, *args, **kwargs)
-
 
 class MaterialOutListView(TechBewListView):
     model = MaterialOut
@@ -765,10 +708,6 @@ class MaterialOutListView(TechBewListView):
         context['material_category'] = MaterialCategory.objects.all()
         return context
 
-    @method_decorator([login_required, permission_required('{0}.view_materialout'.format(app_name))])
-    def dispatch(self, request, *args, **kwargs):
-        return super(MaterialOutListView, self).dispatch(request, *args, **kwargs)
-
 
 # def update_temp(t_d=0.2):
 #     jkm_t_s = JkmT()
@@ -789,12 +728,9 @@ class MaterialOutListView(TechBewListView):
 #     return HttpResponse(content=data)
 
 
-@login_required
-@permission_required('{0}.view_handbook'.format(app_name))
-def handbook(request):
-    template_name = '{0}/handbook/handbook.html'.format(app_name)
-    object_list = HandBook.objects.all()
-    return render(request, template_name=template_name, context={'data': object_list})
+class HandBookListView(TechBewListView):
+    model = HandBook
+    template_name_suffix = '/handbook'
 
 
 @login_required
