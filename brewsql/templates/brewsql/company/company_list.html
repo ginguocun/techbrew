@@ -26,7 +26,7 @@
                     <tbody>{% for d in data %}
                         <tr class="{% cycle '' 'active' %}">
                             <td>{{ d.id }}</td>
-                            <td>{{ d.company_name_cn|default_if_none:"" }}/{{ d.company_name_en|default_if_none:"" }}</td>
+                            <td>{{ d.company_name_cn|default_if_none:"" }}{% if d.company_name_en %}/{{ d.company_name_en|default_if_none:"" }}{% endif %}</td>
                             {% if LANGUAGE_CODE == 'en'%}
                             <td>{{ d.company_type.company_type_en|default_if_none:"" }}</td>{% else %}
                             <td>{{ d.company_type.company_type_cn|default_if_none:"" }}</td>{% endif %}
