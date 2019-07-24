@@ -110,19 +110,78 @@
                                     <th>{% trans '产品' %}</th>
                                     <th>{% trans '数量' %}</th>
                                     <th>{% trans '金额' %}</th>
+                                    <th>{% trans '已出库' %}</th>
+                                    <th>{% trans '已收款' %}</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>{% for item in page_obj %}
                                 <tr class="{% cycle '' 'active' %}">
                                     <th>{{ item.sale_date|date:"Y-m-d"  }}</th>
                                     <td>{% if perms.brewsql.view_saleorder %}
-                                        <a href="{% url 'brewsql:sale_order_detail' item.sale_order.pk %}">{{ item.sale_order }}</a>
-                                        {% else %}
-                                        {{ item.sale_order }}{% endif %}
+                                        <a href="{% url 'brewsql:sale_order_detail' item.sale_order.pk %}">{{ item.sale_order }}</a>{% else %} {{ item.sale_order }}{% endif %}
                                     </td>
                                     <td>{{ item.pack.product }}</td>
                                     <td>{{ item.sale_num }}</td>
                                     <th>¥ {{ item.sale_price }}</th>
+                                    <td>{% if item.is_confirmed %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
+                                    <td>{% if item.fee_received %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
+                                    <td align="right">{% if perms.mylovebrew.change_sale %}
+                                        <a href="{% url 'mylovebrew:sale_update' item.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}
+                                        {% if not item.is_confirmed and perms.mylovebrew.confirm_sale %}
+                                        <a data-toggle="modal" href="#saleConfirm_{{ item.pk }}"><button class="btn btn-warning btn-xs"><i class="fa fa-sign-out"></i></button></a>
+                                        <div align="left" class="modal fade " id="saleConfirm_{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form method="post" action="{% url 'mylovebrew:sale_confirm' %}">{% csrf_token %}
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                            <h4 class="modal-title">{% trans '请确认出库' %}</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>{% trans '单号' %}：{{ item.sale_order.sale_order_code|default_if_none:'N/A' }}</p>
+                                                            <p>{% trans '产品' %}：[{{ item.pack.product.product_code }}] {{ item.pack.product.product_name.product_name_cn }} ({{ item.pack.product.product_pack.product_pack_size_unit_cn }})</p>
+                                                            <p>{% trans '数量' %}：{{ item.sale_num }}</p>
+                                                            <input type="hidden" name="sale_id" value="{{ item.pk }}">
+                                                            <input type="hidden" name="next" value="{{ request.path }}">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                                                            <button class="btn btn-success" type="submit">{% trans '确认' %}</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% if not item.fee_received and perms.mylovebrew.confirm_fee_receive %}
+                                        <a data-toggle="modal" href="#salePay_{{ item.pk }}"><button class="btn btn-danger btn-xs"><i class="fa fa-money"></i></button></a>
+                                        <div align="left" class="modal fade " id="salePay_{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form method="post" action="{% url 'mylovebrew:sale_pay' %}">{% csrf_token %}
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                            <h4 class="modal-title">{% trans '请确认收款' %}</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>{% trans '单号' %}：{{ item.sale_order.sale_order_code|default_if_none:'N/A' }}</p>
+                                                            <p>{% trans '产品' %}：[{{ item.pack.product.product_code }}] {{ item.pack.product.product_name.product_name_cn }} ({{ item.pack.product.product_pack.product_pack_size_unit_cn }})</p>
+                                                            <p>{% trans '数量' %}：{{ item.sale_num }}</p>
+                                                            <p>{% trans '金额' %}：¥ {{ item.sale_price_link.money_in_out|floatformat:"-2" }}</p>
+                                                            <input type="hidden" name="sale_id" value="{{ item.pk }}">
+                                                            <input type="hidden" name="next" value="{{ request.path }}">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button data-dismiss="modal" class="btn btn-default" type="button">{% trans '关闭' %}</button>
+                                                            <button class="btn btn-success" type="submit">{% trans '确认' %}</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </td>
                                 </tr>{% endfor %}
                             </tbody>
                         </table>
