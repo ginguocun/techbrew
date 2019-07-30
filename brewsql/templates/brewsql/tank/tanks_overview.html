@@ -27,8 +27,8 @@
                 <tbody>{% for tank in tanks %}
                     <tr class="{% cycle '' 'active' %}">
                         <td>{{ tank.tank_name }}</td>{% if LANGUAGE_CODE == 'en'%}
-                        <td>{{ tank.current_brew.product_name.product_name_en }}<br><a href="{% if perms.brewsql.view_brew %}{% url 'brewsql:brew_detail' tank.current_brew.pk %}{% endif %}" target="_blank">{{ tank.current_brew.brew_batch_code|default_if_none:"" }}</a></td>{% else %}
-                        <td>{{ tank.current_brew.product_name.product_name_cn }}<br><a href="{% if perms.brewsql.view_brew %}{% url 'brewsql:brew_detail' tank.current_brew.pk %}{% endif %}" target="_blank">{{ tank.current_brew.brew_batch_code|default_if_none:"" }}</a></td>{% endif %}
+                        <td>{{ tank.current_brew.product_name.product_name_en }}<br><a href="{% if perms.brewsql.view_brew and tank.current_brew.pk %}{% url 'brewsql:brew_detail' tank.current_brew.pk %}{% endif %}" target="_blank">{{ tank.current_brew.brew_batch_code|default_if_none:"" }}</a></td>{% else %}
+                        <td>{{ tank.current_brew.product_name.product_name_cn }}<br><a href="{% if perms.brewsql.view_brew and tank.current_brew.pk %}{% url 'brewsql:brew_detail' tank.current_brew.pk %}{% endif %}" target="_blank">{{ tank.current_brew.brew_batch_code|default_if_none:"" }}</a></td>{% endif %}
                         <td>{{ tank.jkm_t_real|default_if_none:'N/A' }}/{{ tank.jkm_t_set|default_if_none:'N/A'  }}</td>
                         <td>{{ tank.current_brew.delta_days }} {% trans '天' %}</td>
                         <td>{{ tank.current_brew.theory_days }} {% trans '天' %}</td>
