@@ -143,6 +143,7 @@ class Employee(models.Model):
             pass
         return reverse('{0}:employee_list'.format(app_name))
 
+    @property
     def name_cn(self):
         if self.first_name and self.last_name:
             return '{0}{1}'.format(self.last_name, self.first_name)
@@ -1266,7 +1267,7 @@ class Brew(models.Model):
                             total_out += float(getattr(
                                 out, 'pack_num')) * float(getattr(
                                 out.product.product_pack, 'product_pack_size'))
-        return total_out
+        return round(total_out)
 
     def get_absolute_url(self):
         return reverse('{0}:brew_detail'.format(app_name), kwargs={'pk': self.pk})

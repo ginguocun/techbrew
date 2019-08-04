@@ -20,6 +20,7 @@
                             <th>{% trans '啤酒名称' %}</th>
                             <th>{% trans '生产批次' %}</th>
                             <th>{% trans '容量' %}</th>
+                            <th>{% trans '已灌装量' %}</th>
                             <th>{% trans '状态' %}</th>
                             <th>{% trans '入罐日期' %}</th>
                         </tr>
@@ -37,6 +38,7 @@
                                 {% endif %}
                             </th>
                             <td>{{ d.tank_standard_volume }} L</td>
+                            <td>{% if d.current_brew %}{{ d.current_brew.current_tank_out }} L{% endif %}</td>
                             <td>{{ d.tank_state|default_if_none:"" }}</td>
                             <td>{{ d.current_brew.date_start|date:"Y-m-d" }}</td>
                         </tr>{% endfor %}
