@@ -41,6 +41,7 @@
                     <th>{% trans '生产批次' %}</th>
                     <th>{% trans '啤酒名称' %}</th>
                     <th>{% trans '发酵罐' %}</th>
+                    <th>{% trans '总出库量' %}</th>
                     <th>{% trans '开始日期' %}</th>
                     <th>{% trans '理论天数' %}</th>
                     <th>{% trans '酿酒师' %}</th>
@@ -53,6 +54,7 @@
                     <th>{{ d.brew_batch_code|default_if_none:"" }}</th>
                     <td>{{ d.product_name }}</td>
                     <td>{{ d.tank.tank_name }}</td>
+                    <td>{{ d.current_tank_out }} L</td>
                     <td>{{ d.date_start|date:"Y-m-d" }}</td>
                     <td>{{ d.theory_days }} {% trans '天' %}</td>
                     <td>{{ d.operator }}</td>

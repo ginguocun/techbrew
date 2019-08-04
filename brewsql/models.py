@@ -1250,6 +1250,24 @@ class Brew(models.Model):
                     cost += round(m.material_out_cost, 2)
         return cost
 
+    @property
+    def current_tank_out(self):
+        total_out = 0
+        current_tank_out = Pack.objects.filter(brew_id=self.pk)
+        if current_tank_out.count() > 0:
+            for out in current_tank_out:
+                if out.pack_num and out.product:
+                    if out.product.product_pack:
+                        if getattr(out.product.product_pack, 'product_pack_unit') == 'mL':
+                            total_out += float(getattr(
+                                out, 'pack_num')) * float(getattr(
+                                out.product.product_pack, 'product_pack_size')) * 0.001
+                        else:
+                            total_out += float(getattr(
+                                out, 'pack_num')) * float(getattr(
+                                out.product.product_pack, 'product_pack_size'))
+        return total_out
+
     def get_absolute_url(self):
         return reverse('{0}:brew_detail'.format(app_name), kwargs={'pk': self.pk})
 
