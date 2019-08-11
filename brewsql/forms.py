@@ -16,16 +16,16 @@ class TbModelForm(ModelForm):
                 v.widget.attrs.update({'class': 'form-control'})
                 if isinstance(v.widget, DateTimeInput):
                     v.widget.attrs.update(
-                        {'class': 'form-control', 'type': 'datetime', 'value': str(timezone.now())[:19]})
+                        {'class': 'form-control datetime-auto'})
                 if isinstance(v.widget, DateInput):
                     v.widget.attrs.update(
-                        {'class': 'form-control', 'type': 'date', 'value': str(timezone.localdate())})
+                        {'class': 'form-control date-auto'})
                 if isinstance(v.widget, Select):
                     v.widget.attrs.update(
                         {'class': 'selectpicker show-tick form-control', 'data-live-search': 'true'})
                 if isinstance(v.widget, TimeInput):
                     v.widget.attrs.update(
-                        {'class': 'form-control', 'value': str(timezone.localtime())[11:16], 'type': 'datetime'})
+                        {'class': 'form-control time-auto'})
                 if isinstance(v.widget, Textarea):
                     v.widget.attrs.update({'class': 'form-control summernote'})
                 if isinstance(v.widget, CheckboxInput):
@@ -113,8 +113,6 @@ class ProductNameForm(TbModelForm):
         widgets = {
             'product_name_code': TextInput(attrs={'class': 'form-control', 'value': product_name_code,
                                                   'placeholder': _('建议3位数字形式')}),
-            'product_name_cn': TextInput(attrs={'class': 'form-control', 'placeholder': '雪花'}),
-            'product_name_en': TextInput(attrs={'class': 'form-control', 'placeholder': 'Snow'}),
         }
 
 
@@ -140,12 +138,6 @@ class ProductStyleForm(TbModelForm):
     class Meta:
         model = ProductStyle
         exclude = ['datetime_created', 'datetime_updated']
-        widgets = {
-            'product_style_cn': TextInput(attrs={'class': 'form-control', 'placeholder': '中文名称'}),
-            'product_style_en': TextInput(attrs={'class': 'form-control', 'placeholder': '英文名称'}),
-            'product_style_desc_cn': Textarea(attrs={'class': 'form-control', 'placeholder': '中文描述'}),
-            'product_style_desc_en': Textarea(attrs={'class': 'form-control', 'placeholder': '英文描述'}),
-        }
 
 
 class ProductForm(TbModelForm):
@@ -281,8 +273,6 @@ class PackUpdateForm(TbModelForm):
         }
         widgets = {
             'pack_batch_code': TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
-            'pack_start': TimeInput(attrs={'class': 'form-control timepicker-24'}),
-            'pack_end': TimeInput(attrs={'class': 'form-control timepicker-24'}),
             'pack_num': NumberInput(attrs={'class': 'form-control', 'min': '0'}),
         }
 
@@ -390,8 +380,6 @@ class MaterialBatchUpdateForm(TbModelForm):
         }
         widgets = {
             'material_batch_code': TextInput(attrs={'class': 'form-control', 'placeholder': _('必填且不得重复')}),
-            'para': TextInput(attrs={'class': 'form-control', 'placeholder': _('参数')}),
-
         }
 
 
