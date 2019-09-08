@@ -126,14 +126,14 @@
                                     <th>¥ {{ item.sale_price }}</th>
                                     <td>{% if item.is_confirmed %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
                                     <td>{% if item.fee_received %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
-                                    <td align="right">{% if perms.mylovebrew.change_sale %}
-                                        <a href="{% url 'mylovebrew:sale_update' item.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}
-                                        {% if not item.is_confirmed and perms.mylovebrew.confirm_sale %}
+                                    <td align="right">{% if perms.brewsql.change_sale %}
+                                        <a href="{% url 'brewsql:sale_update' item.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}
+                                        {% if not item.is_confirmed and perms.brewsql.confirm_sale %}
                                         <a data-toggle="modal" href="#saleConfirm_{{ item.pk }}"><button class="btn btn-warning btn-xs"><i class="fa fa-sign-out"></i></button></a>
                                         <div align="left" class="modal fade " id="saleConfirm_{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <form method="post" action="{% url 'mylovebrew:sale_confirm' %}">{% csrf_token %}
+                                                    <form method="post" action="{% url 'brewsql:sale_confirm' %}">{% csrf_token %}
                                                         <div class="modal-header">
                                                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                                             <h4 class="modal-title">{% trans '请确认出库' %}</h4>
@@ -154,12 +154,12 @@
                                             </div>
                                         </div>
                                         {% endif %}
-                                        {% if not item.fee_received and perms.mylovebrew.confirm_fee_receive %}
+                                        {% if not item.fee_received and perms.brewsql.confirm_fee_receive %}
                                         <a data-toggle="modal" href="#salePay_{{ item.pk }}"><button class="btn btn-danger btn-xs"><i class="fa fa-money"></i></button></a>
                                         <div align="left" class="modal fade " id="salePay_{{ item.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <form method="post" action="{% url 'mylovebrew:sale_pay' %}">{% csrf_token %}
+                                                    <form method="post" action="{% url 'brewsql:sale_pay' %}">{% csrf_token %}
                                                         <div class="modal-header">
                                                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                                             <h4 class="modal-title">{% trans '请确认收款' %}</h4>

@@ -2152,8 +2152,8 @@ class OrderState(models.Model):
 
 
 class SaleOrder(models.Model):
-    sale_order_code = models.CharField(_('订单编号'), max_length=30, unique=True, null=True, blank=True)
-    sale_order_date = models.DateField(_('订单日期'), null=True, blank=True)
+    sale_order_code = models.CharField(_('订单编号'), max_length=30, unique=True, null=True)
+    sale_order_date = models.DateField(_('订单日期'), null=True)
     order_state = models.ForeignKey(
         OrderState,
         null=True,
