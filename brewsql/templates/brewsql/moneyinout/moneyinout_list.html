@@ -92,7 +92,7 @@
                     <td>{{ d.money_in_out_type.money_in_out_type_cn }}</td>{% endif %}
                     <td>¥ {{ d.money_in_out|floatformat:-2 }}{% if d.linked_sale %} / ¥ {{ d.linked_sale.sale_order.total_price|floatformat:"-2" }}{% endif %}</td>
                     <td>¥ {{ d.money_left_before|floatformat:-2 }}</td>
-                    <td>{% if d.appendix %}<a href="{{ MEDIA_URL }}{{ d.appendix }}"><span class="label label-primary">{% trans '附件' %}</span></a>{% endif %}</td>
+                    <td>{% if d.appendix %}<a href="/media/{{ d.appendix.name }}"><span class="label label-primary">{% trans '附件' %}</span></a>{% endif %}</td>
                     <td>{{ d.recorded_by.name_cn }}</td>
                     <td>{% if d.is_confirmed %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
                     <td align="right">
