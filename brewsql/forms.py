@@ -1,9 +1,11 @@
-from django.utils.translation import gettext_lazy as _
-from django.forms import ModelForm, TextInput, Textarea, DateInput, CheckboxInput,\
-    ModelMultipleChoiceField, Select, DateTimeInput, NumberInput, TimeInput
-from django.db.utils import ProgrammingError
 from django.contrib.auth.models import Group, Permission
 from django.core.exceptions import ValidationError
+from django.db.utils import ProgrammingError
+from django.forms import ModelForm, TextInput, Textarea, DateInput, CheckboxInput,\
+    ModelMultipleChoiceField, Select, DateTimeInput, NumberInput, TimeInput
+from django.utils.translation import gettext_lazy as _
+
+
 from .models import *
 
 

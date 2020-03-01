@@ -2,18 +2,20 @@
 Written by Guoqun Jin(guoqun.jin@hotmail.com),
 2019-05-01
 """
+# import mimetypes
+import oss2
+
 from django.contrib import admin
-from django.urls import re_path
 from django.conf import settings
 from django.conf.urls import include
 # from django.conf.urls.i18n import i18n_patterns
+from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseRedirect
 # from django.http import FileResponse
-# import mimetypes
-from django.contrib.auth.decorators import login_required
+from django.urls import re_path
 from django.utils.translation import gettext as _
+
 from .views import *
-import oss2
 
 
 @login_required

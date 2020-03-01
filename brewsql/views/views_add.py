@@ -1,21 +1,23 @@
-from decimal import Decimal
 from copy import deepcopy
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+import datetime
+from decimal import Decimal
+
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.admin.models import LogEntry, ADDITION
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
-from django.views.generic.edit import CreateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-# from client.models import TechBrewClient
-from django.db.models import F
 from django.core.paginator import Paginator
+from django.core.exceptions import ImproperlyConfigured
+from django.db.models import F
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.views.generic.edit import CreateView
+# from client.models import TechBrewClient
 # from django.conf import settings
-import datetime
+
 from ..utils import plato2sg, sg2plato
 from ..forms import *
-from django.core.exceptions import ImproperlyConfigured
 
 
 def get_month_date(d=timezone.localdate()):

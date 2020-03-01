@@ -99,7 +99,7 @@ class TechBrewUpdateView(PermissionRequiredMixin, UpdateView):
 
 
 @login_required
-@permission_required('{0}.change_tank'.format(app_name))
+@permission_required('{0}.change_tank'.format(app_name), raise_exception=True)
 def tank_update(request,
                 template_name='{0}/tank/tank_update.html'.format(app_name),
                 ob=TankStateUpdateForm, 

@@ -1,12 +1,14 @@
 import json
-from django.shortcuts import render
+
+from django.db.models.functions import TruncMonth
+from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
-from django.db.models.functions import TruncMonth
-from django.views.generic import ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.core.exceptions import ImproperlyConfigured
+from django.views.generic import ListView
+from django.shortcuts import render
+
 from ..utils import validate_date
 from ..forms import *
 

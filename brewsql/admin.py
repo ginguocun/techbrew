@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import *
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.conf import settings
+
+from .models import *
 
 admin.site.site_header = '管理界面'
 admin.site.site_title = '管理界面'

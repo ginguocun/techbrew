@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import re_path, path
+
 from .apps import GeneralConfig
 from .views import views, views_add, views_detail, views_change
 

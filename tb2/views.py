@@ -1,10 +1,11 @@
-from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
-from ratelimit.decorators import ratelimit
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
+
 import requests as req
+from ratelimit.decorators import ratelimit
 
 
 @ratelimit(key='ip', rate='5/m', method=['POST'], block=True)

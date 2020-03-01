@@ -1,11 +1,13 @@
-from django.http import HttpResponse
-from xlwt import *
 from io import BytesIO
+from xlwt import *
+
 from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
+
+from ..utils import validate_date
 from ..apps import GeneralConfig
 from ..models import Brew, Pack, Sale
-from ..utils import validate_date
 
 
 app_name = GeneralConfig.name
