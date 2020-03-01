@@ -4,7 +4,7 @@ aliyun-python-sdk-kms==2.6.0
 certifi==2019.3.9
 chardet==3.0.4
 crcmod==1.7
-Django==2.2
+Django==2.2.10
 django-aliyun-oss2-storage==0.1.5
 django-filter==2.1.0
 django-ratelimit==2.0.0
@@ -12,7 +12,7 @@ djangorestframework==3.9.2
 idna==2.8
 jmespath==0.9.4
 oss2==2.6.1
-Pillow==6.0.0
+Pillow==7.0.0
 psycopg2-binary==2.8.2
 pycrypto==2.6.1
 pycryptodome==3.8.1
