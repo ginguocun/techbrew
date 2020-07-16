@@ -1,0 +1,8 @@
+FROM django:v2.2
+WORKDIR /opt/techbrew
+COPY tb_nginx.conf /etc/nginx/sites-available/default
+COPY . /opt/techbrew/
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt && \
+    chmod +x /opt/techbrew/start.sh
+EXPOSE 8089
+ENTRYPOINT ["/opt/techbrew/start.sh"]

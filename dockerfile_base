@@ -1,8 +1,9 @@
 FROM ubuntu:18.04
 MAINTAINER "jingq"<guoqun.jin@hotmail.com>
-RUN apt-get update -y && \
+RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list && \
+    apt-get clean && \
+    apt-get update -y && \
     apt-get install -y locales && \
-    apt-get upgrade -y && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 && \
     apt-get install -y \
         git \
@@ -13,7 +14,8 @@ RUN apt-get update -y && \
         nano \
         nginx && \
     pip3 install --upgrade setuptools pip && \
-    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple uwsgi==2.0.18
+    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple uwsgi==2.0.18 && \
+    mkdir /opt/techbrew
 ENV TZ=Asia/Shanghai
 RUN set -eux; \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime; \
@@ -21,8 +23,8 @@ RUN set -eux; \
 ENV LANG en_US.utf8
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONIOENCODING UTF-8
-COPY requirements.txt /opt/requirements.txt
-WORKDIR /opt
+COPY requirements.txt /opt/techbrew/requirements.txt
+WORKDIR /opt/techbrew
 RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
 COPY tb_nginx.conf /etc/nginx/sites-available/default
 EXPOSE 80
