@@ -6,10 +6,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.exceptions import ImproperlyConfigured
-# from django.core.exceptions import ObjectDoesNotExist
 from ..forms import *
-# from tb2 import sms_aliyun
-
+from ..utils import get_obj_permission_required
 
 app_name = GeneralConfig.name
 
@@ -26,18 +24,7 @@ class TechBrewDeleteView(PermissionRequiredMixin, DeleteView):
         return '{0}.delete_{1}'.format(model_cls._meta.app_label, model_cls._meta.model_name)
 
     def get_permission_required(self):
-        if self.permission_required is None:
-            if self.model is None:
-                raise ImproperlyConfigured(
-                    '{0} is missing the model attribute.'.format(self.__class__.__name__)
-                )
-            else:
-                self.permission_required = self.get_required_object_permissions(self.model)
-        if isinstance(self.permission_required, str):
-            perms = (self.permission_required,)
-        else:
-            perms = self.permission_required
-        return perms
+        return get_obj_permission_required(self)
 
     def delete(self, request, *args, **kwargs):
         oj = self.get_object()
@@ -219,10 +206,10 @@ class MaterialInUpdate(TechBrewUpdateView):
             model = form.save(commit=False)
             if model.material_cost > 0:
                 model.material_cost = - model.material_cost
-            if model.material_cost_link_id:
-                MoneyInOut.objects.filter(pk=self.object.material_cost_link_id).update(
-                    money_in_out=self.object.material_cost,
-                    money_in_out_date=self.object.material_in_date)
+            # if model.material_cost_link_id:
+            #     MoneyInOut.objects.filter(pk=self.object.material_cost_link_id).update(
+            #         money_in_out=self.object.material_cost,
+            #         money_in_out_date=self.object.material_in_date)
             model.save()
             if model:
                 LogEntry.objects.log_action(

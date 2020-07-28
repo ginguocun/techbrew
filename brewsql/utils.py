@@ -2,6 +2,23 @@ import datetime
 import math
 import re
 
+from django.core.exceptions import ImproperlyConfigured
+
+
+def get_obj_permission_required(obj):
+    if obj.permission_required is None:
+        if obj.model is None:
+            raise ImproperlyConfigured(
+                '{0} is missing the model attribute.'.format(obj.__class__.__name__)
+            )
+        else:
+            obj.permission_required = obj.get_required_object_permissions(obj.model)
+    if isinstance(obj.permission_required, str):
+        perms = (obj.permission_required,)
+    else:
+        perms = obj.permission_required
+    return perms
+
 
 def convert_num_to_chinese(t_price):
     dict_chinese = [u'零', u'壹', u'贰', u'叁', u'肆', u'伍', u'陆', u'柒', u'捌', u'玖']

@@ -394,7 +394,7 @@ class BannerListView(generics.ListAPIView):
 
     @method_decorator([jwt_required])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(BannerListView, self).dispatch(request, *args, **kwargs)
 
 
 class OrderStateView(generics.ListAPIView):
@@ -403,7 +403,7 @@ class OrderStateView(generics.ListAPIView):
 
     @method_decorator([jwt_required])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(OrderStateView, self).dispatch(request, *args, **kwargs)
 
 
 class ClientAddressView(generics.ListAPIView):
@@ -421,4 +421,4 @@ class ClientAddressView(generics.ListAPIView):
 
     @method_decorator([jwt_required])
     def dispatch(self, request, *args, **kwargs):
-        return super(__class__, self).dispatch(request, *args, **kwargs)
+        return super(ClientAddressView, self).dispatch(request, *args, **kwargs)

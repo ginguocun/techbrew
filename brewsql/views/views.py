@@ -1,7 +1,6 @@
 import json
 
 from django.db.models.functions import TruncMonth
-from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.models import LogEntry
@@ -9,7 +8,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import ListView
 from django.shortcuts import render
 
-from ..utils import validate_date
+from ..utils import validate_date, get_obj_permission_required
 from ..forms import *
 
 
@@ -18,25 +17,27 @@ app_name = GeneralConfig.name
 
 class TechBewListView(PermissionRequiredMixin, ListView):
     context_object_name = 'data'
-    paginate_by = 20
+    paginate_by = 10
 
     @staticmethod
     def get_required_object_permissions(model_cls):
-        return '{0}.view_{1}'.format(model_cls._meta.app_label, model_cls._meta.model_name)
+        return '{0}.view_{1}'.format(getattr(model_cls, '_meta').app_label, getattr(model_cls, '_meta').model_name)
 
     def get_permission_required(self):
-        if self.permission_required is None:
-            if self.model is None:
-                raise ImproperlyConfigured(
-                    '{0} is missing the model attribute.'.format(self.__class__.__name__)
-                )
-            else:
-                self.permission_required = self.get_required_object_permissions(self.model)
-        if isinstance(self.permission_required, str):
-            perms = (self.permission_required,)
-        else:
-            perms = self.permission_required
-        return perms
+        return get_obj_permission_required(self)
+
+    def get_context_data(self, **kwargs):
+        context = super(TechBewListView, self).get_context_data(**kwargs)
+        context['data_length'] = self.get_queryset().count()
+        page_range = getattr(context['paginator'], 'page_range')
+        current_page_num = getattr(context['page_obj'], 'number')
+        page_range_list = list()
+        if page_range:
+            for p_num in page_range:
+                if -4 < p_num - current_page_num < 4:
+                    page_range_list.append(p_num)
+        context['page_range'] = page_range_list
+        return context
 
 
 def income_by_products_pie(sale_incomes=None):

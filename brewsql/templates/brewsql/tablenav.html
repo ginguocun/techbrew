@@ -1,38 +1,64 @@
-<nav>{% load i18n static staticfiles %}
+{% load i18n static %}
+{% if is_paginated %}
+<nav>
     <ul class="pagination">
-        <li><a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page=1">«</a></li>
+        <li><a class="page_url" href="?page=1">«</a></li>
         {% if page_obj.has_previous %}
-        <li>
-            <a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page={{ page_obj.previous_page_number }}">上一页</a>
-        </li>
+            <li><a class="page_url" href="?page={{ page_obj.previous_page_number }}">‹</a></li>
         {% else %}
-        <li class="previous disabled"><a>{% trans "上一页" %}</a></li>
+            <li class="previous disabled"><a>‹</a></li>
         {% endif %}
-        {% for i in page_obj.paginator.page_range %}
-            {% if page_obj.number == i %}
-                <li  class="active">
-                    <span>{{ i }}</span>
-                </li>
+        {% for page in page_obj.paginator.page_range %}
+            {% ifequal page page_obj.number %}
+                <li class="active"><span>{{ page }}</span></li>
             {% else %}
-                <li class="page_range">
-                    <a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page={{ i }}">{{ i }}</a>
-                </li>
-            {% endif %}
+                <li class="page_range"><a class="page_url" href="?page={{ page }}">{{ page }}</a></li>
+            {% endifequal %}
         {% endfor %}
+
         {% if page_obj.has_next %}
-        <li><a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page={{ page_obj.next_page_number }}">下一页</a></li>
+            <li><a class="page_url" href="?page={{ page_obj.next_page_number }}">›</a></li>
         {% else %}
-        <li class="previous disabled"><a>{% trans "下一页" %}</a></li>
+            <li class="previous disabled"><a>›</a></li>
         {% endif %}
-        <li><a href="{{ request.path }}?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.c %}c={{ request.GET.c }}&{% endif %}{% if request.GET.d %}d={{ request.GET.d }}&{% endif %}{% if request.GET.s %}s={{ request.GET.s }}&{% endif %}{% if request.GET.e %}e={{ request.GET.e }}&{% endif %}&page={{ page_obj.paginator.num_pages }}">»</a></li>
+        <li><a class="page_url" href="?page=last">»</a></li>
     </ul>
 </nav>
+{% endif %}
 
-<script type="text/javascript" src="{% static 'flatlab/js/jquery.js' %}"></script>
 <script>
-    $(document).ready(function(){
-        $(".pagination").children().filter('.page_range').filter(function( index ) {
-        return index - {{ page_obj.number }} > 3 || index - {{ page_obj.number }} < -5;
-      }).remove();
-    });
+    query_params = location.search.split('?')[1]
+    q = []
+    q_v = ''
+    domain_path = location.origin + location.pathname
+
+    function getKeyValue(item){
+        k_v = item.split('=');
+        if( k_v[1] !== "" & k_v[0] !== "" & k_v[0] !== "page") q.push([k_v[0], k_v[1]])
+    }
+
+    function makeUrl(item){
+        if (q_v !== '') q_v += '&'
+        q_v = q_v + item[0] + '=' +  item[1]
+    }
+
+    function refreshUrl(item){
+        if (q_v !== ''){
+            item.href = current_url + '&' + item.search.split('?')[1]
+        } else {
+            item.href = current_url + item.search.split('?')[1]
+        }
+    }
+
+    if (query_params) {
+        k_v_list = query_params.split('&')
+        k_v_list.forEach(getKeyValue)
+    }
+
+    if (q){
+        q.forEach(makeUrl)
+    }
+
+    current_url = domain_path + '?' + q_v
+    document.querySelectorAll('.page_url').forEach(refreshUrl)
 </script>

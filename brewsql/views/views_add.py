@@ -13,10 +13,8 @@ from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView
-# from client.models import TechBrewClient
-# from django.conf import settings
 
-from ..utils import plato2sg, sg2plato
+from ..utils import plato2sg, sg2plato, get_obj_permission_required
 from ..forms import *
 
 
@@ -41,18 +39,7 @@ class TechBrewCreateView(PermissionRequiredMixin, CreateView):
         return '{0}.add_{1}'.format(model_cls._meta.app_label, model_cls._meta.model_name)
 
     def get_permission_required(self):
-        if self.permission_required is None:
-            if self.model is None:
-                raise ImproperlyConfigured(
-                    '{0} is missing the model attribute.'.format(self.__class__.__name__)
-                )
-            else:
-                self.permission_required = self.get_required_object_permissions(self.model)
-        if isinstance(self.permission_required, str):
-            perms = (self.permission_required,)
-        else:
-            perms = self.permission_required
-        return perms
+        return get_obj_permission_required(self)
 
     def get_success_url(self):
         if self.request.GET:
@@ -449,24 +436,24 @@ class MaterialInCreate(TechBrewCreateView):
             model = form.save(commit=False)
             if model.material_cost > 0:
                 model.material_cost = - model.material_cost
-            mio = MoneyInOut(
-                money_in_out=model.material_cost,
-                money_in_out_date=model.material_in_date,
-                money_in_out_type_id='1',  # TODO add id=1 to MoneyInOutType
-                notes='{0} + {1}'.format(model.material_batch, model.amount),
-                recorded_by_id=model.recorder_id,
-                is_confirmed=False,
-                created_by=model.created_by,)
-            mio.save()
-            if mio:
-                LogEntry.objects.log_action(
-                    user_id=self.request.user.pk,
-                    content_type_id=get_content_type_for_model(mio).pk,
-                    object_id=mio.pk,
-                    object_repr=str(mio),
-                    action_flag=ADDITION,
-                )
-            model.material_cost_link_id = mio.pk
+            # mio = MoneyInOut(
+            #     money_in_out=model.material_cost,
+            #     money_in_out_date=model.material_in_date,
+            #     money_in_out_type_id='1',  # TODO add id=1 to MoneyInOutType
+            #     notes='{0} + {1}'.format(model.material_batch, model.amount),
+            #     recorded_by_id=model.recorder_id,
+            #     is_confirmed=False,
+            #     created_by=model.created_by,)
+            # mio.save()
+            # if mio:
+            #     LogEntry.objects.log_action(
+            #         user_id=self.request.user.pk,
+            #         content_type_id=get_content_type_for_model(mio).pk,
+            #         object_id=mio.pk,
+            #         object_repr=str(mio),
+            #         action_flag=ADDITION,
+            #     )
+            # model.material_cost_link_id = mio.pk
             model.save()
             if model:
                 LogEntry.objects.log_action(
