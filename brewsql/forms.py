@@ -209,12 +209,6 @@ class BrewUpdateForm(TbModelForm):
         labels = {
             'tank': _('发酵罐号'),
         }
-        help_texts = {
-            'brew_batch_code': _('请输入酿造批次号'),
-        }
-        widgets = {
-            'brew_batch_code': TextInput(attrs={'class': 'form-control', 'readonly': 'True'}),
-        }
 
 
 class FermentMonitorForm(TbModelForm):
