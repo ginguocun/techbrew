@@ -346,29 +346,29 @@ class SaleCreate(TechBrewCreateView):
         if form.is_valid:
             model = form.save(commit=False)
             selected_pack = model.pack
-            if model.sale_price is not None:
-                mio = MoneyInOut(
-                    money_in_out=model.sale_price,
-                    money_in_out_date=model.sale_date,
-                    money_in_out_type_id=2,  # TODO add id=2 to MoneyInOutType
-                    notes=u'订单:{0} 产品:{1} 数量: {2}'.format(
-                        model.sale_order,
-                        getattr(selected_pack, 'pack_batch_code'),
-                        model.sale_num
-                    ),
-                    recorded_by_id=self.request.user.pk,
-                    is_confirmed=False,
-                    created_by=model.created_by)
-                mio.save()
-                if mio:
-                    LogEntry.objects.log_action(
-                        user_id=self.request.user.pk,
-                        content_type_id=get_content_type_for_model(mio).pk,
-                        object_id=mio.pk,
-                        object_repr=str(mio),
-                        action_flag=ADDITION,
-                    )
-                model.sale_price_link = mio
+            # if model.sale_price is not None:
+            #     mio = MoneyInOut(
+            #         money_in_out=model.sale_price,
+            #         money_in_out_date=model.sale_date,
+            #         money_in_out_type_id=2,  # TODO add id=2 to MoneyInOutType
+            #         notes=u'订单:{0} 产品:{1} 数量: {2}'.format(
+            #             model.sale_order,
+            #             getattr(selected_pack, 'pack_batch_code'),
+            #             model.sale_num
+            #         ),
+            #         recorded_by_id=self.request.user.pk,
+            #         is_confirmed=False,
+            #         created_by=model.created_by)
+            #     mio.save()
+            #     if mio:
+            #         LogEntry.objects.log_action(
+            #             user_id=self.request.user.pk,
+            #             content_type_id=get_content_type_for_model(mio).pk,
+            #             object_id=mio.pk,
+            #             object_repr=str(mio),
+            #             action_flag=ADDITION,
+            #         )
+            #     model.sale_price_link = mio
             model.save()
             if model:
                 LogEntry.objects.log_action(

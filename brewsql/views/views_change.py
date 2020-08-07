@@ -503,13 +503,13 @@ class SaleUpdate(TechBrewUpdateView):
             model = form.save(commit=False)
             if model.sale_price < 0:
                 model.sale_price = - model.sale_price
-            if model.sale_price_link_id:
-                MoneyInOut.objects.filter(pk=self.object.sale_price_link_id).update(
-                    money_in_out=self.object.sale_price,
-                    money_in_out_date=self.object.sale_date,
-                    is_confirmed=self.object.fee_received,
-                    is_active=self.object.is_active,
-                )
+            # if model.sale_price_link_id:
+            #     MoneyInOut.objects.filter(pk=self.object.sale_price_link_id).update(
+            #         money_in_out=self.object.sale_price,
+            #         money_in_out_date=self.object.sale_date,
+            #         is_confirmed=self.object.fee_received,
+            #         is_active=self.object.is_active,
+            #     )
             model.save()
             if model:
                 LogEntry.objects.log_action(
