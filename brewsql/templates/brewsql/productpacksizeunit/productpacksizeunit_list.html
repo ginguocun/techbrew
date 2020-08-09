@@ -3,7 +3,7 @@
 {% block title %}{% trans '产品包装' %}{% endblock %}
 {% block content %}
 <div class="row">
-    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_productpacksizeunit %}
+    <div class="col-lg-12 panel-body" style="text-align:right;">{% if perms.brewsql.add_productpacksizeunit %}
         <a href="{% url 'brewsql:add_productpacksizeunit' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "新建包装" %}</button></a>{% endif %}
     </div>
     <div class="col-lg-12">
@@ -27,7 +27,7 @@
                             <td>{{ d.product_pack_size|floatformat:-1 }}</td>
                             <td>{{ d.product_pack_unit }}</td>
                             <td>{{ d.product_pack_type_cn }}</td>{% if perms.brewsql.change_productpacksizeunit %}
-                            <td align="right">
+                            <td style="text-align:right;">
                                 <a href="{% url 'brewsql:product_pack_update' d.pk %}?next={{ request.path }}">
                                     <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                                 </a>
@@ -40,7 +40,7 @@
         </section>
     </div>
 </div>
-<div align="right">
+<div style="text-align:right;">
     {% include 'brewsql/tablenav.html' %}
 </div>
 {% endblock %}

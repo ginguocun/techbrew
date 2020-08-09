@@ -50,7 +50,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-12" align="right">{% if perms.brewsql.add_moneyinouttype %}
+        <div class="col-md-12" style="text-align:right;">{% if perms.brewsql.add_moneyinouttype %}
             <a href="{% url 'brewsql:money_inout_types' %}?next={{ request.path }}"><button class="btn btn-warning" type="button"> {% trans '收支类型' %}</button></a>{% endif %}{% if perms.brewsql.add_moneyinout %}
             <a href="{% url 'brewsql:add_moneyinout' %}?next={{ request.path }}"><button type="button" class="btn btn-success">{% trans "添加记录" %}</button></a>{% endif %}
         </div>
@@ -95,7 +95,7 @@
                     <td>{% if d.appendix %}<a href="/media/{{ d.appendix.name }}"><span class="label label-primary">{% trans '附件' %}</span></a>{% endif %}</td>
                     <td>{{ d.recorded_by.name_cn }}</td>
                     <td>{% if d.is_confirmed %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
-                    <td align="right">
+                    <td style="text-align:right;">
                         {% if perms.brewsql.change_moneyinout %}
                             {% if d.money_in_out_type.is_auto %}
                                 <a href="{% url 'brewsql:money_ios_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>
@@ -105,7 +105,7 @@
                         {% endif %}
                         {% if d.linked_sale and not d.linked_sale.fee_received and perms.brewsql.confirm_fee_receive %}
                             <!--<a data-toggle="modal" href="#salePay_{{ d.pk }}"><button class="btn btn-danger btn-xs"><i class="fa fa-money"></i></button></a>-->
-                            <!--<div align="left" class="modal fade " id="salePay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
+                            <!--<div style="text-align:left;" class="modal fade " id="salePay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
                                 <!--<div class="modal-dialog">-->
                                     <!--<div class="modal-content">-->
                                         <!--<form method="post" action="{% url 'brewsql:sale_pay' %}">{% csrf_token %}-->
@@ -131,7 +131,7 @@
                                 <!--</div>-->
                             <!--</div>-->
                             <a data-toggle="modal" href="#saleOrderPay_{{ d.pk }}"><label class="btn btn-warning btn-xs"><i class="fa fa-check-square-o"></i></label></a>
-                            <div class="modal fade " id="saleOrderPay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" align="left">
+                            <div class="modal fade " id="saleOrderPay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="text-align:left;">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <form method="post" action="{% url 'brewsql:sale_order_fee_receive' %}">{% csrf_token %}
@@ -163,7 +163,7 @@
                         {% endif %}
                         {% if not d.linked_sale and not d.is_confirmed and perms.brewsql.confirm_moneyinout %}
                             <a data-toggle="modal" href="#moneyConfirmed_{{ d.pk }}"><button class="btn btn-danger btn-xs"><i class="fa fa-money"></i></button></a>
-                            <div align="left" class="modal fade " id="moneyConfirmed_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div style="text-align:left;" class="modal fade " id="moneyConfirmed_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <form method="post" action="{% url 'brewsql:confirm_moneyinout' %}">{% csrf_token %}
@@ -193,7 +193,7 @@
         </table>
     </div>
 </section>
-<div align="right">
+<div style="text-align:right;">
     {% include 'brewsql/tablenav.html' %}
 </div>
 <div class="clearfix"></div>

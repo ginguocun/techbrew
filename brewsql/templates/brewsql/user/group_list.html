@@ -24,7 +24,7 @@
                         <div class="col-sm-11">{{ form.permissions }}{{ form.permissions.errors }}</div>
                     </div>
                     <div class="form-group col-md-12">
-                        <div class="col-sm-12" align="right"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
+                        <div class="col-sm-12" style="text-align:right;"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
                     </div>
                 </form>
             </div>
@@ -57,7 +57,7 @@
                             <td>{{ forloop.counter }}</td>
                             <td>{{ d.name }}</td>
                             {% if perms.brewsql.change_employee %}
-                            <td align="right"><a href="{% url 'brewsql:group_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                            <td style="text-align:right;"><a href="{% url 'brewsql:group_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
                         </tr>{% endfor %}
                     </tbody>
                 </table>

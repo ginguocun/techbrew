@@ -29,7 +29,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-3" align="right">
+        <div class="col-md-3" style="text-align:right;">
             {% if perms.brewsql.add_material %}
             <a href="{% url 'brewsql:add_material' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "添加原料" %}</button></a>{% endif %}
         </div>
@@ -56,14 +56,14 @@
                     <td>{{ d.material_category.material_category_cn }}</td>{% endif %}
                     <td>{{ d.notes|linebreaks|default_if_none:"" }}</td>
                     <td>{{ d.datetime_updated|date:"Y-m-d H:i:m" }}</td>{% if perms.brewsql.change_material %}
-                    <td align="right"><a href="{% url 'brewsql:material_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                    <td style="text-align:right;"><a href="{% url 'brewsql:material_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </section>
-<div align="right">
+<div style="text-align:right;">
     {% include 'brewsql/tablenav.html' %}
 </div>
 {% endblock %}

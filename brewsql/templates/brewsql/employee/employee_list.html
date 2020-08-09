@@ -3,7 +3,7 @@
 {% block title %}{% trans '员工' %}{% endblock %}
 {% block content %}
 <div class="row">
-    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_employee %}
+    <div class="col-lg-12 panel-body" style="text-align:right;">{% if perms.brewsql.add_employee %}
         <a href="{% url 'brewsql:add_employee' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "添加员工" %}</button></a>{% endif %}
     </div>
     <div class="col-lg-12">
@@ -41,13 +41,13 @@
                             <td>{% if d.is_salesman %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
                             <td>{{ d.desc|default_if_none:"" }}</td>{% if perms.brewsql.change_employee %}
                             <td>{{ d.linked_account|default_if_none:"" }}</td>
-                            <td align="right"><a href="{% url 'brewsql:employee_update' d.pk %}?next={{ request.path }}"><label class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></label></a></td>{% endif %}
+                            <td style="text-align:right;"><a href="{% url 'brewsql:employee_update' d.pk %}?next={{ request.path }}"><label class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></label></a></td>{% endif %}
                         </tr>{% endfor %}
                     </tbody>
                 </table>
             </div>
         </section>
-        <div align="right">
+        <div style="text-align:right;">
             {% include 'brewsql/tablenav.html' %}
         </div>
     </div>

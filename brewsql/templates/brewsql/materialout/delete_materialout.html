@@ -11,47 +11,47 @@
             <div class="panel-body">
                 <form class="form-horizontal" method="post">{% csrf_token %}
                     <div class="form-group">
-                        <div class="col-lg-2" align="right">{% trans '酿造批次' %}:</div>
+                        <div class="col-lg-2" style="text-align:right;">{% trans '酿造批次' %}:</div>
                         <div class="col-lg-10">
                             {{ object.brew }}
                             <p class="help-block">{{ object.brew.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-lg-2" align="right">{% trans '原料批次' %}:</div>
+                        <div class="col-lg-2" style="text-align:right;">{% trans '原料批次' %}:</div>
                         <div class="col-lg-10">
                             {{ object.material_batch }}
                             <p class="help-block">{{ object.material_batch.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-lg-2" align="right">{% trans '出库日期' %}:</div>
+                        <div class="col-lg-2" style="text-align:right;">{% trans '出库日期' %}:</div>
                         <div class="col-lg-4">
                             {{ object.material_out_date }}
                             <p class="help-block">{{ object.material_out_date.errors }}</p>
                         </div>
-                        <div class="col-lg-2" align="right">{% trans '数量' %}:</div>
+                        <div class="col-lg-2" style="text-align:right;">{% trans '数量' %}:</div>
                         <div class="col-lg-4">
                             {{ object.amount }}
                             <p class="help-block">{{ object.amount.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-lg-2" align="right">{% trans '经手人' %}:</div>
+                        <div class="col-lg-2" style="text-align:right;">{% trans '经手人' %}:</div>
                         <div class="col-lg-4">
                             {{ object.recorder }}
                             <p class="help-block">{{ object.recorder.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-lg-2" align="right">{% trans '备注' %}:</div>
+                        <div class="col-lg-2" style="text-align:right;">{% trans '备注' %}:</div>
                         <div class="col-lg-10">
                             {{ object.notes }}
                             <p class="help-block">{{ object.notes.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-lg-12" align="right">
+                        <div class="col-lg-12" style="text-align:right;">
                             <button type="submit" class="btn btn-primary">{% trans "提交" %}</button>
                         </div>
                     </div>

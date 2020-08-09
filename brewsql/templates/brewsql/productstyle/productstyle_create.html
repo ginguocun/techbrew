@@ -31,7 +31,7 @@
                         <td>{{ d.product_style_en }}</td>
                         <td style="width: 25%;">{{ d.product_style_desc_cn }}</td>
                         <td style="width: 25%;">{{ d.product_style_desc_en }}</td>{% if perms.brewsql.change_productstyle %}
-                        <td align="right"><a href="{% url 'brewsql:product_style_update' d.pk %}?next={{ request.path }}"><span class="btn btn-info btn-xs">{% trans '更新' %}</span></a></td>{% endif %}
+                        <td style="text-align:right;"><a href="{% url 'brewsql:product_style_update' d.pk %}?next={{ request.path }}"><span class="btn btn-info btn-xs">{% trans '更新' %}</span></a></td>{% endif %}
                     </tr>{% endfor %}
                 </tbody>
             </table>
@@ -47,7 +47,7 @@
                 <div class="col-sm-3">{{ form.product_style_cn }}{{ form.product_style_cn.errors }}<br>{{ form.product_style_en }}{{ form.product_style_en.errors }}</div>
                 <div class="col-sm-4">{{ form.product_style_desc_cn }}{{ form.product_style_desc_cn.errors }}</div>
                 <div class="col-sm-4">{{ form.product_style_desc_en }}{{ form.product_style_desc_en.errors }}</div>
-                <div class="col-sm-1" align="right"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
+                <div class="col-sm-1" style="text-align:right;"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
             </div>
         </form>
     </div>

@@ -88,8 +88,8 @@
              <header class="panel-heading">
                 <div class="row">
                     <div class="col-md-6"><p>{% trans '货物采购记录' %}</p></div>
-                    <div class="col-md-6" align="right"><b>{% trans '合计' %}: ¥ {{ total_cost|floatformat:'-2' }}</b></div>
-                    <div class="col-md-12" align="right"><p>{{ total_cost_cn }}</p></div>
+                    <div class="col-md-6" style="text-align:right;"><b>{% trans '合计' %}: ¥ {{ total_cost|floatformat:'-2' }}</b></div>
+                    <div class="col-md-12" style="text-align:right;"><p>{{ total_cost_cn }}</p></div>
                 </div>
             </header>
             <div class="panel-body bio-graph-info">
@@ -113,7 +113,7 @@
                                 </tr>{% endfor %}
                             </tbody>
                         </table>
-                        <div align="right">
+                        <div style="text-align:right;">
                             {% include 'brewsql/tablenav.html' %}
                         </div>
                     </div>

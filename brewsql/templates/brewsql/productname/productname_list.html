@@ -4,7 +4,7 @@
 {% block content %}
 {% get_current_language as LANGUAGE_CODE %}
 <div class="row">
-    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_productname %}
+    <div class="col-lg-12 panel-body" style="text-align:right;">{% if perms.brewsql.add_productname %}
         <a href="{% url 'brewsql:add_productname' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "新建名称" %}</button></a>{% endif %}
     </div>
     <div class="col-lg-12">
@@ -33,7 +33,7 @@
                             <td>{{ d.notes }}</td>
                             <td>{{ d.is_show|yesno:"是,否" }}</td>
                             <td>{{ d.datetime_created }}</td>{% if perms.brewsql.change_productname %}
-                            <td align="right">
+                            <td style="text-align:right;">
                                 <a href="{% url 'brewsql:product_name_update' d.pk %}?next={{ request.path }}">
                                     <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
                                 </a>
@@ -46,7 +46,7 @@
         </section>
     </div>
 </div>
-<div align="right">
+<div style="text-align:right;">
     {% include 'brewsql/tablenav.html' %}
 </div>
 {% endblock %}

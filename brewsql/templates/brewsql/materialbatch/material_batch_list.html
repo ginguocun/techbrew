@@ -38,7 +38,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-3" align="right">{% if perms.brewsql.add_materialbatch %}
+        <div class="col-md-3" style="text-align:right;">{% if perms.brewsql.add_materialbatch %}
             <a href="{% url 'brewsql:add_material_batch' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "添加批次" %}</button></a>{% endif %}{% if perms.brewsql.add_materialin %}
             <a href="{% url 'brewsql:add_material_in' %}?next={{ request.path }}"><button type="button" class="btn btn-success">{% trans "原料入库" %}</button></a>{% endif %}{% if perms.brewsql.add_materialout %}
             <a href="{% url 'brewsql:add_material_out' %}?next={{ request.path }}"><button type="button" class="btn btn-danger">{% trans "原料出库" %}</button></a>{% endif %}
@@ -83,7 +83,7 @@
                     <td><span class="label label-danger">{{ d.material_batch_total_left|floatformat:"-3" }}</span></td>
                     <td>{{ d.para|default_if_none:'' }}</td>
                     <td>{{ d.notes }}{% if d.qc_report %} <a href="{{ MEDIA_URL }}{{ d.qc_report }}"><span class="btn btn-info btn-xs">{{ d.qc_report_name }}</span></a>{% endif %}</td>
-                    <td align="right">
+                    <td style="text-align:right;">
                         <a href="{% url 'brewsql:material_batch_detail' d.pk %}?next={{ request.path }}"><button class="btn btn-info btn-xs"><i class="fa fa-info-circle"></i></button></a>
                         {% if perms.brewsql.change_materialbatch %}<a href="{% url 'brewsql:material_batch_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}
                     </td>
@@ -93,7 +93,7 @@
         </table>
     </div>
 </section>
-<div align="right">
+<div style="text-align:right;">
     {% include 'brewsql/tablenav.html' %}
 </div>
 {% endblock %}

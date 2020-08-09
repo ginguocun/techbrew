@@ -29,7 +29,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-3" align="right">{% if perms.brewsql.view_product %}
+        <div class="col-md-3" style="text-align:right;">{% if perms.brewsql.view_product %}
             <a href="{% url 'brewsql:product_inventory' %}"><button type="button" class="btn btn-primary">{% trans "产品库存" %}</button></a>{% endif %}{% if perms.brewsql.add_pack %}
             <a href="{% url 'brewsql:add_pack' %}?next={{ request.path }}"><button type="button" class="btn btn-success">{% trans "产品入库" %}</button></a>{% endif %}
         </div>
@@ -62,14 +62,14 @@
                     <td><span class="label label-success">{{ d.pack_num }}</span></td>
                     <td><span class="label label-danger">{{ d.pack_num_left }}</span></td>
                     <td>{{ d.notes }}</td>
-                    <td align="right">{% if perms.brewsql.view_report %}<a href=""><button class="btn btn-primary btn-xs"><i class="fa fa-file-text"></i></button></a>{% endif %} {% if perms.brewsql.change_pack %}
+                    <td style="text-align:right;">{% if perms.brewsql.view_report %}<a href=""><button class="btn btn-primary btn-xs"><i class="fa fa-file-text"></i></button></a>{% endif %} {% if perms.brewsql.change_pack %}
                     <a href="{% url 'brewsql:pack_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}</td>
                 </tr>{% endfor %}
             </tbody>
         </table>{% if perms.brewsql.can_export_pack_data %}
-        <div align="right">
+        <div style="text-align:right;">
             <a data-toggle="modal" href="#data_export"><span class="btn btn-default btn-sm">{% trans '导出数据' %}</span></a>
-            <div align="left" class="modal fade " id="data_export" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div style="text-align:left;" class="modal fade " id="data_export" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -89,7 +89,7 @@
         </div>{% endif %}
     </div>
 </section>
-<div align="right">
+<div style="text-align:right;">
     {% include 'brewsql/tablenav.html' %}
 </div>
 <div class="clearfix"></div>

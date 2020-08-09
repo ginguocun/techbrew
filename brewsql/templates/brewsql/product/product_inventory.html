@@ -3,7 +3,7 @@
 {% block title %}{% trans '产品库存' %}{% endblock %}
 {% block content %}{% get_current_language as LANGUAGE_CODE %}
 <div class="row">
-    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.change_product %}
+    <div class="col-lg-12 panel-body" style="text-align:right;">{% if perms.brewsql.change_product %}
         <a href="{% url 'brewsql:product_list' %}"><button type="button" class="btn btn-primary">{% trans "产品管理" %}</button></a>{% endif %}{% if perms.brewsql.add_pack %}
         <a href="{% url 'brewsql:add_pack' %}?next={{ request.path }}"><button type="button" class="btn btn-success">{% trans "产品入库" %}</button></a>{% endif %}
     </div>
@@ -47,7 +47,7 @@
                             <td>{{ d.product_pack_count|default_if_none:0 }}</td>
                             <td>{{ d.product_sale_count|default_if_none:0 }}</td>
                             <td>¥ {{ d.product_sale_price|default_if_none:0 }}</td>{% if perms.brewsql.change_product %}
-                            <td align="right"><a href="{% url 'brewsql:product_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                            <td style="text-align:right;"><a href="{% url 'brewsql:product_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
                         </tr>{% endif %}{% endfor %}
                     </tbody>
                 </table>

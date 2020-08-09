@@ -7,10 +7,10 @@
         <section class="panel">
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-md-6" align="left">{% trans '产品名称' %}: {{ brew.product_name.product_name_cn }}</div>
-                    <div class="col-md-6" align="left">{% trans '酿造批次' %}: {{ brew.brew_batch_code }}</div>
-                    <div class="col-md-6" align="left">{% trans '发酵罐号' %}: {{ brew.tank.tank_name }}</div>
-                    <div class="col-md-6" align="left">{% trans '开始日期' %}: {{ brew.date_start|date:"Y-m-d" }}</div>
+                    <div class="col-md-6" style="text-align:left;">{% trans '产品名称' %}: {{ brew.product_name.product_name_cn }}</div>
+                    <div class="col-md-6" style="text-align:left;">{% trans '酿造批次' %}: {{ brew.brew_batch_code }}</div>
+                    <div class="col-md-6" style="text-align:left;">{% trans '发酵罐号' %}: {{ brew.tank.tank_name }}</div>
+                    <div class="col-md-6" style="text-align:left;">{% trans '开始日期' %}: {{ brew.date_start|date:"Y-m-d" }}</div>
                 </div>
             </div>
             <div class="panel-body text-center">
@@ -42,11 +42,11 @@
             </section>
         </div>
     </div>
-    <div class="col-lg-3" align="right">
+    <div class="col-lg-3" style="text-align:right;">
         <section class="panel">
             <div class="panel-heading">
                 <div class="row">{% if perms.brewsql.add_brewmonitor %}
-                    <div class="col-md-12" align="right">
+                    <div class="col-md-12" style="text-align:right;">
                         <a href="{% url 'brewsql:add_brewmonitor' %}?next={% url 'brewsql:brew_detail' brew.pk %}"><button type="button" class="btn btn-danger">{% trans "添加糖化记录" %}</button></a>
                     </div>{% endif %}
                 </div>
@@ -75,7 +75,7 @@
             <div class="panel-heading">
                 <div class="row">
                     <div class="col-md-6">{% trans '发酵监控数据' %}</div>
-                    <div class="col-md-6" align="right">{% if perms.brewsql.add_fermentmonitor %}
+                    <div class="col-md-6" style="text-align:right;">{% if perms.brewsql.add_fermentmonitor %}
                         <a href="{% url 'brewsql:new_ferment_record_2' brew.pk %}">
                             <button type="button" class="btn btn-primary">{% trans "添加记录" %}</button>
                         </a>{% endif %}
@@ -119,7 +119,7 @@
                 </table>
             </div>
         </section>
-        <div align="right">
+        <div style="text-align:right;">
             {% include 'brewsql/tablenav.html' %}
         </div>
     </div>
@@ -131,7 +131,7 @@
                     <div class="col-md-6">
                         {% trans '产品入库记录' %}
                     </div>
-                    <div class="col-md-6" align="right">{% if perms.brewsql.add_pack %}
+                    <div class="col-md-6" style="text-align:right;">{% if perms.brewsql.add_pack %}
                         <a href="{% url 'brewsql:add_pack' %}?next={% url 'brewsql:brew_detail' brew.pk %}&brew_id={{ brew.pk }}"><button type="button" class="btn btn-success">{% trans "产品入库" %}</button></a>{% endif %}
                     </div>
                 </div>
@@ -167,7 +167,7 @@
                     <div class="col-md-6">
                         {% trans '原料使用记录' %}
                     </div>
-                    <div class="col-md-6" align="right">{% if perms.brewsql.add_materialout %}
+                    <div class="col-md-6" style="text-align:right;">{% if perms.brewsql.add_materialout %}
                         <a href="{% url 'brewsql:add_material_out' %}?next={% url 'brewsql:brew_detail' brew.pk %}&brew_id={{ brew.pk }}"><button type="button" class="btn btn-info">{% trans "原料出库" %}</button></a>{% endif %}
                     </div>
                 </div>
@@ -205,7 +205,7 @@
                     <div class="col-md-6">
                         {% trans '产品出库记录' %}
                     </div>
-                    <div class="col-md-6" align="right">{% if perms.brewsql.add_sale %}
+                    <div class="col-md-6" style="text-align:right;">{% if perms.brewsql.add_sale %}
                         <a href="{% url 'brewsql:add_sale' %}?next={% url 'brewsql:brew_detail' brew.pk %}&brew_id={{ brew.pk }}"><button type="button" class="btn btn-warning">{% trans "产品出库" %}</button></a>{% endif %}
                     </div>
                 </div>

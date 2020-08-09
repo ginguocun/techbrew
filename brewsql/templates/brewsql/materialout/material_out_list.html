@@ -38,7 +38,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-3" align="right">{% if perms.brewsql.add_materialout %}
+        <div class="col-md-3" style="text-align:right;">{% if perms.brewsql.add_materialout %}
             <a href="{% url 'brewsql:add_material_out' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "原料出库" %}</button></a>{% endif %}
         </div>
     </div>
@@ -72,7 +72,7 @@
                     <td>{{ d.brew.brew_batch_code }}</td>
                     <td><span class="label label-warning">{{ d.amount|floatformat:"-3" }}</span></td>
                     <td>{{ d.notes }}</td>
-                    <td align="right">{% if perms.brewsql.change_materialout %}
+                    <td style="text-align:right;">{% if perms.brewsql.change_materialout %}
                         <a href="{% url 'brewsql:material_out_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a>{% endif %}{% if perms.brewsql.delete_materialout %}
                         <a href="{% url 'brewsql:material_out_delete' d.pk %}?next={{ request.path }}"><button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></a>{% endif %}
                     </td>
@@ -82,7 +82,7 @@
         </table>
     </div>
 </section>
-<div align="right">
+<div style="text-align:right;">
     {% include 'brewsql/tablenav.html' %}
 </div>
 {% endblock %}

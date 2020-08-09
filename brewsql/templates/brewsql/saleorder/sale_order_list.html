@@ -47,7 +47,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-lg-1" align="right">
+        <div class="col-lg-1" style="text-align:right;">
             {% if perms.brewsql.add_saleorder %}
             <a href="{% url 'brewsql:add_saleorder' %}?next={{ request.path }}"><button type="button" class="btn btn-danger">{% trans "创建订单" %}</button></a>{% endif %}
         </div>
@@ -63,10 +63,10 @@
                     <div class="col-md-3">{% trans '订单金额' %}: ¥ {{ d.total_price|floatformat:"-2" }}</div>
                     <div class="col-md-2">{% trans '订单日期' %}: {{ d.sale_order_date|date:"Y-m-d" }}</div>
                     <div class="col-md-2">{% trans '销售员' %}: {{ d.employee }}</div>
-                    <div class="col-md-2" align="right">
+                    <div class="col-md-2" style="text-align:right;">
                         {% if perms.brewsql.confirm_sale and not d.is_delivered %}
                         <a data-toggle="modal" href="#saleOrderDeliver_{{ d.pk }}"><label class="btn btn-primary">{% trans '发货' %}</label></a>
-                        <div class="modal fade " id="saleOrderDeliver_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" align="left">
+                        <div class="modal fade " id="saleOrderDeliver_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="text-align:left;">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <form method="post" action="{% url 'brewsql:sale_order_good_deliver' %}?next={{ request.path }}">{% csrf_token %}
@@ -97,7 +97,7 @@
                         {% endif %}
                         {% if perms.brewsql.confirm_fee_receive and not d.fee_received %}
                         <a data-toggle="modal" href="#saleOrderPay_{{ d.pk }}"><label class="btn btn-warning">{% trans '收款' %}</label></a>
-                        <div class="modal fade " id="saleOrderPay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" align="left">
+                        <div class="modal fade " id="saleOrderPay_{{ d.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="text-align:left;">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <form method="post" action="{% url 'brewsql:sale_order_fee_receive' %}?next={{ request.path }}">{% csrf_token %}
@@ -145,7 +145,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-3" align="right">
+            <div class="col-md-3" style="text-align:right;">
                 {% if not d.is_delivered and perms.brewsql.add_sale %}
                 <a href="{% url 'brewsql:add_sale' %}?next={{ request.path }}&sale_order_id={{ d.pk }}">
                      <button type="button" class="btn btn-shadow btn-primary btn-sm"><i class="fa fa-plus"></i> {% trans '添加商品' %}</button>
@@ -181,10 +181,10 @@
                                 <td>¥ {{ i.sale_price }}</td>
                                 <td>{% if i.is_confirmed %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
                                 <td>{% if i.fee_received %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
-                                <td align="right">
+                                <td style="text-align:right;">
                                     {% if not i.is_confirmed and perms.brewsql.confirm_sale %}
                                     <a data-toggle="modal" href="#myModal_{{ i.pk }}"><button class="btn btn-warning btn-xs"><i class="fa fa-sign-out"></i></button></a>
-                                    <div align="left" class="modal fade " id="myModal_{{ i.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div style="text-align:left;" class="modal fade " id="myModal_{{ i.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <form method="post" action="{% url 'brewsql:sale_confirm' %}?next={{ request.path }}">{% csrf_token %}
@@ -210,7 +210,7 @@
                                     {% endif %}
                                     {% if not i.fee_received and perms.brewsql.confirm_fee_receive %}
                                     <a data-toggle="modal" href="#salePay_{{ i.pk }}"><button class="btn btn-danger btn-xs"><i class="fa fa-money"></i></button></a>
-                                    <div align="left" class="modal fade " id="salePay_{{ i.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div style="text-align:left;" class="modal fade " id="salePay_{{ i.pk }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <form method="post" action="{% url 'brewsql:sale_pay' %}?next={{ request.path }}">{% csrf_token %}
@@ -242,14 +242,14 @@
                     </table>
                 </section>
             </div>
-            <div class="col-md-12" align="right">
+            <div class="col-md-12" style="text-align:right;">
                 {% trans '合计' %}：{{ d.total_price }} 元
             </div>
         </div>
     </div>
 </div>
 {% endfor %}
-<div align="right">
+<div style="text-align:right;">
     {% include 'brewsql/tablenav.html' %}
 </div>
 {% endblock %}

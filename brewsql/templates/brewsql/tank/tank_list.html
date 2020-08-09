@@ -3,7 +3,7 @@
 {% block title %}{% trans '发酵罐' %}{% endblock %}
 {% block content %}
 <div class="row">{% if perms.brewsql.add_brew %}
-    <div class="col-lg-12 panel-body" align="right">{% if perms.brewsql.add_brew %}
+    <div class="col-lg-12 panel-body" style="text-align:right;">{% if perms.brewsql.add_brew %}
         <a href="{% url 'brewsql:add_brew' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "新建批次" %}</button></a>{% endif %}{% if perms.brewsql.change_tank %}
         <a href="{% url 'brewsql:tank_update' %}?next={{ request.path }}"><button type="button" class="btn btn-danger">{% trans "更新状态" %}</button></a>{% endif %}{% if perms.brewsql.add_fermentmonitor %}
         <a href="{% url 'brewsql:new_ferment_record' %}?next={{ request.path }}"><button type="button" class="btn btn-success">{% trans "记录数据" %}</button></a>{% endif %}
@@ -46,7 +46,7 @@
                 </table>
             </div>
         </section>
-        <div align="right">
+        <div style="text-align:right;">
             {% include 'brewsql/tablenav.html' %}
         </div>
     </div>

@@ -9,10 +9,10 @@
         <section class="panel">
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-md-6" align="left">{% trans '产品名称' %}: {{ brew.product_name.product_name_cn }}</div>
-                    <div class="col-md-6" align="left">{% trans '酿造批次' %}: {{ brew.brew_batch_code }}</div>
-                    <div class="col-md-6" align="left">{% trans '发酵罐号' %}: {{ brew.tank.tank_name }}</div>
-                    <div class="col-md-6" align="left">{% trans '开始日期' %}: {{ brew.date_start|date:"Y-m-d" }}</div>
+                    <div class="col-md-6" style="text-align:left;">{% trans '产品名称' %}: {{ brew.product_name.product_name_cn }}</div>
+                    <div class="col-md-6" style="text-align:left;">{% trans '酿造批次' %}: {{ brew.brew_batch_code }}</div>
+                    <div class="col-md-6" style="text-align:left;">{% trans '发酵罐号' %}: {{ brew.tank.tank_name }}</div>
+                    <div class="col-md-6" style="text-align:left;">{% trans '开始日期' %}: {{ brew.date_start|date:"Y-m-d" }}</div>
                 </div>
             </div>
         </section>
@@ -53,7 +53,7 @@
                         </tr>{% endfor %}
                     </tbody>
                 </table>
-                <div align="right">
+                <div style="text-align:right;">
                     {% include 'brewsql/tablenav.html' %}
                 </div>
             </div>
