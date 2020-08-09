@@ -456,6 +456,10 @@ class MaterialPackSizeUnitForm(TbModelForm):
     class Meta:
         model = MaterialPackSizeUnit
         fields = '__all__'
+        widgets = {
+            'material_pack_name': TextInput(attrs={'class': 'form-control', 'placeholder': _('显示名称')}),
+            'material_pack_size': TextInput(attrs={'class': 'form-control', 'placeholder': _('规格')}),
+        }
 
 
 class WarehouseForm(TbModelForm):

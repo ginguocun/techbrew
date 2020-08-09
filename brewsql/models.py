@@ -760,9 +760,13 @@ class MaterialCategory(models.Model):
 
 
 class MaterialPackSizeUnit(models.Model):
+    material_pack_name = models.CharField(_('显示名称'), null=True, unique=True, max_length=200)
     material_pack_size = models.DecimalField(_('包装规格'), max_digits=9, decimal_places=3, null=True)
-    material_pack_unit = models.CharField(_('包装单位'), max_length=100, null=True,
-                                          choices=(('g', 'g'), ('kg', 'kg'), ('mL', 'mL'), ('L', 'L')))
+    material_pack_unit = models.CharField(
+        _('包装单位'),
+        max_length=100,
+        null=True,
+        choices=(('g', 'g'), ('kg', 'kg'), ('mL', 'mL'), ('L', 'L'), ('EA', '个/瓶/张/托')))
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -795,7 +799,10 @@ class MaterialPackSizeUnit(models.Model):
         verbose_name_plural = _('原料包装')
 
     def __str__(self):
-        return "{0} {1}".format(str(self.material_pack_size).rstrip('0').rstrip('.'), self.material_pack_unit)
+        if self.material_pack_name:
+            return self.material_pack_name
+        else:
+            return "{0} {1}".format(str(self.material_pack_size).rstrip('0').rstrip('.'), self.material_pack_unit)
 
 
 class Material(models.Model):

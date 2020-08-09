@@ -48,21 +48,10 @@ class TechBrewUpdateView(PermissionRequiredMixin, UpdateView):
 
     @staticmethod
     def get_required_object_permissions(model_cls):
-        return '{0}.change_{1}'.format(model_cls._meta.app_label, model_cls._meta.model_name)
+        return '{0}.change_{1}'.format(getattr(model_cls, '_meta').app_label, getattr(model_cls, '_meta').model_name)
 
     def get_permission_required(self):
-        if self.permission_required is None:
-            if self.model is None:
-                raise ImproperlyConfigured(
-                    '{0} is missing the model attribute.'.format(self.__class__.__name__)
-                )
-            else:
-                self.permission_required = self.get_required_object_permissions(self.model)
-        if isinstance(self.permission_required, str):
-            perms = (self.permission_required,)
-        else:
-            perms = self.permission_required
-        return perms
+        return get_obj_permission_required(self)
 
     def get_success_url(self):
         if self.request.GET:

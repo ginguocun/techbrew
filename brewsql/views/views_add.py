@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.paginator import Paginator
-from django.core.exceptions import ImproperlyConfigured
 from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
@@ -36,7 +35,7 @@ class TechBrewCreateView(PermissionRequiredMixin, CreateView):
 
     @staticmethod
     def get_required_object_permissions(model_cls):
-        return '{0}.add_{1}'.format(model_cls._meta.app_label, model_cls._meta.model_name)
+        return '{0}.add_{1}'.format(getattr(model_cls, '_meta').app_label, getattr(model_cls, '_meta').model_name)
 
     def get_permission_required(self):
         return get_obj_permission_required(self)

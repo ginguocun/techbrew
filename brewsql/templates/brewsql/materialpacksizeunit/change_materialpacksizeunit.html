@@ -15,6 +15,13 @@
                 <form class="form-horizontal" method="post">{% csrf_token %}
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group">
+                        <div class="col-lg-3 control-label">{{ form.material_pack_name.label_tag }}</div>
+                        <div class="col-lg-9">
+                            {{ form.material_pack_name }}
+                            <p class="help-block">{{ form.material_pack_name.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-lg-3 control-label">{{ form.material_pack_size.label_tag }}</div>
                         <div class="col-lg-9">
                             {{ form.material_pack_size }}

@@ -6,32 +6,8 @@
 {% endblock %}
 {% block content %}
 <div class="row">
-    <div class="col-lg-6">
-        <section class="panel table-responsive">
-            <div class="panel-body">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>{% trans '包装规格' %}</th>
-                            <th>{% trans '单位' %}</th>{% if perms.brewsql.change_materialpacksizeunit %}
-                            <th></th>{% endif %}
-                        </tr>
-                    </thead>
-                    <tbody>{% for d in data %}
-                        <tr class="{% cycle '' 'active' %}">
-                            <td>{{ d.pk }}</td>
-                            <td>{{ d.material_pack_size|floatformat:-3 }}</td>
-                            <td>{{ d.material_pack_unit }}</td>{% if perms.brewsql.change_materialpacksizeunit %}
-                            <td align="right"><a href="{% url 'brewsql:material_pack_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
-                        </tr>{% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </div>
-    {% if perms.brewsql.add_materialpacksizeunit %}
-    <div class="col-lg-6">
+        {% if perms.brewsql.add_materialpacksizeunit %}
+    <div class="col-lg-8 col-lg-offset-2">
         <section class="panel">
             <header class="panel-heading">
                 {% trans '添加原料包装' %}
@@ -42,14 +18,42 @@
                     <input type="hidden" name="created_by" id="id_created_by" value="{{ request.user.id }}">
                     <input type="hidden" name="modified_by" id="id_modified_by" value="{{ request.user.id }}">
                     <div class="form-group col-md-12">
-                        <div class="col-sm-5">{{ form.material_pack_size }}{{ form.material_pack_size.errors }}</div>
-                        <div class="col-sm-5">{{ form.material_pack_unit }}{{ form.material_pack_unit.errors }}</div>
+                        <div class="col-sm-4">{{ form.material_pack_name }}{{ form.material_pack_name.errors }}</div>
+                        <div class="col-sm-3">{{ form.material_pack_size }}{{ form.material_pack_size.errors }}</div>
+                        <div class="col-sm-3">{{ form.material_pack_unit }}{{ form.material_pack_unit.errors }}</div>
                         <div class="col-sm-2" align="right"><button type="submit" class="btn btn-primary">{% trans "添加" %}</button></div>
                     </div>
                 </form>
             </div>
       </section>
     </div>{% endif %}
+    <div class="col-lg-8 col-lg-offset-2">
+        <section class="panel table-responsive">
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>{% trans '显示名称' %}</th>
+                            <th>{% trans '包装规格' %}</th>
+                            <th>{% trans '单位' %}</th>{% if perms.brewsql.change_materialpacksizeunit %}
+                            <th></th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>{% for d in data %}
+                        <tr class="{% cycle '' 'active' %}">
+                            <td>{{ d.pk }}</td>
+                            <td>{{ d.material_pack_name|default_if_none:'' }}</td>
+                            <td>{{ d.material_pack_size|floatformat:-3 }}</td>
+                            <td>{{ d.material_pack_unit }}</td>{% if perms.brewsql.change_materialpacksizeunit %}
+                            <td class="align-right"><a href="{% url 'brewsql:material_pack_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
 </div>
 {% endblock %}
 {% block this_js %}
