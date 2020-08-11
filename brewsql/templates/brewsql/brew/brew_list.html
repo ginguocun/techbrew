@@ -8,20 +8,20 @@
             <form class="form-inline" role="form" method="get">
                 <div class="form-group">
                     <div class="input-group">
-                        <span class="input-group-addon">{% trans '起始' %}:</span>
-                        <input type="date" name="s" class="form-control" value="{% if request.GET.s %}{{ request.GET.s }}{% endif %}">
+                        <label for="s" class="input-group-addon">{% trans '起始' %}:</label>
+                        <input id="s" type="date" name="s" class="form-control" value="{% if request.GET.s %}{{ request.GET.s }}{% endif %}">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <span class="input-group-addon">{% trans '截止' %}:</span>
-                        <input type="date" name="e" class="form-control" value="{% if request.GET.e %}{{ request.GET.e }}{% endif %}">
+                        <label for="e" class="input-group-addon">{% trans '截止' %}:</label>
+                        <input id="e" type="date" name="e" class="form-control" value="{% if request.GET.e %}{{ request.GET.e }}{% endif %}">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <input class="form-control" type="text" name="q" placeholder="" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
-                        <span class="input-group-btn"><button class="btn btn-primary" type="submit">搜索</button></span>
+                        <input id="q" class="form-control" type="text" name="q" placeholder="" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                        <label for="q" class="input-group-btn"><button class="btn btn-primary" type="submit">搜索</button></label>
                     </div>
                 </div>
             </form>
@@ -41,7 +41,8 @@
                     <th>{% trans '生产批次' %}</th>
                     <th>{% trans '啤酒名称' %}</th>
                     <th>{% trans '发酵罐' %}</th>
-                    <th>{% trans '总出库量' %}</th>
+                    <th>{% trans '总入罐量' %}</th>
+                    <th>{% trans '总灌装量' %}</th>
                     <th>{% trans '开始日期' %}</th>
                     <th>{% trans '理论天数' %}</th>
                     <th>{% trans '酿酒师' %}</th>
@@ -54,6 +55,7 @@
                     <th>{{ d.brew_batch_code|default_if_none:"" }}</th>
                     <td>{{ d.product_name }}</td>
                     <td>{{ d.tank.tank_name }}</td>
+                    <td>{{ d.volume_in|default_if_none:'N/A' }} L</td>
                     <td>{{ d.current_tank_out }} L</td>
                     <td>{{ d.date_start|date:"Y-m-d" }}</td>
                     <td>{{ d.theory_days }} {% trans '天' %}</td>

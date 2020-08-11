@@ -182,7 +182,7 @@ class ProductUpdateForm(TbModelForm):
 class BrewForm(TbModelForm):
     class Meta:
         model = Brew
-        fields = ['brew_batch_code', 'product_name', 'recipe', 'tank', 'theory_days',
+        fields = ['brew_batch_code', 'product_name', 'recipe', 'tank', 'theory_days', 'volume_in',
                   'date_start', 'operator', 'notes', 'created_by']
         labels = {
             'tank': _('发酵罐号'),
@@ -204,7 +204,7 @@ class BrewForm(TbModelForm):
 class BrewUpdateForm(TbModelForm):
     class Meta:
         model = Brew
-        fields = ['brew_batch_code', 'product_name', 'tank', 'theory_days',
+        fields = ['brew_batch_code', 'product_name', 'tank', 'theory_days', 'volume_in',
                   'date_start', 'operator', 'notes', 'created_by']
         labels = {
             'tank': _('发酵罐号'),

@@ -53,6 +53,13 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.volume_in.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.volume_in }}
+                            <p class="help-block">{{ form.volume_in.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.notes.label_tag }}</div>
                         <div class="col-lg-10">
                             {{ form.notes }}

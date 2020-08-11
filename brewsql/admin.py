@@ -163,7 +163,8 @@ class RecipeAdmin(AutoUpdateUserModelAdmin):
 
 @admin.register(Brew)
 class BrewAdmin(AutoUpdateUserModelAdmin):
-    list_display = ('brew_batch_code', 'product_name', 'recipe', 'tank', 'date_start', 'operator', 'notes')
+    list_display = (
+        'pk', 'brew_batch_code', 'product_name', 'recipe', 'tank', 'volume_in', 'date_start', 'operator', 'notes')
     list_filter = ('tank', 'product_name')
     search_fields = ['brew_batch_code', 'notes']
 

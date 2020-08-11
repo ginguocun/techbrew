@@ -33,15 +33,21 @@ class TechBewListView(PermissionRequiredMixin, ListView):
         current_page_num = getattr(context['page_obj'], 'number')
         page_range_list = list()
         if page_range:
-            for p_num in page_range:
-                if -4 < p_num - current_page_num < 4:
+            if len(page_range) > 7:
+                for p_num in page_range:
+                    if -3 < p_num - current_page_num < 3:
+                        page_range_list.append(p_num)
+                if 1 not in page_range_list:
+                    page_range_list.insert(0, 1)
+                    if 2 not in page_range_list:
+                        page_range_list.insert(1, 0)
+                if page_range[-1] not in page_range_list:
+                    if page_range[-2] not in page_range_list:
+                        page_range_list.append(0)
+                    page_range_list.append(page_range[-1])
+            else:
+                for p_num in page_range:
                     page_range_list.append(p_num)
-            if 2 not in page_range_list:
-                page_range_list.insert(0, 1)
-                page_range_list.insert(1, 0)
-            if page_range[-1] not in page_range_list:
-                page_range_list.append(0)
-                page_range_list.append(page_range[-1])
         context['page_range'] = page_range_list
         return context
 

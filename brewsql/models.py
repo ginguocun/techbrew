@@ -1200,6 +1200,7 @@ class Brew(models.Model):
         on_delete=models.SET_NULL,
         verbose_name=_('操作人员')
     )
+    volume_in = models.IntegerField(_('入罐容量'), null=True, blank=True)
     theory_days = models.IntegerField(_('理论天数'), default=25, null=True, blank=True)
     notes = models.TextField(_('备注'), max_length=1000, null=True, blank=True)
     is_share = models.BooleanField(_('可访问'), default=True)
@@ -1271,11 +1272,11 @@ class Brew(models.Model):
                         if getattr(out.product.product_pack, 'product_pack_unit') == 'mL':
                             total_out += float(getattr(
                                 out, 'pack_num')) * float(getattr(
-                                out.product.product_pack, 'product_pack_size')) * 0.001
+                                    out.product.product_pack, 'product_pack_size')) * 0.001
                         else:
                             total_out += float(getattr(
                                 out, 'pack_num')) * float(getattr(
-                                out.product.product_pack, 'product_pack_size'))
+                                    out.product.product_pack, 'product_pack_size'))
         return round(total_out)
 
     def get_absolute_url(self):
