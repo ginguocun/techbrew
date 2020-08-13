@@ -243,7 +243,7 @@ def add_ferment_monitor(request, pk=None):
 @permission_required('{0}.add_pack'.format(app_name))
 def add_pack(request, template_name='{0}/pack/add_pack.html'.format(app_name)):
     brews = Brew.objects.filter(Q(
-        date_start__gte=(timezone.now() - datetime.timedelta(days=60))) | Q(
+        date_start__gte=(timezone.now() - datetime.timedelta(days=300))) | Q(
         tank__current_brew_code=F('brew_batch_code'))).distinct().order_by('-id')
     if request.method == 'POST':
         r = request.POST

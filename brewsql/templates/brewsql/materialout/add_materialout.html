@@ -22,7 +22,7 @@
                     <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.brew.label_tag }}</div>
                         <div class="col-lg-10">
-                            <select name="brew" class="selectpicker show-tick form-control" data-live-search="true" id="id_brew" required="">
+                            <select name="brew" class="selectpicker show-tick form-control" data-live-search="true" id="id_brew">
                                 <option value="">---------</option>
                                 {% if request.GET.brew_id %}
                                     {% for brew in brews %}
