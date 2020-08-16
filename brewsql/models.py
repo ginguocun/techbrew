@@ -4,6 +4,8 @@ from django.db import models
 from django.db.models import Sum, Count, Q
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.utils import timezone
@@ -205,9 +207,10 @@ class Company(models.Model):
     china_district = models.CharField(_('地区编号'), max_length=100, null=True, blank=True)
     company_tel = models.CharField(_('公司电话'), max_length=100, null=True, blank=True)
     email = models.EmailField(_('公司邮箱'), max_length=100, null=True, blank=True)
+    contact = models.EmailField(_('联系人'), max_length=100, null=True, blank=True)
     tax_code = models.CharField(_('税号'), max_length=100, null=True, blank=True)
-    bank = models.CharField(_('银行'), max_length=200, null=True, blank=True)
-    bank_account = models.CharField(_('银行卡号'), max_length=50, null=True, blank=True)
+    bank = models.CharField(_('开户行'), max_length=200, null=True, blank=True)
+    bank_account = models.CharField(_('账户'), max_length=50, null=True, blank=True)
     desc = models.TextField(_('公司介绍'), max_length=1000, null=True, blank=True)
     company_type = models.ForeignKey(
         CompanyType,
@@ -216,7 +219,6 @@ class Company(models.Model):
         on_delete=models.SET_NULL,
         verbose_name=_('公司类型')
     )
-    company_share = models.BooleanField(_('是否共享'), default=False)
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -843,8 +845,22 @@ class Material(models.Model):
     def current_inventory(self):
         batches = getattr(self, 'material_batch').all()
         if batches:
-            res = ['{0}*{1} [{2}]'.format(b.material_batch_total_left, b.material_pack_size_unit, b.material_batch_code)
-                   for b in batches if float(b.material_batch_total_left) > 0]
+            res = list()
+            for b in batches:
+                if float(b.material_batch_total_left) > 0:
+                    v = '{0}*{1}={2} [{3}]'.format(
+                        b.material_batch_total_left,
+                        b.material_pack_size_unit,
+                        '<span class="label label-success">{}</span>'.format(
+                            round(
+                                float(
+                                    b.material_batch_total_left
+                                ) * float(
+                                    b.material_pack_size_unit.material_pack_size
+                                ), 2),),
+                        b.material_batch_code
+                    )
+                    res.append(v)
             return '<br>'.join(res)
         return None
 
@@ -2162,7 +2178,7 @@ class OrderState(models.Model):
 
 
 class SaleOrder(models.Model):
-    sale_order_code = models.CharField(_('订单编号'), max_length=30, unique=True, null=True)
+    sale_order_code = models.CharField(_('订单编号'), max_length=30, unique=True, null=True, blank=True)
     sale_order_date = models.DateField(_('订单日期'), null=True)
     order_state = models.ForeignKey(
         OrderState,
@@ -2177,6 +2193,21 @@ class SaleOrder(models.Model):
         on_delete=models.SET_NULL,
         verbose_name=_('销售员'),
         limit_choices_to={'is_salesman': True},
+        related_name='sale_order_employee'
+    )
+    employee2 = models.ForeignKey(
+        Employee,
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('经办人'),
+        related_name='sale_order_employee2'
+    )
+    employee3 = models.ForeignKey(
+        Employee,
+        null=True,
+        on_delete=models.PROTECT,
+        verbose_name=_('出库人'),
+        related_name='sale_order_employee3'
     )
     client = models.ForeignKey(
         Client,
@@ -2240,6 +2271,12 @@ class SaleOrder(models.Model):
 
     def __str__(self):
         return "{0}".format(self.sale_order_code)
+
+
+@receiver(pre_save, sender=SaleOrder)
+def pre_save_sale_order(sender, instance, **kwargs):
+    if not instance.sale_order_code:
+        instance.sale_order_code = timezone.localtime().strftime('%y%m%d%H%M%S')
 
 
 class Sale(models.Model):

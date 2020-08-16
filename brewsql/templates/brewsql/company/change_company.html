@@ -45,9 +45,33 @@
                     </div>
                     <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.email.label_tag }}</div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-4">
                             {{ form.email }}
                             <p class="help-block">{{ form.email.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.contact.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.contact }}
+                            <p class="help-block">{{ form.contact.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.tax_code.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.tax_code }}
+                            <p class="help-block">{{ form.tax_code.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.bank.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.bank }}
+                            <p class="help-block">{{ form.bank.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.bank_account.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.bank_account }}
+                            <p class="help-block">{{ form.bank_account.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">

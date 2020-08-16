@@ -18,7 +18,9 @@
                 <!--<li class="active"><a href="profile.html"> <i class="fa fa-user"></i> Profile</a></li>-->
                 <!--<li><a href="profile-activity.html"> <i class="fa fa-calendar"></i> Recent Activity <span class="label label-danger pull-right r-activity">9</span></a></li>-->
                 {% if perms.brewsql.change_client and client_data %}
-                <li><a href="{% url 'brewsql:client_update' client_data.pk %}?next={% url 'brewsql:client_detail' client_data.pk %}"> <i class="fa fa-edit"></i>{% trans "编辑资料" %}</a></li>{% endif %}
+                <li><a href="{% url 'brewsql:client_update' client_data.pk %}?next={% url 'brewsql:client_detail' client_data.pk %}"> <i class="fa fa-edit"></i>{% trans "编辑客户资料" %}</a></li>{% endif %}
+                                {% if perms.brewsql.change_company and client_data.client_company %}
+                <li><a href="{% url 'brewsql:company_update' client_data.client_company.pk %}?next={% url 'brewsql:client_detail' client_data.pk %}"> <i class="fa fa-edit"></i>{% trans "编辑公司资料" %}</a></li>{% endif %}
             </ul>
         </section>
         <section class="panel">

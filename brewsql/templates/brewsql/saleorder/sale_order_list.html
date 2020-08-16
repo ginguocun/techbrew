@@ -135,17 +135,20 @@
     </div>
     <div class="panel-collapse collapse in" id="accordion0_{{ d.pk }}">
         <div class="panel-body">
-            <div class="col-md-9">
-                <table frame=void>
+            <div class="col-md-9 col-lg-9">
+                <table>
                     <tbody>
                         <tr><td>{% trans '客户' %}: {{ d.client.name|default_if_none:'N/A' }}</td><td>{% trans '手机' %}: {{ d.client.mobile|default_if_none:'N/A' }}</td></tr>
-                        <tr><td colspan="2">{% trans '公司' %}: {{ d.client.client_company.company_name_cn|default_if_none:'N/A' }}</td></tr>
+                        <tr><td colspan="2">{% trans '名称' %}: {{ d.client.client_company.company_name_cn|default_if_none:'N/A' }}</td></tr>
+                        <tr><td colspan="2">{% trans '税号' %}: {{ d.client.client_company.tax_code|default_if_none:'N/A' }}</td></tr>
+                        <tr><td colspan="2">{% trans '开户行' %}: {{ d.client.client_company.bank|default_if_none:'N/A' }}</td></tr>
+                        <tr><td colspan="2">{% trans '账号' %}: {{ d.client.client_company.bank_account|default_if_none:'N/A' }}</td></tr>
                         <tr><td colspan="2">{% trans '地址' %}: {{ d.client.client_company.company_address|default_if_none:'N/A' }}</td></tr>
                         <tr><td colspan="2">{% trans '备注' %}: {{ d.notes|default_if_none:'' }}</td></tr>
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-3" style="text-align:right;">
+            <div class="col-md-3 col-lg-3" style="text-align:right;">
                 {% if not d.is_delivered and perms.brewsql.add_sale %}
                 <a href="{% url 'brewsql:add_sale' %}?next={{ request.path }}&sale_order_id={{ d.pk }}">
                      <button type="button" class="btn btn-shadow btn-primary btn-sm"><i class="fa fa-plus"></i> {% trans '添加商品' %}</button>

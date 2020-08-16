@@ -46,14 +46,20 @@
                     <div class="form-group">
                         <div class="col-lg-2 control-label">{{ form.employee.label_tag }}</div>
                         <div class="col-lg-4">
-                            <select name="employee" class="selectpicker show-tick form-control" data-live-search="true" required id="id_employee">
-                                <option value="">---------</option>
-                                {% for u in employee %}{% if forloop.first %}
-                                <option value="{{ u.pk }}" selected>{{ u }}</option>{% else %}
-                                <option value="{{ u.pk }}">{{ u }}</option>{% endif %}
-                                {% endfor %}
-                            </select>
+                            {{ form.employee }}
                             <p class="help-block">{{ form.employee.errors }}</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-2 control-label">{{ form.employee2.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.employee2 }}
+                            <p class="help-block">{{ form.employee2.errors }}</p>
+                        </div>
+                        <div class="col-lg-2 control-label">{{ form.employee3.label_tag }}</div>
+                        <div class="col-lg-4">
+                            {{ form.employee3 }}
+                            <p class="help-block">{{ form.employee3.errors }}</p>
                         </div>
                     </div>
                     <div class="form-group">

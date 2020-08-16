@@ -49,7 +49,7 @@
                     <th>{{ d.material_code }}</th>
                     <td>{{ d.material_cn }}</td>{% if not request.GET.c %}
                     <td>{{ d.material_category.material_category_cn }}</td>{% endif %}
-                    <td>{{ d.current_inventory }}</td>
+                    <td>{{ d.current_inventory|safe }}</td>
                     <td>{{ d.notes|linebreaks|default_if_none:"" }}</td>
                 </tr>
                 {% endfor %}

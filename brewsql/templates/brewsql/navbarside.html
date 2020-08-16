@@ -50,7 +50,8 @@
                     <i class="fa fa-shopping-cart"></i>
                     <span>{% trans '销售管理' %}</span>
                 </a>
-                <ul class="sub">{% if perms.brewsql.view_saleorder %}
+                <ul class="sub">{% if perms.brewsql.view_client %}
+                    <li><a href="{% url 'brewsql:client_list' %}">{% trans '客户管理' %}</a></li>{% endif %}{% if perms.brewsql.view_saleorder %}
                     <li><a  href="{% url 'brewsql:sale_order_list' %}?c=1">{% trans '销售订单' %}</a></li>{% endif %}{% if perms.brewsql.view_sale %}
                     <li><a  href="{% url 'brewsql:sale_list' %}?c=1">{% trans '订单明细' %}</a></li>{% endif %}{% if perms.brewsql.view_saleorder %}
                     <li><a  href="{% url 'brewsql:sale_order_list_wx' %}">{% trans '小程序订单' %}</a></li>{% endif %}
@@ -85,8 +86,7 @@
                     <i class="fa fa-male"></i>
                     <span>{% trans '人员管理' %}</span>
                 </a>
-                <ul class="sub">{% if perms.brewsql.view_client %}
-                    <li><a href="{% url 'brewsql:client_list' %}">{% trans '客户管理' %}</a></li>{% endif %}{% if perms.brewsql.view_supplier %}
+                <ul class="sub">{% if perms.brewsql.view_supplier %}
                     <li><a href="{% url 'brewsql:supplier_list' %}">{% trans '供应商管理' %}</a></li>{% endif %}{% if perms.brewsql.view_company %}
                     <li><a href="{% url 'brewsql:company_list' %}">{% trans '合作公司' %}</a></li>{% endif %}{% if perms.brewsql.view_employee %}
                     <li><a href="{% url 'brewsql:employee_list' %}">{% trans '员工管理' %}</a></li>{% endif %}{% if perms.brewsql.add_employee %}
