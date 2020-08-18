@@ -57,29 +57,28 @@
                 </tr>
                 </thead>
                 <tbody>{% for d in data %}
-                <tr class="{% cycle '' 'active' %}">
-                    <td>{{ d.id }}</td>
-                    <td>{{ d.company_name_cn|default_if_none:"" }}
-                        {% if d.company_name_en %}
-                            /{{ d.company_name_en|default_if_none:"" }}
+                    <tr class="{% cycle '' 'active' %}">
+                        <td>{{ d.id }}</td>
+                        <td>{{ d.company_name_cn|default_if_none:"" }}
+                            {% if d.company_name_en %}
+                                /{{ d.company_name_en|default_if_none:"" }}
+                            {% endif %}
+                        </td>
+                        {% if LANGUAGE_CODE == 'en'%}
+                        <td>{{ d.company_type.company_type_en|default_if_none:"" }}</td>
+                        {% else %}
+                        <td>{{ d.company_type.company_type_cn|default_if_none:"" }}</td>
                         {% endif %}
-                    </td>
-                    {% if LANGUAGE_CODE == 'en'%}
-                    <td>{{ d.company_type.company_type_en|default_if_none:"" }}</td>
-                    {% else %}
-                    <td>{{ d.company_type.company_type_cn|default_if_none:"" }}</td>
-                    {% endif %}
-                    <td>{{ d.company_address|default_if_none:"" }}</td>
-                    <td>{{ d.company_tel|default_if_none:"" }}</td>
-                    <td>{{ d.email|default_if_none:"" }}</td>
-                    <td>{{ d.desc|default_if_none:"" }}</td>
-                    {% if perms.brewsql.change_company %}
-                    <td style="text-align:right;"><a
-                            href="{% url 'brewsql:company_update' d.pk %}?next={{ request.path }}">
-                        <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-                    </a></td>
-                    {% endif %}
-                </tr>
+                        <td>{{ d.company_address|default_if_none:"" }}</td>
+                        <td>{{ d.company_tel|default_if_none:"" }}</td>
+                        <td>{{ d.email|default_if_none:"" }}</td>
+                        <td>{{ d.desc|default_if_none:"" }}</td>
+                        {% if perms.brewsql.change_company %}
+                        <td style="text-align:right;"><a href="{% url 'brewsql:company_update' d.pk %}?next={{ request.path }}">
+                            <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                        </a></td>
+                        {% endif %}
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
