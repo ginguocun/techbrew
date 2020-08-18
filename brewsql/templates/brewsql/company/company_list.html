@@ -22,10 +22,8 @@
                     </div>
                     <div class="form-group">
                         <div class="input-group">
-                            <input class="form-control" type="text" name="q" placeholder=""
-                                   value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
-                            <span class="input-group-btn"><button class="btn btn-primary"
-                                                                  type="submit">搜索</button></span>
+                            <input class="form-control" type="text" name="q" placeholder="" value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                            <span class="input-group-btn"><button class="btn btn-primary" type="submit">搜索</button></span>
                         </div>
                     </div>
                 </form>
@@ -60,9 +58,6 @@
                     <tr class="{% cycle '' 'active' %}">
                         <td>{{ d.id }}</td>
                         <td>{{ d.company_name_cn|default_if_none:"" }}
-                            {% if d.company_name_en %}
-                                /{{ d.company_name_en|default_if_none:"" }}
-                            {% endif %}
                         </td>
                         {% if LANGUAGE_CODE == 'en'%}
                         <td>{{ d.company_type.company_type_en|default_if_none:"" }}</td>
