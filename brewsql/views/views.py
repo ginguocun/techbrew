@@ -263,6 +263,23 @@ class CompanyListView(TechBewListView):
     model = Company
     template_name_suffix = '/company_list'
 
+    def get_queryset(self):
+        object_list = Company.objects.all()
+        company_type_id = self.request.GET.get('c')
+        if company_type_id:
+            object_list = object_list.filter(company_type_id=int(company_type_id))
+        q = self.request.GET.get('q')
+        if q:
+            object_list = object_list.filter(
+                Q(company_name_cn__icontains=q) | Q(company_tel__icontains=q) | Q(contact__icontains=q) | Q(
+                    company_address__icontains=q)).distinct()
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['company_types'] = CompanyType.objects.all()
+        return context
+
 
 class ProductNameListView(TechBewListView):
     model = ProductName

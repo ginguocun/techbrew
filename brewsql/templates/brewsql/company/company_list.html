@@ -3,46 +3,89 @@
 {% block title %}{% trans '合作公司' %}{% endblock %}
 {% block content %}
 {% get_current_language as LANGUAGE_CODE %}
-<div class="row">
-    <div class="col-lg-12 panel-body" style="text-align:right;">{% if perms.brewsql.add_company %}
-        <a href="{% url 'brewsql:add_company' %}?next={{ request.path }}"><button type="button" class="btn btn-primary">{% trans "添加公司" %}</button></a>{% endif %}
-    </div>
-    <div class="col-lg-12">
-        <section class="panel table-responsive">
-            <div class="panel-body">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>{% trans '公司名字' %}</th>
-                            <th>{% trans '公司类型' %}</th>
-                            <th>{% trans '地址' %}</th>
-                            <th>{% trans '电话' %}</th>
-                            <th>{% trans '邮箱' %}</th>
-                            <th>{% trans '介绍' %}</th>{% if perms.brewsql.change_company %}
-                            <th></th>{% endif %}
-                        </tr>
-                    </thead>
-                    <tbody>{% for d in data %}
-                        <tr class="{% cycle '' 'active' %}">
-                            <td>{{ d.id }}</td>
-                            <td>{{ d.company_name_cn|default_if_none:"" }}{% if d.company_name_en %}/{{ d.company_name_en|default_if_none:"" }}{% endif %}</td>
-                            {% if LANGUAGE_CODE == 'en'%}
-                            <td>{{ d.company_type.company_type_en|default_if_none:"" }}</td>{% else %}
-                            <td>{{ d.company_type.company_type_cn|default_if_none:"" }}</td>{% endif %}
-                            <td>{{ d.company_address|default_if_none:"" }}</td>
-                            <td>{{ d.company_tel|default_if_none:"" }}</td>
-                            <td>{{ d.email|default_if_none:"" }}</td>
-                            <td>{{ d.desc|default_if_none:"" }}</td>{% if perms.brewsql.change_company %}
-                            <td style="text-align:right;"><a href="{% url 'brewsql:company_update' d.pk %}?next={{ request.path }}"><button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button></a></td>{% endif %}
-                        </tr>{% endfor %}
-                    </tbody>
-                </table>
+<div class="col-lg-12">
+    <section class="panel">
+        <div class="panel-body">
+            <div class="col-lg-9">
+                <form class="form-inline" role="form" method="get">
+                    <div class="form-group">
+                        <select name="c" class="selectpicker show-tick form-control" data-live-search='true'>
+                            <option value="">{% trans '公司类型' %}</option>
+                            {% for company_type in company_types %}
+                                {% ifequal company_type.pk|escape request.GET.c|escape %}
+                                <option value="{{ company_type.pk }}" selected>{{ company_type.company_type_cn }}</option>
+                                {% else %}
+                                <option value="{{ company_type.pk }}">{{ company_type.company_type_cn }}</option>
+                                {% endifequal %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input class="form-control" type="text" name="q" placeholder=""
+                                   value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+                            <span class="input-group-btn"><button class="btn btn-primary"
+                                                                  type="submit">搜索</button></span>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </section>
-        <div style="text-align:right;">
-            {% include 'brewsql/tablenav.html' %}
+            <div class="col-lg-3" style="text-align:right;">{% if perms.brewsql.add_company %}
+                <a href="{% url 'brewsql:add_company' %}?next={{ request.path }}">
+                    <button type="button" class="btn btn-primary">{% trans "添加公司" %}</button>
+                </a>{% endif %}
+            </div>
         </div>
+    </section>
+</div>
+<div class="col-lg-12">
+    <section class="panel table-responsive">
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>{% trans '公司名字' %}</th>
+                    <th>{% trans '公司类型' %}</th>
+                    <th>{% trans '地址' %}</th>
+                    <th>{% trans '电话' %}</th>
+                    <th>{% trans '邮箱' %}</th>
+                    <th>{% trans '介绍' %}</th>
+                    {% if perms.brewsql.change_company %}
+                    <th></th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody>{% for d in data %}
+                <tr class="{% cycle '' 'active' %}">
+                    <td>{{ d.id }}</td>
+                    <td>{{ d.company_name_cn|default_if_none:"" }}{% if d.company_name_en %}/{{
+                        d.company_name_en|default_if_none:"" }}{% endif %}
+                    </td>
+                    {% if LANGUAGE_CODE == 'en'%}
+                    <td>{{ d.company_type.company_type_en|default_if_none:"" }}</td>
+                    {% else %}
+                    <td>{{ d.company_type.company_type_cn|default_if_none:"" }}</td>
+                    {% endif %}
+                    <td>{{ d.company_address|default_if_none:"" }}</td>
+                    <td>{{ d.company_tel|default_if_none:"" }}</td>
+                    <td>{{ d.email|default_if_none:"" }}</td>
+                    <td>{{ d.desc|default_if_none:"" }}</td>
+                    {% if perms.brewsql.change_company %}
+                    <td style="text-align:right;"><a
+                            href="{% url 'brewsql:company_update' d.pk %}?next={{ request.path }}">
+                        <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                    </a></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    <div style="text-align:right;">
+        {% include 'brewsql/tablenav.html' %}
     </div>
+</div>
 </div>
 {% endblock %}

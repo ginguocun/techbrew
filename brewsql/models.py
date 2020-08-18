@@ -207,7 +207,7 @@ class Company(models.Model):
     china_district = models.CharField(_('地区编号'), max_length=100, null=True, blank=True)
     company_tel = models.CharField(_('公司电话'), max_length=100, null=True, blank=True)
     email = models.EmailField(_('公司邮箱'), max_length=100, null=True, blank=True)
-    contact = models.EmailField(_('联系人'), max_length=100, null=True, blank=True)
+    contact = models.CharField(_('联系人'), max_length=100, null=True, blank=True)
     tax_code = models.CharField(_('税号'), max_length=100, null=True, blank=True)
     bank = models.CharField(_('开户行'), max_length=200, null=True, blank=True)
     bank_account = models.CharField(_('账户'), max_length=50, null=True, blank=True)
@@ -246,7 +246,7 @@ class Company(models.Model):
         return reverse('{0}:company_list'.format(app_name))
 
     class Meta:
-        ordering = ['id']
+        ordering = ['-id']
         verbose_name = _('公司')
         verbose_name_plural = _('公司')
 
