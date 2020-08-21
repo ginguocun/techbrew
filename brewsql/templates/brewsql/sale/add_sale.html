@@ -58,7 +58,7 @@
                                     {% endfor %}
                                 {% else %}
                                     {% for pack in packs %}
-                                        <option value="{{ pack.pk }}">{{ pack.pack_batch_code }} {{ pack.product.product_name.product_name_cn }} [{{ pack.product.product_pack.product_pack_size_unit_cn }}] [¥ {{ pack.product.bar_price }}] 剩余: {{ pack.pack_num_left }}</option>
+                                        <option value="{{ pack.pk }}">{{ pack.pack_batch_code }} [{{ pack.product.product_code }}] {{ pack.product.product_name.product_name_cn }} [{{ pack.product.product_pack.product_pack_size_unit_cn }}] [¥ {{ pack.product.bar_price }}] 剩余: {{ pack.pack_num_left }}</option>
                                     {% endfor %}
                                 {% endif %}
                             </select>

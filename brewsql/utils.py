@@ -132,5 +132,7 @@ def update_permissions_name():
             p.name = str(p.name).replace('log entry', '日志')
         if 'content type' in p.name:
             p.name = str(p.name).replace('content type', '内容类型')
+        if 'session' in p.name:
+            p.name = str(p.name).replace('session', '会话')
         p.save()
     print('总共{}条，更新了{}条'.format(t_c, c))

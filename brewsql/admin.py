@@ -26,12 +26,6 @@ class AutoUpdateUserModelAdmin(admin.ModelAdmin):
         form.save_m2m()
 
 
-@admin.register(BankAccount)
-class BankAccountAdmin(AutoUpdateUserModelAdmin):
-    list_display = ('bank_account', 'bank', 'bank_address', 'desc')
-    search_fields = ['bank_account']
-
-
 @admin.register(EmployeeState)
 class EmployeeStateAdmin(AutoUpdateUserModelAdmin):
     list_display = ('pk', 'employee_state_cn', 'employee_state_en')

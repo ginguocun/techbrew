@@ -53,8 +53,8 @@
                 <ul class="sub">{% if perms.brewsql.view_client %}
                     <li><a href="{% url 'brewsql:client_list' %}">{% trans '客户管理' %}</a></li>{% endif %}{% if perms.brewsql.view_saleorder %}
                     <li><a  href="{% url 'brewsql:sale_order_list' %}?c=1">{% trans '销售订单' %}</a></li>{% endif %}{% if perms.brewsql.view_sale %}
-                    <li><a  href="{% url 'brewsql:sale_list' %}?c=1">{% trans '订单明细' %}</a></li>{% endif %}{% if perms.brewsql.view_saleorder %}
-                    <li><a  href="{% url 'brewsql:sale_order_list_wx' %}">{% trans '小程序订单' %}</a></li>{% endif %}
+                    <li><a  href="{% url 'brewsql:sale_list' %}?c=1">{% trans '订单明细' %}</a></li>{% endif %}
+<!--                    {% if perms.brewsql.view_saleorder %}<li><a  href="{% url 'brewsql:sale_order_list_wx' %}">{% trans '小程序订单' %}</a></li>{% endif %}-->
                 </ul>
             </li>
             {% endif %}
@@ -69,7 +69,8 @@
                     <li><a href="{% url 'brewsql:material_list' %}">{% trans '原料列表' %}</a></li>{% endif %}{% if perms.brewsql.view_materialbatch %}
                     <li><a href="{% url 'brewsql:material_batch_list' %}">{% trans '原料批次' %}</a></li>{% endif %}{% if perms.brewsql.view_materialin %}
                     <li><a href="{% url 'brewsql:material_in_list'%}">{% trans '原料入库' %}</a></li>{% endif %}{% if perms.brewsql.view_materialout %}
-                    <li><a href="{% url 'brewsql:material_out_list'%}">{% trans '原料出库' %}</a></li>{% endif %}{% if perms.brewsql.add_materialpacksizeunit or perms.brewsql.add_warehouse %}
+                    <li><a href="{% url 'brewsql:material_out_list'%}">{% trans '原料出库' %}</a></li>{% endif %}{% if perms.brewsql.view_supplier %}
+                    <li><a href="{% url 'brewsql:supplier_list' %}">{% trans '供应商管理' %}</a></li>{% endif %}{% if perms.brewsql.add_materialpacksizeunit or perms.brewsql.add_warehouse %}
                     <li class="sub-menu">
                         <a href="javascript:;" class="dcjq-parent">{% trans '包装/位置' %}<span class="dcjq-icon"></span></a>
                         <ul class="sub" style="display: none;">{% if perms.brewsql.add_materialpacksizeunit %}
@@ -86,8 +87,7 @@
                     <i class="fa fa-male"></i>
                     <span>{% trans '人员管理' %}</span>
                 </a>
-                <ul class="sub">{% if perms.brewsql.view_supplier %}
-                    <li><a href="{% url 'brewsql:supplier_list' %}">{% trans '供应商管理' %}</a></li>{% endif %}{% if perms.brewsql.view_company %}
+                <ul class="sub">{% if perms.brewsql.view_company %}
                     <li><a href="{% url 'brewsql:company_list' %}">{% trans '合作公司' %}</a></li>{% endif %}{% if perms.brewsql.view_employee %}
                     <li><a href="{% url 'brewsql:employee_list' %}">{% trans '员工管理' %}</a></li>{% endif %}{% if perms.brewsql.add_employee %}
                     <li><a href="{% url 'brewsql:user_list' %}">{% trans '账号管理' %}</a></li>
@@ -113,12 +113,12 @@
                 </a>
             </li>{% endif %}
             {% if perms.brewsql.view_handbook %}
-            <li class="sub-menu">
-                <a href="{% url 'brewsql:handbook' %}" >
-                    <i class="fa fa-book"></i>
-                    <span>{% trans '操作说明' %}</span>
-                </a>
-            </li>
+<!--            <li class="sub-menu">-->
+<!--                <a href="{% url 'brewsql:handbook' %}" >-->
+<!--                    <i class="fa fa-book"></i>-->
+<!--                    <span>{% trans '操作说明' %}</span>-->
+<!--                </a>-->
+<!--            </li>-->
             {% endif %}
         </ul>
     <!-- sidebar menu end-->

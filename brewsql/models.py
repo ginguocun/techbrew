@@ -15,43 +15,6 @@ from .apps import GeneralConfig
 app_name = GeneralConfig.name
 
 
-class BankAccount(models.Model):
-    bank = models.CharField(_('银行'), max_length=200, null=True, blank=True)
-    account_owner = models.CharField(_('账户名'), max_length=200, null=True, blank=True)
-    bank_account = models.CharField(_('银行卡号'), max_length=50, null=True, blank=True)
-    bank_address = models.CharField(_('银行地址'), max_length=400, null=True, blank=True)
-    desc = models.TextField(_('备注'), max_length=1000, null=True, blank=True)
-    is_active = models.BooleanField(_('可用'), default=True)
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name=_('创建者'),
-        related_name='bank_account_created_by'
-    )
-    modified_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name=_('更新者'),
-        related_name='bank_account_modified_by'
-    )
-    datetime_created = models.DateTimeField(_('创建时间'), auto_now_add=True)
-    datetime_updated = models.DateTimeField(_('更新时间'), auto_now=True)
-
-    objects = models.Manager()
-
-    class Meta:
-        ordering = ['id']
-        verbose_name = _('收款帐号')
-        verbose_name_plural = _('收款帐号')
-
-    def __str__(self):
-        return '{0} {1}'.format(self.bank, self.bank_account)
-
-
 class EmployeeState(models.Model):
     employee_state_cn = models.CharField(_('员工状态-中文'), max_length=100, null=True, unique=True)
     employee_state_en = models.CharField(_('员工状态-英文'), max_length=100, null=True, unique=True, blank=True)
@@ -1746,7 +1709,8 @@ class Product(models.Model):
         verbose_name_plural = _('产品')
 
     def __str__(self):
-        return "{0} ({1})".format(
+        return "[{0}] {1} ({2})".format(
+            self.product_code,
             self.product_name,
             self.product_pack
         )
@@ -2273,12 +2237,6 @@ class SaleOrder(models.Model):
         return "{0}".format(self.sale_order_code)
 
 
-@receiver(pre_save, sender=SaleOrder)
-def pre_save_sale_order(sender, instance, **kwargs):
-    if not instance.sale_order_code:
-        instance.sale_order_code = timezone.localtime().strftime('%y%m%d%H%M%S')
-
-
 class Sale(models.Model):
     sale_order = models.ForeignKey(
         SaleOrder,
@@ -2393,3 +2351,9 @@ class HandBook(models.Model):
             self.chapter,
             self.chapter_name_cn,
         )
+
+
+@receiver(pre_save, sender=SaleOrder)
+def pre_save_sale_order(sender, instance, **kwargs):
+    if not instance.sale_order_code:
+        instance.sale_order_code = timezone.localtime().strftime('%y%m%d%H%M%S')
