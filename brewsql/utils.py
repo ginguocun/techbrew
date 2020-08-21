@@ -2,6 +2,7 @@ import datetime
 import math
 import re
 
+from django.contrib.auth.models import Permission
 from django.core.exceptions import ImproperlyConfigured
 
 
@@ -103,5 +104,33 @@ def validate_date(date_text):
         # raise ValueError("错误是日期格式或日期,格式是年-月-日")
 
 
-if __name__ == '__main__':
-    print(validate_date('2019/0/1'))
+def update_permissions_name():
+    ps = Permission.objects.all()
+    c = 0
+    t_c = 0
+    for p in ps:
+        t_c += 1
+        if 'Can view' in p.name:
+            p.name = str(p.name).replace('Can view ', '可以查看')
+            c += 1
+        if 'Can add' in p.name:
+            p.name = str(p.name).replace('Can add ', '可以添加')
+            c += 1
+        if 'Can delete' in p.name:
+            p.name = str(p.name).replace('Can delete ', '可以删除')
+            c += 1
+        if 'Can change' in p.name:
+            p.name = str(p.name).replace('Can change ', '可以修改')
+            c += 1
+        if 'user' in p.name:
+            p.name = str(p.name).replace('user', '用户')
+        if 'group' in p.name:
+            p.name = str(p.name).replace('group', '权限分组')
+        if 'permission' in p.name:
+            p.name = str(p.name).replace('permission', '权限')
+        if 'log entry' in p.name:
+            p.name = str(p.name).replace('log entry', '日志')
+        if 'content type' in p.name:
+            p.name = str(p.name).replace('content type', '内容类型')
+        p.save()
+    print('总共{}条，更新了{}条'.format(t_c, c))
