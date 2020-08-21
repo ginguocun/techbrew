@@ -526,17 +526,18 @@ def sale_delete(request, pk):
             oj = ojs.first()
             selected_pack = oj.pack
             order_id = oj.sale_order.pk
-            linked_money_io = MoneyInOut.objects.filter(pk=oj.sale_price_link.pk)
-            if linked_money_io.exists():
-                l_mio = linked_money_io.first()
-                LogEntry.objects.log_action(
-                    user_id=request.user.pk,
-                    content_type_id=get_content_type_for_model(l_mio).pk,
-                    object_id=l_mio.pk,
-                    object_repr=str(l_mio),
-                    action_flag=DELETION,
-                )
-                l_mio.delete()
+            if oj.sale_price_link:
+                linked_money_io = MoneyInOut.objects.filter(pk=oj.sale_price_link.pk)
+                if linked_money_io.exists():
+                    l_mio = linked_money_io.first()
+                    LogEntry.objects.log_action(
+                        user_id=request.user.pk,
+                        content_type_id=get_content_type_for_model(l_mio).pk,
+                        object_id=l_mio.pk,
+                        object_repr=str(l_mio),
+                        action_flag=DELETION,
+                    )
+                    l_mio.delete()
             LogEntry.objects.log_action(
                 user_id=request.user.pk,
                 content_type_id=get_content_type_for_model(oj).pk,

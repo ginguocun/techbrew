@@ -140,6 +140,12 @@ class ProductStyleForm(TbModelForm):
     class Meta:
         model = ProductStyle
         exclude = ['datetime_created', 'datetime_updated']
+        widgets = {
+            'product_style_cn': TextInput(attrs={'class': 'form-control', 'placeholder': '中文名称'}),
+            'product_style_en': NumberInput(attrs={'class': 'form-control', 'placeholder': '英文名称'}),
+            'product_style_desc_cn': TextInput(attrs={'class': 'form-control', 'placeholder': '中文介绍'}),
+            'product_style_desc_en': TextInput(attrs={'class': 'form-control', 'placeholder': '英文介绍'}),
+        }
 
 
 class ProductForm(TbModelForm):
