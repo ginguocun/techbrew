@@ -170,6 +170,7 @@
                                 <th>{% trans '小计' %}</th>
                                 <th>{% trans '已出库' %}</th>
                                 <th>{% trans '已收款' %}</th>
+                                <th>{% trans '备注' %}</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -184,6 +185,7 @@
                                 <td>¥ {{ i.sale_price }}</td>
                                 <td>{% if i.is_confirmed %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
                                 <td>{% if i.fee_received %}<label class="badge bg-success"><i class="fa fa-check"></i></label>{% else %}<label class="badge bg-important"><i class="fa  fa-times"></i></label>{% endif %}</td>
+                                <td>{{ i.notes }}</td>
                                 <td style="text-align:right;">
                                     {% if not i.is_confirmed and perms.brewsql.confirm_sale %}
                                     <a data-toggle="modal" href="#myModal_{{ i.pk }}"><button class="btn btn-warning btn-xs"><i class="fa fa-sign-out"></i></button></a>
