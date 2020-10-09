@@ -33,7 +33,7 @@
                         <td>{{ tank.jkm_t_real|default_if_none:'N/A' }}/{{ tank.jkm_t_set|default_if_none:'N/A'  }}</td>
                         <td>{{ tank.current_brew.delta_days }} {% trans '天' %}</td>
                         <td>{{ tank.current_brew.theory_days }} {% trans '天' %}</td>{% else %}
-                        <td></td><td></td><td></td>
+                        <td></td><td></td><td></td><td></td>
                         {% endif %}
                     </tr>{% endfor %}
                 </tbody>
