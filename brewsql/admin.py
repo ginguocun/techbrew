@@ -72,7 +72,7 @@ class SupplierAdmin(AutoUpdateUserModelAdmin):
 
 @admin.register(TankState)
 class TankStateAdmin(AutoUpdateUserModelAdmin):
-    list_display = ('pk', 'tank_state_en', 'tank_state_cn', 'with_product')
+    list_display = ('pk', 'tank_state_en', 'tank_state_cn', 'with_product', 'can_start')
 
 
 @admin.register(Tank)

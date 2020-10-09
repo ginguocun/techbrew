@@ -28,7 +28,7 @@
                     </thead>
                     <tbody>{% for d in data %}
                         <tr class="{% cycle '' 'active' %}">
-                            <td>{{ d.tank_name }}</td>
+                            <td>{{ d.tank_name }}</td>{% if d.tank_state.with_product %}
                             <td>{{ d.jkm_t_real|default_if_none:'N/A' }}/{{ d.jkm_t_set|default_if_none:'N/A'  }}</td>{% if LANGUAGE_CODE == 'en'%}
                             <td>{{ d.current_brew.product_name.product_name_en|default_if_none:"" }}</td>{% else %}
                             <td>{{ d.current_brew.product_name.product_name_cn|default_if_none:"" }}</td>{% endif %}
@@ -43,6 +43,16 @@
                             <td>{% if d.current_brew %}{{ d.current_brew.current_tank_out }} L{% endif %}</td>
                             <td>{{ d.tank_state|default_if_none:"" }}</td>
                             <td>{{ d.current_brew.date_start|date:"Y-m-d" }}</td>
+                            {% else %}
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ d.tank_standard_volume }} L</td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ d.tank_state|default_if_none:"" }}</td>
+                                <td></td>
+                            {% endif %}
                         </tr>{% endfor %}
                     </tbody>
                 </table>
