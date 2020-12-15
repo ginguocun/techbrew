@@ -130,14 +130,14 @@ urlpatterns = [
     re_path(r'^company_type_list/$', views_add.CompanyTypeCreate.as_view(), name='company_type_list'),
     re_path(r'^company_type_update/(?P<pk>\d+)/$', views_change.CompanyTypeUpdate.as_view(), name='company_type_update'),
     # 资金流水
-    re_path(r'^money_io_types/$', views_add.MoneyInOutTypeCreate.as_view(), name='money_inout_types'),
-    re_path(r'^money_iot_update/(?P<pk>\d+)/$', views_change.MoneyInOutTypeUpdate.as_view(), name='money_iot_update'),
-    re_path(r'^money_io_list/$', views.MoneyInOutListView.as_view(), name='moneyinout_list'),
-    re_path(r'^money_io_update/(?P<pk>\d+)/$', views_change.MoneyInOutUpdate.as_view(), name='moneyinout_update'),
-    re_path(r'^money_ios_update/(?P<pk>\d+)/$', views_change.MoneyInOutStateUpdate.as_view(), name='money_ios_update'),
-    re_path(r'^add_money_io/$', views_add.MoneyInOutCreate.as_view(), name='add_moneyinout'),
-    re_path(r'^confirm_moneyinout/$', views_change.confirm_moneyinout, name='confirm_moneyinout'),
-    re_path(r'^money_io_delete/(?P<pk>\d+)/$', views_change.MoneyInOutDelete.as_view(), name='money_io_delete'),
+    # re_path(r'^money_io_types/$', views_add.MoneyInOutTypeCreate.as_view(), name='money_inout_types'),
+    # re_path(r'^money_iot_update/(?P<pk>\d+)/$', views_change.MoneyInOutTypeUpdate.as_view(), name='money_iot_update'),
+    # re_path(r'^money_io_list/$', views.MoneyInOutListView.as_view(), name='moneyinout_list'),
+    # re_path(r'^money_io_update/(?P<pk>\d+)/$', views_change.MoneyInOutUpdate.as_view(), name='moneyinout_update'),
+    # re_path(r'^money_ios_update/(?P<pk>\d+)/$', views_change.MoneyInOutStateUpdate.as_view(), name='money_ios_update'),
+    # re_path(r'^add_money_io/$', views_add.MoneyInOutCreate.as_view(), name='add_moneyinout'),
+    # re_path(r'^confirm_moneyinout/$', views_change.confirm_moneyinout, name='confirm_moneyinout'),
+    # re_path(r'^money_io_delete/(?P<pk>\d+)/$', views_change.MoneyInOutDelete.as_view(), name='money_io_delete'),
     # 温度更新
     # re_path(r'^temp/update$', views.update_temp, name='tem_update'),
     # 用户管理

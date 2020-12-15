@@ -105,21 +105,6 @@
                 </ul>
             </li>
             {% endif %}
-            {% if perms.brewsql.view_moneyinout %}
-            <li class="sub-menu">
-                <a href="{% url 'brewsql:moneyinout_list' %}" >
-                    <i class="fa fa-money"></i>
-                    <span>{% trans '资金流水' %}</span>
-                </a>
-            </li>{% endif %}
-            {% if perms.brewsql.view_handbook %}
-<!--            <li class="sub-menu">-->
-<!--                <a href="{% url 'brewsql:handbook' %}" >-->
-<!--                    <i class="fa fa-book"></i>-->
-<!--                    <span>{% trans '操作说明' %}</span>-->
-<!--                </a>-->
-<!--            </li>-->
-            {% endif %}
         </ul>
     <!-- sidebar menu end-->
     </div>

@@ -88,15 +88,15 @@ class WarehouseAdmin(AutoUpdateUserModelAdmin):
     list_display = ('pk', 'place_code', 'place_desc')
 
 
-admin.site.register(MoneyInOutType)
-
-
-@admin.register(MoneyInOut)
-class MoneyInOutAdmin(AutoUpdateUserModelAdmin):
-    list_display = ('datetime_created', 'money_in_out', 'money_in_out_type', 'notes', 'recorded_by', 'confirmed_by',
-                    'datetime_updated')
-    list_filter = ('money_in_out_type', 'recorded_by', 'is_confirmed', 'is_active')
-    search_fields = ['notes', ]
+# admin.site.register(MoneyInOutType)
+#
+#
+# @admin.register(MoneyInOut)
+# class MoneyInOutAdmin(AutoUpdateUserModelAdmin):
+#     list_display = ('datetime_created', 'money_in_out', 'money_in_out_type', 'notes', 'recorded_by', 'confirmed_by',
+#                     'datetime_updated')
+#     list_filter = ('money_in_out_type', 'recorded_by', 'is_confirmed', 'is_active')
+#     search_fields = ['notes', ]
 
 
 @admin.register(MaterialCategory)
